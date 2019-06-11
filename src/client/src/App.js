@@ -1,9 +1,12 @@
 import React from 'react';
 
+// Components
+import SLRealTime from "./components/sl/RealTime";
+
 function App() {
   return (
     <div>
-      hello world
+      <SLRealTime />
     </div>
   );
 }
