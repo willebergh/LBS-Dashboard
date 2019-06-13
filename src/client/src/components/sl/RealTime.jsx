@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import Departure from "./realtime/Departure";
+import Departure from "./Departure";
+import { List, Divider } from "@material-ui/core"
 
 class RealTime extends Component {
     constructor(props) {
@@ -13,7 +14,7 @@ class RealTime extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:5000/api/sl/realtime/9189")
+        axios.get("http://dampgang.com:5000/api/sl/realtime/9189")
             .then(res => {
                 this.setState({
                     data: res.data,
@@ -30,9 +31,11 @@ class RealTime extends Component {
         } else {
             return (
                 <div>
-                    {data.ResponseData.Buses.map(bus => {
-                        return <Departure data={bus} />
-                    })}
+                    <List>
+                        {data.ResponseData.Buses.map(bus => {
+                            return <Departure data={bus} />
+                        })}
+                    </List>
                 </div>
             );
         }
