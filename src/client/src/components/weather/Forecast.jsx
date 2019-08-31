@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import axios from "axios";
 import moment from "moment"
 
-import WeatherIcon from "./WeatherIcon";
 import Day from "./Day";
+import CurrentWeather from "./CurrentWeather";
+import NextHours from "./NextHours";
 
 
 class Forecast extends Component {
@@ -17,7 +18,7 @@ class Forecast extends Component {
     }
 
     async componentDidMount() {
-        await axios.get("http://localhost:5000/api/smhi/forecast")
+        await axios.get("http://localhost:5000/api/smhi/test")
             .then(res => {
                 this.setState({
                     data: res.data.timeSeries
@@ -47,11 +48,16 @@ class Forecast extends Component {
 
 
     render() {
+        const { data, sorted } = this.state;
         return (
             <div>
-                {this.state.sorted.map(day => {
+                <CurrentWeather data={data} />
+                <br />
+                <NextHours data={data} />
+                <br />
+                {sorted.map((day, index) => {
                     return (
-                        <div>
+                        <div key={index}>
                             <Day day={day} />
                             <br />
                         </div>

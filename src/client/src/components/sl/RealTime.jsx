@@ -14,7 +14,7 @@ class RealTime extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://dampgang.com:5000/api/sl/realtime/9189")
+        axios.get("/api/sl/realtime/3404")
             .then(res => {
                 this.setState({
                     data: res.data,

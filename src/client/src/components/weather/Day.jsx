@@ -12,12 +12,10 @@ class Day extends Component {
         }
     }
 
-    async componentDidMount() {
-        await this.setState({
+    componentDidMount() {
+        this.setState({
             day: this.props.day
         })
-
-        console.log(this.state.day)
     }
 
     findParam(params, name) {
@@ -25,9 +23,10 @@ class Day extends Component {
     }
 
     render() {
+        const { day } = this.state;
         return (
             <div>
-                {this.state.day.map((day, index) => {
+                {day.map((day, index) => {
                     const params = day.parameters;
                     return (
                         <div key={index}>

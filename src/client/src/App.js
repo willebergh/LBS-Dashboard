@@ -1,12 +1,13 @@
 import React from 'react';
 
 // Components
-import SLRealTime from "./components/sl/RealTime";
+import Forecast from "./components/weather/Forecast";
+import SlRealTime from "./components/sl/RealTime";
 
 function App() {
   return (
     <div>
-      <SLRealTime />
+      <Forecast />
     </div>
   );
 }
