@@ -1,0 +1,86 @@
+<div id="foodMenu">
+    <div class="header">
+        <span>Menu @ Jöns Jacob</span>
+    </div>
+    <div class="week">
+        <div class="day">
+            <span class="title">Mån</span>
+            <div class="menu">
+                <span class="item">Pasta med broccoli och paprikasås och grana padano</span>
+                <span class="item">Pasta med kyckling i paprikasås och grana padano</span>
+            </div>
+        </div>
+        <div class="day">
+            <span class="title">Tis</span>
+            <div class="menu">
+                <span class="item">Falaffel med currydipp el aioli och ris</span>
+                <span class="item">Panerad stekt fisk med currydipp el aioli och ris</span>
+            </div>
+        </div>
+        <div class="day">
+            <span class="title">Ons</span>
+            <div class="menu">
+                <span class="item">Pizzabuffe olika sorter</span>
+            </div>
+        </div>
+        <div class="day today">
+            <span class="title">Tors</span>
+            <div class="menu">
+                <span class="item">Zuccinipiccatta med tomatsås, tzatziki och ris</span>
+                <span class="item">Grekisk Pannbiff med tomatsås, tzatziki och ris</span>
+            </div>
+        </div>
+        <div class="day">
+            <span class="title">Fre</span>
+            <div class="menu">
+                <span class="item">Vego Schnitzel med stekta rotfrukter och citronsky</span>
+                <span class="item">Kycklingschnitzel med stekta rotfrukter och citronsky</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+#foodMenu {
+width: fit-content;
+margin: auto auto 0;
+}
+#foodMenu .header {
+display: block;
+padding: 16px;
+text-align: left;
+font-weight: 500;
+}
+#foodMenu .header :last-child {
+padding: 4px;
+border-bottom: solid 1px #111;
+}
+#foodMenu .week {
+
+}
+#foodMenu .week .day {
+text-align: center;
+}
+#foodMenu .week .day .title {
+text-align: center;
+margin-right: 16px;
+}
+#foodMenu .week .day .menu {
+display: flex;
+flex-direction: column;
+}
+#foodMenu .week .day .menu .item {
+text-align: center;
+}
+#foodMenu .week .today {
+font-size: 1.5em;
+}
+#foodMenu .week .today .title {
+font-weight: 500;
+}
+#foodMenu .week .today .menu {
+
+}
+#foodMenu .week .today .menu .item {
+font-weight: 500;
+
+}
