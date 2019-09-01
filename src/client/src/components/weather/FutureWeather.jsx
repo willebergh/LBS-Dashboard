@@ -1,6 +1,6 @@
-import React, { Component } from './node_modules/react';
-import PropTypes from "./node_modules/prop-types";
-import moment from "./node_modules/moment";
+import React, { Component } from 'react';
+import PropTypes from "prop-types";
+import moment from "moment";
 
 import WeatherIcon from "./WeatherIcon";
 

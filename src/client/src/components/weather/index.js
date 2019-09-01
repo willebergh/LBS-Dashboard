@@ -1,6 +1,6 @@
-import React, { Component } from './node_modules/react';
-import axios from "./node_modules/axios";
-import moment from "./node_modules/moment";
+import React, { Component } from 'react';
+import axios from "axios";
+import moment from "moment";
 import "./style.css";
 
 import CurrentWeather from "./CurrentWeather";

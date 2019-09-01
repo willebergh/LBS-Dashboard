@@ -1,4 +1,4 @@
-import React from "./node_modules/react";
+import React from "react";
 
 import ClearSky from "./icons/ClearSky";
 import NearlyClearSky from "./icons/NearlyClearSky";
