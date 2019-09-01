@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const rp = require("request-promise");
 const $ = require("cheerio");
-
+const moment = require("moment");
 
 router.get("/", async (req, res) => {
 
@@ -74,13 +74,26 @@ router.get("/", async (req, res) => {
         })
         .catch(err => console.error(err));
 
-    console.log("res.status().json()")
-    res.status(200).json({
-        currentWeekNr,
-        foodMenu
+    function getDayOfTheWeek() {
+        switch (moment().format("dddd")) {
+            case "Monday": return "måndag";
+            case "Tuesday": return "tisdag";
+            case "Wednesday": return "onsdag";
+            case "Thursday": return "torsdag";
+            case "Friday": return "fredag";
+            case "Saturday": return "måndag";
+            case "Sunday": return "måndag";
+        }
+    }
+
+    const currentWeak = foodMenu.find(x => x.nr === currentWeekNr);
+    const today = currentWeak.days.find(day => day.title.toLowerCase() === getDayOfTheWeek());
+
+    res.json({
+        today,
+        currentWeak
     })
 
 });
-
 
 module.exports = router;
