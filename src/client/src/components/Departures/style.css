@@ -1,0 +1,72 @@
+/*
+    SL Realtime departures component.
+*/
+#slRealTime {
+    grid-row: 3 / span 1;
+    grid-column: 1 / span 1;
+    width: fit-content;
+    margin: auto;
+}
+#slRealTime .station {
+    display: flex;
+    width: fit-content;
+    margin: auto;
+}
+#slRealTime .station .header {
+    display: block;
+    padding: 16px;
+    text-align: center;
+    font-weight: 500;
+}
+#slRealTime .station .header :last-child {
+    padding: 4px;
+    border-bottom: solid 1px #111;
+}
+#slRealTime .departures {
+
+}
+#slRealTime .departures :first-child {
+    border: none;
+}
+#slRealTime .departure {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-top: solid 1px #ccc;
+}
+#slRealTime .departure :first-child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: none;
+}
+#slRealTime .lineNr {
+    display: block;
+    background-color: red;
+    border-radius: 8px;
+    padding: 4px 8px;
+    color: #fff;
+    font-weight: 500;
+}
+#slRealTime .destination {
+    display: block;
+    margin-left: 8px;
+}
+#slRealTime .timeUntilDeparture {
+
+}
+#slRealTime .nextDeparture .header {
+
+}
+#slRealTime .nextDeparture .display {
+    text-align: center;
+}
+#slRealTime .nextDeparture .display .int {
+    font-size: 8em;
+    font-weight: 300;
+}
+#slRealTime .nextDeparture .display .unit {
+    
+}
