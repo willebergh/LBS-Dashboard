@@ -16,7 +16,7 @@ import ModerateSleetShowers from "./icons/ModerateSleetShowers";
 import HeavySleetShowers from "./icons/HeavySleetShowers";
 import LightSnowShowers from "./icons/LightSnowShowers";
 import ModerateSnowShowers from "./icons/ModerateSnowShowers";
-import HeavySnowShowers from "./icons/HeavySnowShowers.jsx";
+import HeavySnowShowers from "./icons/HeavySnowShowers";
 import LightRain from "./icons/LightRain";
 import ModerateRain from "./icons/ModerateRain";
 import HeavyRain from "./icons/HeavyRain";
@@ -28,92 +28,90 @@ import LightSnowfall from "./icons/LightSnowfall";
 import ModerateSnowfall from "./icons/ModerateSnowfall";
 import HeavySnowfall from "./icons/HeavySnowfall";
 
-function WeatherIcon({ value }) {
-
-
+function WeatherIcon({ value, text }) {
 
     switch (value) {
 
         case 1:
-            return <ClearSky />
+            return <ClearSky text={text} />
 
         case 2:
-            return <NearlyClearSky />
+            return <NearlyClearSky text={text} />
 
         case 3:
-            return <VariableCloudiness />
+            return <VariableCloudiness text={text} />
 
         case 4:
-            return <HalfclearSky />
+            return <HalfclearSky text={text} />
 
         case 5:
-            return <CloudySky />
+            return <CloudySky text={text} />
 
         case 6:
-            return <Overcast />
+            return <Overcast text={text} />
 
         case 7:
-            return <Fog />
+            return <Fog text={text} />
 
         case 8:
-            return <LightRainShowers />
+            return <LightRainShowers text={text} />
 
         case 9:
-            return <ModerateRainShowers />
+            return <ModerateRainShowers text={text} />
 
         case 10:
-            return <HeavyRainShowers />
+            return <HeavyRainShowers text={text} />
 
         case 11:
-            return <Thunderstorm />
+            return <Thunderstorm text={text} />
 
         case 12:
-            return <LightSleetShowers />
+            return <LightSleetShowers text={text} />
 
         case 13:
-            return <ModerateSleetShowers />
+            return <ModerateSleetShowers text={text} />
 
         case 14:
-            return <HeavySleetShowers />
+            return <HeavySleetShowers text={text} />
 
         case 15:
-            return <LightSnowShowers />
+            return <LightSnowShowers text={text} />
 
         case 16:
-            return <ModerateSnowShowers />
+            return <ModerateSnowShowers text={text} />
 
         case 17:
-            return <HeavySnowShowers />
+            return <HeavySnowShowers text={text} />
 
         case 18:
-            return <LightRain />
+            return <LightRain text={text} />
 
         case 19:
-            return <ModerateRain />
+            return <ModerateRain text={text} />
 
         case 20:
-            return <HeavyRain />
+            return <HeavyRain text={text} />
 
         case 21:
-            return <Thunder />
+            return <Thunder text={text} />
 
         case 22:
-            return <LightSleet />
+            return <LightSleet text={text} />
 
         case 23:
-            return <ModerateSleet />
+            return <ModerateSleet text={text} />
 
         case 24:
-            return <HeavySleet />
+            return <HeavySleet text={text} />
 
         case 25:
-            return <LightSnowfall />
+            return <LightSnowfall text={text} />
 
         case 26:
-            return <ModerateSnowfall />
+            return <ModerateSnowfall text={text} />
 
         case 27:
-            return <HeavySnowfall />
+            return <HeavySnowfall text={text} />
 
         default:
             return <span>WeatherIcon</span>
