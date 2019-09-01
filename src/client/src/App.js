@@ -2,9 +2,10 @@ import React from 'react';
 import "./App.css";
 
 // Components
-import CurrentTimeAndDate from "./components/CurrentTimeAndDate";
 import Weather from "./components/Weather";
+import FoodMenu from "./components/FoodMenu";
 import Departures from "./components/Departures";
+import CurrentTimeAndDate from "./components/CurrentTimeAndDate";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <CurrentTimeAndDate />
       <Weather />
       <Departures station="3404" transportType="bus" />
+      <FoodMenu />
     </div>
   );
 }
