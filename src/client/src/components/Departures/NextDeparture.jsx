@@ -7,8 +7,8 @@ class NextDeparture extends Component {
 
         if (t.charAt(2) === ":") {
             return (
-                <div className="display">
-                    <span className="int">
+                <div className="display" style={{ paddingTop: 16 }}>
+                    <span className="int" style={{ fontSize: "4em" }}>
                         {t}
                     </span>
                 </div>
@@ -16,7 +16,7 @@ class NextDeparture extends Component {
         } else if (t.toLowerCase() === "nu") {
             return (
                 <div className="display">
-                    <span className="int">
+                    <span className="int" style={{ fontSize: "8em" }}>
                         {t}
                     </span>
                 </div>
@@ -24,7 +24,7 @@ class NextDeparture extends Component {
         } else {
             return (
                 <div className="display">
-                    <span className="int">
+                    <span className="int" style={{ marginLeft: 25, fontSize: "8em" }}>
                         {t.split(" ")[0]}
                     </span>
                     <span className="unit">

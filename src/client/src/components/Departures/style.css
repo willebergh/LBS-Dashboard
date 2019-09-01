@@ -58,14 +58,14 @@
 
 }
 #slRealTime .nextDeparture .header {
-
+    padding-bottom: 0;
 }
 #slRealTime .nextDeparture .display {
     text-align: center;
 }
 #slRealTime .nextDeparture .display .int {
-    font-size: 8em;
     font-weight: 300;
+    letter-spacing: -8px;
 }
 #slRealTime .nextDeparture .display .unit {
     
