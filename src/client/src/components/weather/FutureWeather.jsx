@@ -5,10 +5,10 @@ import WeatherIcon from "../WeatherIcon";
 
 class FutureWeather extends Component {
     render() {
-        let count = 0;
         if (!this.props.data.data) {
             return (
                 <div className="futureWeather">
+                    <PlaceHolder />
                     <PlaceHolder />
                     <PlaceHolder />
                     <PlaceHolder />
@@ -20,8 +20,27 @@ class FutureWeather extends Component {
             return (
                 <div className="futureWeather">
                     {this.props.data.data.map((d, i) => {
-                        if (count < 5) {
-                            count++;
+                        if (i < 6) {
+
+                            if (i === 0) {
+                                return (
+                                    <div className="column">
+                                        <div className="row">
+                                            Now
+                                        </div>
+                                        <div className="row">
+                                            <WeatherIcon value={d.icon} />
+                                        </div>
+                                        <div className="row">
+                                            {Math.round(d.temperature)}&deg;
+                                    </div>
+                                        <div className="row">
+                                            {d.rain}
+                                        </div>
+                                    </div>
+                                )
+                            }
+
                             return (
                                 <div className="column">
                                     <div className="row">
@@ -60,7 +79,7 @@ function PlaceHolder() {
                 </div>
             <div className="row">
                 rain
-                </div>
+            </div>
         </div>
     )
 }

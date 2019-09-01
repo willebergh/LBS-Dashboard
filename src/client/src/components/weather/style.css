@@ -40,7 +40,8 @@
     Future weather component.
 */
 .futureWeather {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     margin-top: 16px;
     font-size: 1em;
     justify-content: center;

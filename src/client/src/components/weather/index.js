@@ -19,19 +19,19 @@ class Weather extends Component {
 
     componentDidMount() {
         this.clock();
-        this.updateWeather();
     }
 
     clock() {
+        this.updateState();
         setInterval(() => {
             const time = moment().format("mm:ss");
-            if (time === "00:00") this.updateWeather();
+            if (time === "01:00") this.updateState();
         }, 1000)
     }
 
-    updateWeather() {
+    updateState() {
         console.log(moment().format("HH:mm:ss") + " - Updating weather...");
-        axios.get("/api/weather/test")
+        axios.get("/api/weather/new")
             .then(res => { this.setState({ data: res.data }) })
     }
 
