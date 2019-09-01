@@ -25,7 +25,7 @@ class FoodMenu extends Component {
     }
 
     updateState() {
-        axios.get("/api/FoodMenu/today")
+        axios.get("/api/FoodMenu")
             .then(res => {
                 this.setState({ menuItems: res.data.today.menu })
             })
