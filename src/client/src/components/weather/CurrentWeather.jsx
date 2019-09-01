@@ -1,27 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
 
-import WeatherIcon from "./WeatherIcon";
-
 class CurrentWeather extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
-
-
     render() {
-
-        const { temperature, icon } = this.props;
-
+        const { temperature, summary } = this.props.data;
         return (
             <div id="currentWeather">
                 <div class="body">
                     <div class="temperature">
                         <span>
-                            {temperature}
+                            {Math.round(temperature)}
                         </span>
                     </div>
                     <div class="degUnit">
@@ -31,7 +19,7 @@ class CurrentWeather extends Component {
                 </div>
                 <div class="footer">
                     <div class="title">
-                        <WeatherIcon value={icon} text />
+                        {summary}
                     </div>
                 </div>
             </div>
@@ -40,8 +28,7 @@ class CurrentWeather extends Component {
 }
 
 CurrentWeather.propTypes = {
-    temperature: PropTypes.object.isRequired,
-    icon: PropTypes.number.isRequired
+    data: PropTypes.object.isRequired
 }
 
 export default CurrentWeather;
