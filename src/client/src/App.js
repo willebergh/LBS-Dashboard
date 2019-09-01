@@ -1,13 +1,15 @@
 import React from 'react';
+import "./App.css";
 
 // Components
-import Forecast from "./components/weather/Forecast";
-import SlRealTime from "./components/sl/RealTime";
+import CurrentTimeAndDate from "./components/CurrentTimeAndDate";
+import Weather from "./components/Weather";
 
 function App() {
   return (
-    <div>
-      <Forecast />
+    <div id="grid">
+      <CurrentTimeAndDate />
+      <Weather />
     </div>
   );
 }
