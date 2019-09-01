@@ -8,10 +8,19 @@ import NextDeparture from "./NextDeparture";
 class NextDepartures extends Component {
 
     componentDidMount() {
+        this.clock();
+    }
+
+    clock() {
+        this.updateState();
+        setInterval(() => {
+            this.updateState();
+        }, 1000 * 60)
+    }
+
+    updateState() {
         axios.get("/api/sl/realtime/3404")
-            .then(res => {
-                this.setState({ data: res.data.ResponseData })
-            })
+            .then(res => this.setState({ data: res.data.ResponseData }))
     }
 
     transportType() {
@@ -30,7 +39,7 @@ class NextDepartures extends Component {
                         <div className="header">
                             <span>
                                 {this.transportType()} {" @ "}
-                                {departures[0].StopAreaName}
+                                {departures[0] ? departures[0].StopAreaName : ""}
                             </span>
                         </div>
                         <div className="departures">
@@ -48,7 +57,7 @@ class NextDepartures extends Component {
                         </div>
                     </div>
                     <div>
-                        <NextDeparture displayTime={departures[0].DisplayTime} />
+                        <NextDeparture displayTime={departures[0] ? departures[0].DisplayTime : ""} />
                     </div>
                 </div>
             </div>
