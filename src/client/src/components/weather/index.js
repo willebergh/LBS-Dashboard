@@ -31,7 +31,7 @@ class Weather extends Component {
 
     updateState() {
         console.log(moment().format("HH:mm:ss") + " - Updating weather...");
-        axios.get("/api/weather/new")
+        axios.get("/api/weather")
             .then(res => { this.setState({ data: res.data }) })
     }
 
