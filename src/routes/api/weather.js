@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 require("dotenv").config();
 
-router.get("/new", (req, res) => {
+router.get("/", (req, res) => {
     const apiKey = process.env.DARKSKY_APIKEY
     axios.get(`https://api.darksky.net/forecast/${apiKey}/59.2747,18.0333?units=si`)
         .then(response => res.status(200).json(response.data))
