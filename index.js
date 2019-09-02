@@ -7,8 +7,8 @@ app.use(cors({
     "Access-Control-Allow-Origin": "*"
 }))
 
-// Api route
-app.use("/api", require("./src/api"));
+const routes = require("./src/routes");
+app.use(routes);
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
