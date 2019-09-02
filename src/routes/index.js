@@ -3,11 +3,11 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const finder = require('findit')(__dirname);
-
-
+const logger = require("../logger");
 
 function addRoute(subDir, fileName, filePath) {
     router.use(`/${subDir}/${fileName}`, require(filePath));
+    logger.log("Router", `Added route: /${subDir}/${fileName}`)
 };
 
 finder.on("directory", dir => {
@@ -21,7 +21,5 @@ finder.on("directory", dir => {
         addRoute(base, fileName, filePath)
     }
 });
-
-
 
 module.exports = router;
