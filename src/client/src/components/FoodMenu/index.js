@@ -8,7 +8,8 @@ class FoodMenu extends Component {
     constructor() {
         super();
         this.state = {
-            menuItems: []
+            menuItems: [],
+            restaurant: null
         }
     }
 
@@ -25,9 +26,9 @@ class FoodMenu extends Component {
     }
 
     updateState() {
-        axios.get("/api/FoodMenu")
+        axios.get("/api/restaurant/jonsjacob")
             .then(res => {
-                this.setState({ menuItems: res.data.today.menu })
+                this.setState({ menuItems: res.data.today.menu, restaurant: res.data.displayName })
             })
     }
 
@@ -35,7 +36,9 @@ class FoodMenu extends Component {
         return (
             <div id="foodMenu">
                 <div className="header">
-                    <span>Idag @ Jöns Jacob</span>
+                    <span>
+                        {this.state.restaurant ? "Idag @ " + this.state.restaurant : ""}
+                    </span>
                 </div>
                 <div className="body">
                     {this.state.menuItems.map(item => {

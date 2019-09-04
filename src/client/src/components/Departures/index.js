@@ -20,7 +20,7 @@ class NextDepartures extends Component {
 
     updateState() {
         axios.get("/api/sl/realtime/3404")
-            .then(res => this.setState({ data: res.data.ResponseData }))
+            .then(res => this.setState({ data: res.data }))
     }
 
     transportType() {
