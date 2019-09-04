@@ -24,7 +24,7 @@ function update(clock) {
 
     // Once a day
     if (h === "00" && m === "00" && s === "00") {
-        updateRestaurant("Jöns Jacob")
+        updateRestaurant("Jöns Jacob");
     }
 
     // Once an hour
@@ -34,7 +34,7 @@ function update(clock) {
 
     // Once a minute
     if (s === "00") {
-        updateStation("3404")
+        updateStation("3404");
     }
 
 }
