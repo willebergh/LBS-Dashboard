@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
 
 const FoodMenuSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
     today: {
         type: Object
     },
-    currentWeek: {
+    thisWeek: {
         type: Object
     }
 });
