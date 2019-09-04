@@ -2,13 +2,15 @@ const logger = require("../../logger");
 const moment = require("moment");
 require("dotenv").config();
 
-const updateFoodMenu = require("./updateFoodMenu");
+const updateRestaurant = require("./updateRestaurant");
 const updateForecast = require("./updateForecast");
 const updateSLRealTime = require("./updateSLRealTime");
 
 module.exports.init = function () {
 
     logger.log("Updater initialized", "Updater");
+
+    updateRestaurant("Jöns Jacob");
 
     setInterval(() => {
         const clock = moment().format("HH:mm:ss");
@@ -24,7 +26,7 @@ function update(clock) {
 
     // Once a day
     if (h === "00" && m === "00" && s === "00") {
-        updateFoodMenu();
+        updateRestaurant("Jöns Jacob");
     }
 
     // Once an hour
