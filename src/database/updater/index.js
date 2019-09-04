@@ -29,7 +29,7 @@ function update(clock) {
 
     // Once an hour
     if (m === "00" && s === "00") {
-        updateForecast();
+        updateForecast("stockholm");
     }
 
     // Once a minute

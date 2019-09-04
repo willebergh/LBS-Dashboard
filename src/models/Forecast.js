@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const ForecastSchema = new mongoose.Schema({
+    city: {
+        type: String,
+        required: true,
+        unique: true
+    },
     latitude: {
         type: Number
     },
