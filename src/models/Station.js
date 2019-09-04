@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 
-const SLRealTimeSchema = new mongoose.Schema({
-    SiteId: {
-        type: String
+const StationSchema = new mongoose.Schema({
+    siteId: {
+        type: String,
+        required: true,
+        unique: true
     },
     LatestUpdate: {
         type: String
@@ -30,4 +32,4 @@ const SLRealTimeSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("SLRealTime", SLRealTimeSchema);
+module.exports = mongoose.model("station", StationSchema);
