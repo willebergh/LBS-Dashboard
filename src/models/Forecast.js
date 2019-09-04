@@ -30,4 +30,4 @@ const ForecastSchema = new mongoose.Schema({
     }
 });
 
-module.exports = CurrentlySchema;
+module.exports = mongoose.model("forcast", ForecastSchema);
