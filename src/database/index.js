@@ -5,7 +5,8 @@ require("dotenv").config();
 
 function init() {
     mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useCreateIndex: true
     })
         .then(() => {
             logger.log("Connected to database successfully", "MongoDB");
