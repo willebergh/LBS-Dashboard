@@ -1,22 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const axios = require("axios");
-require("dotenv").config();
+const Station = require("../../models/Station");
+const logger = require("../../logger");
 
-// @route   api/sl/realtime
-// @desc    Get realtime data on departures
-// @access  Public
-router.get("/realtime/:siteid", (req, res) => {
-    const token = process.env.SL_API_REALTIME_TOKEN;
-    const siteid = req.params.siteid;
-    const url = `https://api.sl.se/api2/realtimedeparturesV4.json?key=${token}&siteid=${siteid}`;
-    axios.get(url)
-        .then(response => {
-            res.status(200).json(response.data)
-        })
-        .catch(err => {
-            res.status(400).json(err)
-        })
+router.get("/realtime/:siteId", (req, res) => {
+    const siteId = req.params.siteId;
+    Station.findOne({ siteId })
+        .select("-_id -__v")
+        .then(station => res.status(200).json(station))
+        .catch(err => logger.error(err, "/api/sl/realtime"))
 });
 
 module.exports = router;

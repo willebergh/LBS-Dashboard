@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const axios = require("axios");
-require("dotenv").config();
+const Forecast = require("../../models/Forecast");
+const logger = require("../../logger");
 
-router.get("/", (req, res) => {
-    const apiKey = process.env.DARKSKY_APIKEY
-    axios.get(`https://api.darksky.net/forecast/${apiKey}/59.2747,18.0333?units=si`)
-        .then(response => res.status(200).json(response.data))
-        .catch(err => res.status(400).json(err))
+router.get("/:city", (req, res) => {
+    const city = req.params.city;
+    Forecast.find({ city })
+        .select("-_id -__v")
+        .then(forecast => res.status(200).json(forecast))
+        .catch(err => logger.error(err, "/api/weather"))
 });
 
 module.exports = router;
