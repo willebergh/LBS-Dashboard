@@ -28,12 +28,12 @@ module.exports = async function (name) {
 
 async function getData(name) {
     switch (name) {
-        case "Jöns Jacob": return await getDataJonsJacob(name);
+        case "jonsjacob": return await getDataJonsJacob();
     }
 }
 
 // Get data for restaurant Jöns Jacob
-async function getDataJonsJacob(name) {
+async function getDataJonsJacob() {
     let weeks;
     let currentWeekNr;
 
@@ -99,7 +99,8 @@ async function getDataJonsJacob(name) {
     const today = thisWeek.days.find(day => day.day.toLowerCase() === getDayOfTheWeek());
 
     return ({
-        name,
+        name: "jonsjacob",
+        displayName: "Jöns Jacob",
         today,
         thisWeek
     })
