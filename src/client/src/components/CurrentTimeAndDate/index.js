@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from "moment";
-import "./style.css";
+import Odometer from "react-odometerjs";
 
 class CurrentTimeAndDate extends Component {
     constructor() {
@@ -36,19 +36,21 @@ class CurrentTimeAndDate extends Component {
         const { day, date, time } = this.state;
         return (
             <div id="currentTimeAndDate">
-                <div className="row">
+                <div className="fadeIn row">
                     <span className="day">
                         {day}
                     </span>
                 </div>
-                <div className="row">
+                <div className="fadeIn row">
                     <span className="date">
                         {date}
                     </span>
                 </div>
-                <div className="row">
+                <div className="fadeIn row">
                     <span className="time">
-                        {time}
+                        <Odometer value={time.split(":")[0]} format="d" />
+                        :
+                        <Odometer value={time.split(":")[1]} format="d" />
                     </span>
                 </div>
             </div>

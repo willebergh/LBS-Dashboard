@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
 import moment from "moment";
-import "./style.css";
 
 import CurrentWeather from "./CurrentWeather";
 import FutureWeather from "./FutureWeather";
@@ -41,7 +40,7 @@ class Weather extends Component {
     render() {
         const { currently, hourly } = this.state.data;
         return (
-            <div id="weatherContainer">
+            <div id="weatherContainer" >
 
                 <CurrentWeather data={currently} />
 

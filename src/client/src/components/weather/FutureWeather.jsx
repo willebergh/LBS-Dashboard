@@ -6,7 +6,7 @@ import WeatherIcon from "../WeatherIcon";
 class FutureWeather extends Component {
     render() {
         if (!this.props.data.data) {
-            return "loading"
+            return ""
         } else {
             return (
                 <div className="futureWeather">
@@ -15,7 +15,7 @@ class FutureWeather extends Component {
 
                             if (i === 0) {
                                 return (
-                                    <div key={i} className="column">
+                                    <div key={i} className="column fadeIn">
                                         <div className="row">
                                             Now
                                         </div>
@@ -33,7 +33,7 @@ class FutureWeather extends Component {
                             }
 
                             return (
-                                <div key={i} className="column">
+                                <div key={i} className="column fadeIn">
                                     <div className="row">
                                         {moment.unix(d.time).format("HH:mm")}
                                     </div>

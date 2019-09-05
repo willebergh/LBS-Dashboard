@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import moment from "moment";
 import axios from "axios";
-import "./style.css";
 
 
 class FoodMenu extends Component {
@@ -39,12 +38,12 @@ class FoodMenu extends Component {
     render() {
         return (
             <div id="foodMenu">
-                <div className="header">
+                <div className="header fadeIn">
                     <span>
                         {this.state.restaurant ? "Idag @ " + this.state.restaurant : ""}
                     </span>
                 </div>
-                <div className="body">
+                <div className="body fadeIn">
                     {this.state.menuItems.map((item, i) => {
                         return (
                             <span key={i} className="item">

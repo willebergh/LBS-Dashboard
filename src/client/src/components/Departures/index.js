@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import "./style.css";
 
 import Departure from "./Departure";
 import NextDeparture from "./NextDeparture";
@@ -34,13 +33,13 @@ class NextDepartures extends Component {
     }
 
     render() {
-        if (!this.state) return "loading";
+        if (!this.state) return "";
         const departures = this.state.data[this.transportType()];
         return (
             <div id="slRealTime">
                 <div className="station">
                     <div>
-                        <div className="header">
+                        <div className="header fadeIn">
                             <span>
                                 {this.transportType()} {" @ "}
                                 {departures[0] ? departures[0].StopAreaName : ""}

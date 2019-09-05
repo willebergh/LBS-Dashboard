@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import anime from "animejs";
 
 // Components
 import Weather from "./Weather";
@@ -22,7 +23,25 @@ class Dashboard extends Component {
 
     render() {
 
-        if (this.state.components.length === 4) console.log("All components has loaded")
+        if (this.state.components.length === 4) {
+            anime({
+                targets: "#currentTimeAndDate .row, #currentWeather .body, #currentWeather .footer, #slRealTime .header, #foodMenu .header",
+                translateY: -100,
+                opacity: [1, 0],
+                direction: 'reverse',
+                easing: "easeInExpo",
+                delay: anime.stagger(100)
+            });
+
+            anime({
+                targets: ".futureWeather .column, #slRealTime .nextDeparture .display, #slRealTime .departure, #foodMenu .body",
+                translateY: 100,
+                opacity: [1, 0],
+                direction: 'reverse',
+                easing: "easeInExpo",
+                delay: anime.stagger(100)
+            });
+        }
 
         return (
             <div id="grid">

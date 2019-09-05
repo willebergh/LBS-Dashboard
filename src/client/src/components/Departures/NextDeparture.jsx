@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Odometer from "react-odometerjs";
 
 class NextDeparture extends Component {
 
@@ -7,7 +8,7 @@ class NextDeparture extends Component {
 
         if (t.charAt(2) === ":") {
             return (
-                <div className="display" style={{ paddingTop: 16 }}>
+                <div className="display fadeIn" style={{ paddingTop: 16 }}>
                     <span className="int" style={{ fontSize: "4em" }}>
                         {t}
                     </span>
@@ -15,7 +16,7 @@ class NextDeparture extends Component {
             )
         } else if (t.toLowerCase() === "nu") {
             return (
-                <div className="display">
+                <div className="display fadeIn">
                     <span className="int" style={{ fontSize: "8em" }}>
                         {t}
                     </span>
@@ -23,9 +24,9 @@ class NextDeparture extends Component {
             )
         } else {
             return (
-                <div className="display">
+                <div className="display fadeIn">
                     <span className="int" style={{ marginLeft: 25, fontSize: "8em" }}>
-                        {t.split(" ")[0]}
+                        <Odometer value={t.split(" ")[0]} format="d" />
                     </span>
                     <span className="unit">
                         {t.split(" ")[1]}
@@ -39,7 +40,7 @@ class NextDeparture extends Component {
     render() {
         return (
             <div className="nextDeparture">
-                <div className="header">
+                <div className="header fadeIn">
                     <span>Next departure in...</span>
                 </div>
 
