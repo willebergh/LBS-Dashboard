@@ -13,35 +13,41 @@ class CurrentTimeAndDate extends Component {
     }
 
     componentDidMount() {
-        this.clock()
+        this.updateTime();
+        this.clock();
+        this.props.hasLoaded("CurrentTimeAndDate");
     }
 
     clock() {
         setInterval(() => {
-            this.setState({
-                day: moment().format("dddd").toLowerCase(),
-                date: moment().format("D MMMM").toLowerCase(),
-                time: moment().format("HH:mm")
-            });
+            this.updateTime();
         }, 1000)
+    }
+
+    updateTime() {
+        this.setState({
+            day: moment().format("dddd").toLowerCase(),
+            date: moment().format("D MMMM").toLowerCase(),
+            time: moment().format("HH:mm")
+        });
     }
 
     render() {
         const { day, date, time } = this.state;
         return (
             <div id="currentTimeAndDate">
-                <div class="row">
-                    <span class="day">
+                <div className="row">
+                    <span className="day">
                         {day}
                     </span>
                 </div>
-                <div class="row">
-                    <span class="date">
+                <div className="row">
+                    <span className="date">
                         {date}
                     </span>
                 </div>
-                <div class="row">
-                    <span class="time">
+                <div className="row">
+                    <span className="time">
                         {time}
                     </span>
                 </div>

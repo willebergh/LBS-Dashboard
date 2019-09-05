@@ -6,7 +6,7 @@ require("dotenv").config();
 module.exports = async function (siteId) {
     if (!siteId) return;
 
-    logger.log(`Updating station ${siteId}...`, "Updater");
+    logger.log(`Updating station ${siteId}...`.yellow, "Updater");
 
     const data = await getData(siteId);
     const station = await Station.findOne({ siteId });
@@ -14,13 +14,13 @@ module.exports = async function (siteId) {
     if (!station) {
         const newStation = new Station(data)
         newStation.save()
-            .then(() => logger.log(`Added station ${siteId} to the database`, "Updater"))
+            .then(() => logger.log(`Added station ${siteId} to the database`.green, "Updater"))
             .catch(err => logger.error(err, "Updater"))
     } else {
         await Station.deleteOne({ _id: station._id });
         const newStation = new Station(data);
         newStation.save()
-            .then(() => logger.log(`Updated station ${siteId}`, "Updater"))
+            .then(() => logger.log(`Updated station ${siteId}`.green, "Updater"))
             .catch(err => logger.error(err, "Updater"))
     }
 }

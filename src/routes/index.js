@@ -7,7 +7,7 @@ const logger = require("../logger");
 
 function addRoute(subDir, fileName, filePath) {
     router.use(`/${subDir}/${fileName}`, require(filePath));
-    logger.log(`Added route: /${subDir}/${fileName}`, "Express", "Router")
+    logger.success(`Added route: /${subDir}/${fileName}`, "Router")
 };
 
 finder.on("directory", dir => {

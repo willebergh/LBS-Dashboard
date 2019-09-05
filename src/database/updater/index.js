@@ -8,7 +8,12 @@ const updateStation = require("./updateStation");
 
 module.exports.init = function () {
 
-    logger.log("Updater initialized", "Updater");
+    logger.success("Updater initialized", "Updater");
+    logger.loading("Updating...", "Updater");
+
+    updateRestaurant("jonsjacob");
+    updateForecast("stockholm");
+    updateStation("3404");
 
     setInterval(() => {
         const clock = moment().format("HH:mm:ss");

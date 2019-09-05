@@ -13,5 +13,5 @@ database.init();
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
-    logger.log(`Server started on port ${PORT}.`, "Express")
+    logger.success(`Server started on port ${PORT}.`, "Express")
 })

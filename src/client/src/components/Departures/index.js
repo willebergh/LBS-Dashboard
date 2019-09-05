@@ -12,7 +12,11 @@ class NextDepartures extends Component {
     }
 
     clock() {
-        this.updateState();
+        axios.get("/api/sl/realtime/3404")
+            .then(res => {
+                this.setState({ data: res.data })
+                this.props.hasLoaded("Departures")
+            })
         setInterval(() => {
             this.updateState();
         }, 1000 * 60)
@@ -44,9 +48,10 @@ class NextDepartures extends Component {
                         </div>
                         <div className="departures">
 
-                            {departures.map(d => {
+                            {departures.map((d, i) => {
                                 return (
                                     <Departure
+                                        key={i}
                                         destination={d.Destination}
                                         displayTime={d.DisplayTime}
                                         lineNumber={d.LineNumber}

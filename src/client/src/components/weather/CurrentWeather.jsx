@@ -6,19 +6,19 @@ class CurrentWeather extends Component {
         const { temperature, summary } = this.props.data;
         return (
             <div id="currentWeather">
-                <div class="body">
-                    <div class="temperature">
+                <div className="body">
+                    <div className="temperature">
                         <span>
-                            {Math.round(temperature)}
+                            {temperature ? Math.round(temperature) : 0}
                         </span>
                     </div>
-                    <div class="degUnit">
-                        <span class="deg">&deg;</span>
-                        <span class="unit">C</span>
+                    <div className="degUnit">
+                        <span className="deg">&deg;</span>
+                        <span className="unit">C</span>
                     </div>
                 </div>
-                <div class="footer">
-                    <div class="title">
+                <div className="footer">
+                    <div className="title">
                         {summary}
                     </div>
                 </div>

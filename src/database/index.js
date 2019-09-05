@@ -9,7 +9,7 @@ function init() {
         useCreateIndex: true
     })
         .then(() => {
-            logger.log("Connected to database successfully", "MongoDB");
+            logger.success("Connected to database successfully", "MongoDB");
             updater.init()
         })
         .catch(err => {

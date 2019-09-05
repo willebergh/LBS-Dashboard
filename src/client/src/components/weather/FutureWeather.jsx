@@ -6,16 +6,7 @@ import WeatherIcon from "../WeatherIcon";
 class FutureWeather extends Component {
     render() {
         if (!this.props.data.data) {
-            return (
-                <div className="futureWeather">
-                    <PlaceHolder />
-                    <PlaceHolder />
-                    <PlaceHolder />
-                    <PlaceHolder />
-                    <PlaceHolder />
-                    <PlaceHolder />
-                </div>
-            )
+            return "loading"
         } else {
             return (
                 <div className="futureWeather">
@@ -24,7 +15,7 @@ class FutureWeather extends Component {
 
                             if (i === 0) {
                                 return (
-                                    <div className="column">
+                                    <div key={i} className="column">
                                         <div className="row">
                                             Now
                                         </div>
@@ -42,7 +33,7 @@ class FutureWeather extends Component {
                             }
 
                             return (
-                                <div className="column">
+                                <div key={i} className="column">
                                     <div className="row">
                                         {moment.unix(d.time).format("HH:mm")}
                                     </div>
@@ -63,25 +54,6 @@ class FutureWeather extends Component {
             );
         }
     }
-}
-
-function PlaceHolder() {
-    return (
-        <div className="column">
-            <div className="row">
-                00:00
-                </div>
-            <div className="row">
-                icon
-                </div>
-            <div className="row">
-                0&deg;
-                </div>
-            <div className="row">
-                rain
-            </div>
-        </div>
-    )
 }
 
 

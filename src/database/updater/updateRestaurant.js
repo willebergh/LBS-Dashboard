@@ -5,7 +5,7 @@ const logger = require("../../logger");
 const Restaurant = require("../../models/Restaurant");
 
 module.exports = async function (name) {
-    logger.log(`Updating restaurant ${name}...`, "Updater");
+    logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
 
     const data = await getData(name);
     const restaurant = await Restaurant.findOne({ name });
@@ -13,14 +13,14 @@ module.exports = async function (name) {
     if (!restaurant) {
         const newRestaurant = new Restaurant(data);
         newRestaurant.save()
-            .then(() => logger.log("Added new restaurant to the database", "Updater"))
+            .then(() => logger.log("Added new restaurant to the database".green, "Updater"))
             .catch(err => logger.error(err, "Updater"))
     } else {
         await Restaurant.deleteOne({ _id: restaurant._id });
 
         const newRestaurant = new Restaurant(data);
         newRestaurant.save()
-            .then(() => logger.log(`Updated restaurant ${name}`, "Updater"))
+            .then(() => logger.log(`Updated restaurant ${name}`.green, "Updater"))
             .catch(err => logger.error(err, "Updater"))
     }
 

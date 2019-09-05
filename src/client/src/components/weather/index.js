@@ -22,7 +22,11 @@ class Weather extends Component {
     }
 
     clock() {
-        this.updateState();
+        axios.get("/api/weather/stockholm")
+            .then(res => {
+                this.setState({ data: res.data });
+                this.props.hasLoaded("Weather");
+            })
         setInterval(() => {
             const time = moment().format("mm:ss");
             if (time === "01:00") this.updateState();
@@ -30,7 +34,6 @@ class Weather extends Component {
     }
 
     updateState() {
-        console.log(moment().format("HH:mm:ss") + " - Updating weather...");
         axios.get("/api/weather/stockholm")
             .then(res => { this.setState({ data: res.data }) })
     }

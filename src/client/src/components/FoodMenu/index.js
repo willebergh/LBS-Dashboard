@@ -18,7 +18,11 @@ class FoodMenu extends Component {
     }
 
     clock() {
-        this.updateState();
+        axios.get("/api/restaurant/jonsjacob")
+            .then(res => {
+                this.setState({ menuItems: res.data.today.menu, restaurant: res.data.displayName });
+                this.props.hasLoaded("FoodMenu")
+            })
         setInterval(() => {
             const time = moment().format("HH:mm:ss");
             if (time === "00:00:00") this.updateState();
@@ -41,9 +45,9 @@ class FoodMenu extends Component {
                     </span>
                 </div>
                 <div className="body">
-                    {this.state.menuItems.map(item => {
+                    {this.state.menuItems.map((item, i) => {
                         return (
-                            <span className="item">
+                            <span key={i} className="item">
                                 {item}
                             </span>
                         )
