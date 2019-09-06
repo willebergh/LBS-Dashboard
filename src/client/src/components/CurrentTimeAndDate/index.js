@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from "moment";
-import Odometer from "react-odometerjs";
 
 class CurrentTimeAndDate extends Component {
     constructor() {
@@ -48,9 +47,7 @@ class CurrentTimeAndDate extends Component {
                 </div>
                 <div className="fadeIn row">
                     <span className="time">
-                        <Odometer value={time.split(":")[0]} format="d" />
-                        :
-                        <Odometer value={time.split(":")[1]} format="d" />
+                        {time}
                     </span>
                 </div>
             </div>

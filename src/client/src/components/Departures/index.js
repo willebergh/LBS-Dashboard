@@ -60,9 +60,7 @@ class NextDepartures extends Component {
 
                         </div>
                     </div>
-                    <div>
-                        <NextDeparture displayTime={departures[0] ? departures[0].DisplayTime : ""} />
-                    </div>
+                    <NextDeparture displayTime={departures[0] ? departures[0].DisplayTime : ""} />
                 </div>
             </div>
         );
