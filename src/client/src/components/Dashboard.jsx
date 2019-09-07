@@ -14,29 +14,50 @@ class Dashboard extends Component {
         this.state = {
             loadedComponents: [],
             isAllComponentsLoaded: false,
-            show: false
+            isDashboardOpening: false
         }
 
         this.hasLoaded = this.hasLoaded.bind(this);
+        this.openDashboard = this.openDashboard.bind(this);
+
     }
 
     async hasLoaded(component) {
-        const { loadedComponents } = this.state;
+        const { loadedComponents, isTimelineOpened } = this.state;
         console.log(component)
         loadedComponents.push(component)
         if (loadedComponents.length === 4) {
-            setTimeout(() => {
-                this.setState({ isAllComponentsLoaded: true })
-            }, 10000)
+            this.setState({ isAllComponentsLoaded: true })
         }
     }
 
+    openDashboard() {
+        this.setState({ isDashboardOpening: true })
+        anime({
+            targets: "#currentTimeAndDate .row, #currentWeather .body, #currentWeather .footer, #slRealTime .header, #foodMenu .header",
+            translateY: -100,
+            opacity: [1, 0],
+            direction: 'reverse',
+            easing: "easeInExpo",
+            delay: anime.stagger(100)
+        });
+
+        anime({
+            targets: ".futureWeather .column, #slRealTime .nextDeparture .display, #slRealTime .departure, #foodMenu .body",
+            translateY: 100,
+            opacity: [1, 0],
+            direction: 'reverse',
+            easing: "easeInExpo",
+            delay: anime.stagger(100)
+        });
+    }
+
     render() {
-        const { show, isAllComponentsLoaded } = this.state;
+        const { isAllComponentsLoaded, isDashboardOpening } = this.state;
 
         return (
             <div>
-                <Loading loop={isAllComponentsLoaded ? false : true} />
+                {isDashboardOpening ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} />}
                 <div id="grid">
                     <CurrentTimeAndDate hasLoaded={this.hasLoaded} />
                     <Weather hasLoaded={this.hasLoaded} />
