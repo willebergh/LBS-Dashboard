@@ -1,45 +1,48 @@
 const logger = require("../../logger");
 const moment = require("moment");
+const schedule = require("node-schedule");
 require("dotenv").config();
 
 const updateRestaurant = require("./updateRestaurant");
 const updateForecast = require("./updateForecast");
 const updateStation = require("./updateStation");
 
-module.exports.init = function () {
-
-    logger.success("Updater initialized", "Updater");
-    logger.loading("Updating...", "Updater");
-
-    updateRestaurant("jonsjacob");
-    updateForecast("stockholm");
-    updateStation("3404");
-
-    setInterval(() => {
-        const clock = moment().format("HH:mm:ss");
-        update(clock)
-    }, 1000)
-
-}
-
-function update(clock) {
-    const h = clock.split(":")[0];
-    const m = clock.split(":")[1];
-    const s = clock.split(":")[2];
-
-    // Once a day
-    if (h === "00" && m === "00" && s === "00") {
-        updateRestaurant("jonsjacob");
+module.exports = class Updater {
+    init() {
+        this.addJob_updateRestaurants();
+        this.addJob_updateForecast();
+        this.addJob_updateStation();
     }
 
-    // Once an hour
-    if (m === "00" && s === "00") {
-        updateForecast("stockholm");
+    addJob_updateRestaurants() {
+        var rule = new schedule.RecurrenceRule();
+        rule.hour = 7;
+        rule.minute = 0;
+        rule.second = 0;
+
+        var j = schedule.scheduleJob(rule, () => {
+            updateRestaurant("jonsjacob");
+        })
     }
 
-    // Once a minute
-    if (s === "00") {
-        updateStation("3404");
+    addJob_updateForecast() {
+        var rule = new schedule.RecurrenceRule();
+        rule.hour = new schedule.Range(7, 18);
+        rule.minute = [0, 15, 30, 45];
+        rule.second = 0;
+
+        var j = schedule.scheduleJob(rule, () => {
+            updateForecast("stockholm");
+        })
     }
 
+    addJob_updateStation() {
+        var rule = new schedule.RecurrenceRule();
+        rule.hour = new schedule.Range(7, 18);
+        rule.second = [0, 30];
+
+        var j = schedule.scheduleJob(rule, function () {
+            updateStation("3404");
+        });
+    }
 }
