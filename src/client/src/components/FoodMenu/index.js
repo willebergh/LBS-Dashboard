@@ -40,7 +40,7 @@ class FoodMenu extends Component {
             <div id="foodMenu">
                 <div className="header fadeIn">
                     <span>
-                        {this.state.restaurant ? "Idag @ " + this.state.restaurant : ""}
+                        {this.state.restaurant ? "Today @ " + this.state.restaurant : ""}
                     </span>
                 </div>
                 <div className="body fadeIn">

@@ -14,21 +14,21 @@ import Thunderstorm from "./icons/Thunderstorm";
 import Tornado from "./icons/Tornado";
 import Wind from "./icons/Wind";
 
-function WeatherIcon({ value }) {
+function WeatherIcon({ value, theme }) {
     switch (value) {
-        case "clear-day": return <ClearDay />
-        case "clear-night": return <ClearNight />
-        case "rain": return <Rain />
-        case "snow": return <Snow />
-        case "sleet": return <Sleet />
-        case "wind": return <Wind />
-        case "fog": return <Fog />
-        case "cloudy": return <Cloudy />
-        case "partly-cloudy-day": return <PartlyCloudyDay />
-        case "partly-cloudy-night": return <PartlyCloudyNight />
-        case "hail": return <Hail />
-        case "thunderstorm": return <Thunderstorm />
-        case "tornado": return <Tornado />
+        case "clear-day": return <ClearDay theme={theme} />
+        case "clear-night": return <ClearNight theme={theme} />
+        case "rain": return <Rain theme={theme} />
+        case "snow": return <Snow theme={theme} />
+        case "sleet": return <Sleet theme={theme} />
+        case "wind": return <Wind theme={theme} />
+        case "fog": return <Fog theme={theme} />
+        case "cloudy": return <Cloudy theme={theme} />
+        case "partly-cloudy-day": return <PartlyCloudyDay theme={theme} />
+        case "partly-cloudy-night": return <PartlyCloudyNight theme={theme} />
+        case "hail": return <Hail theme={theme} />
+        case "thunderstorm": return <Thunderstorm theme={theme} />
+        case "tornado": return <Tornado theme={theme} />
         default: return "icon"
     }
 }

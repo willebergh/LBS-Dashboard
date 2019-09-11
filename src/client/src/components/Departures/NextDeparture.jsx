@@ -25,8 +25,8 @@ class NextDeparture extends Component {
         } else {
             return (
                 <div className="display fadeIn">
-                    <span className="int" style={{ marginLeft: 25, fontSize: "8em" }}>
-                        <Odometer value={t.split(" ")[0]} format="d" />
+                    <span className="int" style={{ fontSize: "8em" }}>
+                        {t.split(" ")[0]}
                     </span>
                     <span className="unit">
                         {t.split(" ")[1]}

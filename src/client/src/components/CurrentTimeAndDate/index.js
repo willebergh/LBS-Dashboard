@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from "moment";
+import { EventEmitter } from 'events';
 
 class CurrentTimeAndDate extends Component {
     constructor() {
@@ -25,8 +26,8 @@ class CurrentTimeAndDate extends Component {
 
     updateTime() {
         this.setState({
-            day: moment().format("dddd").toLowerCase(),
-            date: moment().format("D MMMM").toLowerCase(),
+            day: moment().format("dddd"),
+            date: moment().format("D MMMM"),
             time: moment().format("HH:mm")
         });
     }

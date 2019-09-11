@@ -108,7 +108,8 @@ body {
 }
 #slRealTime .station .header :last-child {
     padding: 4px;
-    border-bottom: solid 1px #111;
+    border-bottom: solid 1px;
+    border-color: inherit;
 }
 #slRealTime .departures {
 
@@ -122,13 +123,11 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-    border-top: solid 1px #ccc;
 }
 #slRealTime .departure :first-child {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border: none;
 }
 #slRealTime .lineNr {
     display: block;
@@ -172,7 +171,8 @@ body {
 }
 #foodMenu .header :last-child {
     padding: 4px;
-    border-bottom: solid 1px #111;
+    border-bottom: solid 1px;
+    border-color: inherit;
 }
 #foodMenu .body {
 }

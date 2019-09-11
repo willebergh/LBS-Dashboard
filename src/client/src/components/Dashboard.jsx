@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import anime from "animejs";
+import moment from "moment";
 
 // Components
 import Loading from "./Loading"
@@ -14,11 +15,13 @@ class Dashboard extends Component {
         this.state = {
             loadedComponents: [],
             isAllComponentsLoaded: false,
-            isDashboardOpening: false
+            isDashboardOpening: false,
+            theme: "light",
         }
 
         this.hasLoaded = this.hasLoaded.bind(this);
         this.openDashboard = this.openDashboard.bind(this);
+        this.updateTheme = this.updateTheme.bind(this);
 
     }
 
@@ -52,20 +55,35 @@ class Dashboard extends Component {
         });
     }
 
+    updateTheme(theme) {
+        this.setState({ theme });
+    }
+
     render() {
-        const { isAllComponentsLoaded, isDashboardOpening } = this.state;
+        const { isAllComponentsLoaded, isDashboardOpening, theme } = this.state;
 
         return (
-            <div>
-                {isDashboardOpening ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} />}
+            <div style={themes[theme]}>
+                {isDashboardOpening ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} theme={theme} />}
                 <div id="grid">
                     <CurrentTimeAndDate hasLoaded={this.hasLoaded} />
-                    <Weather hasLoaded={this.hasLoaded} />
+                    <Weather hasLoaded={this.hasLoaded} theme={theme} updateTheme={this.updateTheme} />
                     <Departures hasLoaded={this.hasLoaded} station="3404" transportType="bus" />
                     <FoodMenu hasLoaded={this.hasLoaded} />
                 </div>
             </div>
         );
+    }
+}
+
+const themes = {
+    light: {
+
+    },
+    dark: {
+        color: "#eee",
+        backgroundColor: "#000",
+        borderColor: "#eee"
     }
 }
 

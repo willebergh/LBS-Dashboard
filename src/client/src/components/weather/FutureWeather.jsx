@@ -20,7 +20,7 @@ class FutureWeather extends Component {
                                             Now
                                         </div>
                                         <div className="row">
-                                            <WeatherIcon value={d.icon} />
+                                            <WeatherIcon value={d.icon} theme={this.props.theme} />
                                         </div>
                                         <div className="row">
                                             {Math.round(d.temperature)}&deg;
@@ -38,7 +38,7 @@ class FutureWeather extends Component {
                                         {moment.unix(d.time).format("HH:mm")}
                                     </div>
                                     <div className="row">
-                                        <WeatherIcon value={d.icon} />
+                                        <WeatherIcon value={d.icon} theme={this.props.theme} />
                                     </div>
                                     <div className="row">
                                         {Math.round(d.temperature)}&deg;
