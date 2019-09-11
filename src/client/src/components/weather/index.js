@@ -45,7 +45,6 @@ class Weather extends Component {
         const sunRise = moment.unix(this.state.data.daily.data[0].sunriseTime);
         const sunSet = moment.unix(this.state.data.daily.data[0].sunsetTime);
         let isSunOut = moment().isBetween(sunRise, sunSet);
-        console.log("Sun is out: " + isSunOut);
         this.props.updateTheme(isSunOut ? "light" : "dark");
     }
 

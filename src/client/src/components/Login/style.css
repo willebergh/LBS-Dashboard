@@ -1,0 +1,30 @@
+.login-container {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%);
+    text-align: center;
+}
+
+.login-title {
+    display: block;
+    padding-bottom: 16px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-input {
+    display: block;
+    margin: 16px;
+    padding: 4px 8px;
+}
+
+.login-button {
+    display: block;
+    margin: 16px auto;
+    width: 50%;
+    padding: 4px 8px;
+}
