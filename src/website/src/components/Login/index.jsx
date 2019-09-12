@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
-import { Form, Button, Row } from "react-bootstrap";
+import { Form, Button, Label } from "react-bootstrap";
 import "./style.css";
 
 class Login extends Component {
@@ -23,7 +23,7 @@ class Login extends Component {
     }
 
     handleChange(e) {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value, errorCode: null, errorMsg: null })
     }
 
     onSubmit(e) {
@@ -40,36 +40,52 @@ class Login extends Component {
         const { errorCode, errorMsg } = this.state;
         if (this.state.redirect) return <Redirect to="/" />
         return (
-            <div class="container" style={style}>
-                <Form noValidate onSubmit={this.onSubmit}>
-                    <Form.Group as={Row} md="10" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control isInvalid={errorCode ? true : false} type="text" placeholder="Enter email" name="email" onChange={this.handleChange} value={this.state.email} />
-                    </Form.Group>
+            <div className="container d-flex flex-column" style={{ marginTop: "-83px" }}>
+                <div className="row align-items-center justify-content-center no-gutters min-vh-100">
+                    <div className="col-12 col-md-5 col-lg-4 py-8 py-md-11">
+                        <h1 className="mb-0 font-weight-bold text-center">Login</h1>
+                        <p className="mb-6 text-center text-muted">LBS-Dashboard, simply look & go.</p>
+                        <form className="mb-6" noValidate onSubmit={this.onSubmit}>
+                            <div className="form-group">
+                                <label for="email">Email Address</label>
+                                <input
+                                    type="text"
+                                    name="email"
+                                    id="login_email"
+                                    autoComplete="off"
+                                    placeholder="Email"
+                                    value={this.state.email}
+                                    onChange={this.handleChange}
+                                    className={errorCode ? "form-control is-invalid" : "form-control"}
+                                />
+                            </div>
+                            <div className="form-group mb-5">
+                                <label for="password">Password</label>
+                                <input type="password"
+                                    name="password"
+                                    id="login_password"
+                                    placeholder="Password"
+                                    value={this.state.password}
+                                    onChange={this.handleChange}
+                                    className={errorCode ? "form-control is-invalid" : "form-control"}
+                                />
+                                <div className="invalid-feedback">
+                                    Wrong username or password
+                                </div>
+                            </div>
+                            <button className="btn btn-block btn-primary" type="submit">
+                                Sign in
+                            </button>
 
-                    <Form.Group as={Row} md="10" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control isInvalid={errorCode ? true : false} type="password" placeholder="Password" name="password" onChange={this.handleChange} value={this.state.password} />
-                        <Form.Control.Feedback type="invalid">
-                            Wrong username or password
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Row}>
-                        <Button variant="primary" type="submit" value="login" className="m-auto d-block col mt-3">
-                            Login
-                    </Button>
-                    </Form.Group>
-                </Form>
+                        </form>
+                        <p className="mb-0 font-size-sm text-center text-muted">
+                            Contact <a href="mailto:willebergh@outlook.com">willebergh@outlook.com</a> for more information.
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
-}
-
-const style = {
-    position: "absolute",
-    top: "40%",
-    left: "50%",
-    transform: "translate(-50%)",
 }
 
 export default Login;
