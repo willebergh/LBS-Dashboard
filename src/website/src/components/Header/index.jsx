@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
-import "./style.css";
-import { Button, Menu, MenuItem } from "@material-ui/core";
 import fire from "../../config/fire";
+import "./style.css";
 
 class Header extends Component {
-
-    logout() {
-        fire.auth().signOut();
-    }
-
     render() {
         const { pathname } = this.props.location
         return (
@@ -28,10 +22,11 @@ class Header extends Component {
                     {
                         this.props.user ?
                             (
-                                <span class="action" onClick={this.logout}>Logout</span>
+                                <Link className="action" to="/logout">Logout</Link>
                             ) : (
                                 <Link className="action" to="/login" style={pathname === "/login" ? { backgroundColor: "white", color: "black" } : null}>Login</Link>
-                            )}
+                            )
+                    }
                 </div>
 
             </div>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import fire from "../config/fire";
+import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
 
 class Logout extends Component {
@@ -12,11 +12,11 @@ class Logout extends Component {
 
     componentDidMount() {
         fire.auth().signOut()
-            .then((a) => console.log(a))
+            .then(() => this.setState({ redirect: true }))
     }
 
     render() {
-        return this.state.redirect ? <Redirect path="/" /> : "loading";
+        return this.state.redirect ? <Redirect to="/login" /> : null;
     }
 }
 
