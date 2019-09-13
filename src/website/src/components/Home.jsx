@@ -6,32 +6,47 @@ class Home extends Component {
         this.state = {
 
         }
+
     }
     render() {
         return (
-            <div className="container d-flex justify-content-center">
-                <div class="col-12 col-md-6 order-md-1" >
+            <div className="min-vh-100 d-flex align-items-center pt-5 pb-5" style={{ marginTop: "-88px" }}>
+                <div class="container pt-5">
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-6 order-md-2">
 
-                    <h1 class="display-3">
-                        LBS-Dashboard, <br />
-                        <span class="text-primary">simply look & go</span>.
-                    </h1>
+                            <div class="img-skewed img-skewed-left mb-8 mb-md-0">
+                                <img src="https://landkit.goodthemes.co/assets/img/screenshots/desktop/dashkit.jpg" alt="..." class="screenshot img-fluid mw-md-130 aos-init aos-animate" data-aos="img-skewed-item-left" data-aos-delay="100" />
+                            </div>
 
-                    <p class="lead text-muted mb-6 mb-md-8">
-                        It's a perfectly engineered pice of software that's deployed to your wall.
-                    </p>
+                        </div>
+                        <div class="col-12 col-md-6 order-md-1 pt-md-0 pt-5">
 
-                    <p class="lead text-muted mb-6 mb-md-8">
-                        <span className="text-primary"> - What's time is it? </span> Check the wall! <br />
-                        <span className="text-primary"> - What's the weather? </span> Check the wall! <br />
-                        <span className="text-primary"> - What's todays food? </span> Check the wall!  <br />
-                        <span className="text-primary"> - When does the next bus departure? </span> <br />
-                        <br />
-                        Well... you know what to do.
-                    </p>
+                            <h1 className="display-md-4">
+                                LBS-Dashboard, <br />
+                                <span className="text-primary">simply look & go.</span>
+                            </h1>
 
+                            <p class="lead text-muted mb-6 mb-md-8">
+                                It's a perfectly engineered pice of software that's deployed to your wall.
+                                <br />
+                                <span className="text-primary"> - What's time is it? </span> Check the wall! <br />
+                                <span className="text-primary"> - What's todays food? </span> Check the wall!  <br />
+                                <span className="text-primary"> - When does the next bus departure? </span> <br />
+                                Well... you know what to do.
+                            </p>
+
+                            <a href="#!" class="btn btn-primary mr-1">
+                                Checkout the demo
+                            </a>
+                            <a href="#!" class="btn btn-primary-soft">
+                                Learn more
+                            </a>
+
+                        </div>
+                    </div>
                 </div >
-            </div >
+            </div>
         )
     }
 }

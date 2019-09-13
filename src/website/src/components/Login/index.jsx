@@ -40,9 +40,9 @@ class Login extends Component {
         const { errorCode, errorMsg } = this.state;
         if (this.state.redirect) return <Redirect to="/" />
         return (
-            <div className="container d-flex flex-column" style={{ marginTop: "-83px" }}>
+            <div className="container d-flex flex-column" style={{ marginTop: "-88px" }}>
                 <div className="row align-items-center justify-content-center no-gutters min-vh-100">
-                    <div className="col-12 col-md-5 col-lg-4 py-8 py-md-11">
+                    <div className="col-12 col-md-5 col-lg-4">
                         <h1 className="mb-0 font-weight-bold text-center">Login</h1>
                         <p className="mb-6 text-center text-muted">LBS-Dashboard, simply look & go.</p>
                         <form className="mb-6" noValidate onSubmit={this.onSubmit}>
