@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import fire from "./config/fire";
-import axios from "axios";
-
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -50,15 +48,15 @@ export default class App extends Component {
             <Router>
 
                 <Header user={this.state.user} />
-
                 <Route exact path="/" component={Home} />
 
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/logout" component={Logout} />
 
+                <Route exact path="/" component={Footer} />
+
                 <PrivateRoute exact path="/admin" component={Admin} />
 
-                <Footer />
 
             </Router>
         );

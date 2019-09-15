@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spinner } from "react-bootstrap";
+import { Switch, Route } from "react-router-dom";
 import fire from "../../config/fire";
 
 class Admin extends Component {
@@ -11,18 +11,11 @@ class Admin extends Component {
     }
 
     render() {
-        const user = fire.auth().currentUser;
+        return (
+            <div>
 
-        if (user && user.email === "willebergh@outlook.com") {
-            return (
-                <div>
-                    <h1>Welcome back boss.</h1>
-                </div>
-            )
-        }
-
-        return null;
-
+            </div>
+        )
     }
 }
 
