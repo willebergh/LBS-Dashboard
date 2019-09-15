@@ -22,13 +22,13 @@ class Home extends Component {
                         </div>
                         <div class="col-12 col-md-6 order-md-1 pt-md-0 pt-5">
 
-                            <h1 className="display-md-4">
+                            <h1 className="font-weight-light">
                                 LBS-Dashboard, <br />
                                 <span className="text-primary">simply look & go.</span>
                             </h1>
 
                             <p class="lead text-muted mb-6 mb-md-8">
-                                It's a perfectly engineered pice of software that's deployed to your wall.
+                                A perfectly engineered piece of software on your wall.
                                 <br />
                                 <span className="text-primary"> - What's time is it? </span> Check the wall! <br />
                                 <span className="text-primary"> - What's todays food? </span> Check the wall!  <br />
