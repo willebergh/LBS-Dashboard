@@ -25,6 +25,18 @@ class Dashboard extends Component {
 
     }
 
+    componentDidMount() {
+        this.socketListener();
+    }
+
+    socketListener() {
+        const socket = this.props.socket;
+        const config = JSON.parse(localStorage.getItem("dashboard-config"));
+        socket.emit("dashboard-reconnect", config);
+        socket.on("dashboard-connected", data => console.log(data));
+        socket.on("update-connected-dashboards", data => console.log(data));
+    }
+
     async hasLoaded(component) {
         const { loadedComponents, isTimelineOpened } = this.state;
         console.log(component)
