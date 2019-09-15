@@ -54,16 +54,6 @@ class Header extends Component {
                             </Link>
 
                             <Link
-                                to="/about"
-                                onClick={this.toggleCollapse}
-                                aria-expanded={this.state.open}
-                                aria-controls="responsive-navbar-nav"
-                                className={pathname === "/about" ? "nav-link active" : "nav-link"}
-                            >
-                                About
-                            </Link>
-
-                            <Link
                                 to="/dashboard"
                                 onClick={this.toggleCollapse}
                                 aria-expanded={this.state.open}
@@ -71,6 +61,16 @@ class Header extends Component {
                                 className={pathname === "/dashboard" ? "nav-link active" : "nav-link"}
                             >
                                 Dashboard
+                            </Link>
+
+                            <Link
+                                to="/demo"
+                                onClick={this.toggleCollapse}
+                                aria-expanded={this.state.open}
+                                aria-controls="responsive-navbar-nav"
+                                className={pathname === "/demo" ? "nav-link active" : "nav-link"}
+                            >
+                                Demo
                             </Link>
 
                             {
