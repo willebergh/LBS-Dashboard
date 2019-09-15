@@ -3,6 +3,7 @@ import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
 import { Form, Button, Label } from "react-bootstrap";
 import "./style.css";
+import axios from "axios";
 
 class Login extends Component {
     constructor(props) {
@@ -29,7 +30,18 @@ class Login extends Component {
     onSubmit(e) {
         e.preventDefault();
         fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(data => this.setState({ redirect: true }))
+            .then(data => {
+
+                fire.auth().currentUser.getIdToken(true)
+                    .then(idToken => {
+                        axios({
+                            method: "post",
+                            url: "/api/auth/login",
+                            data: { idToken }
+                        });
+                        this.setState({ redirect: true })
+                    })
+            })
             .catch(err => {
                 this.setState({ errorMsg: err.message, errorCode: err.code })
                 console.log(err)
