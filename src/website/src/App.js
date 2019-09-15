@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import fire from "./config/fire";
+import axios from "axios";
+
 
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Home from "./components/Home";
-import About from "./components/About";
 import Login from "./components/Login"
 import Logout from "./components/Logout";
 import PrivateRoute from "./middleware/PrivateRoute";
@@ -50,12 +52,13 @@ export default class App extends Component {
                 <Header user={this.state.user} />
 
                 <Route exact path="/" component={Home} />
-                <Route exact path="/about" component={About} />
 
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/logout" component={Logout} />
 
                 <PrivateRoute exact path="/admin" component={Admin} />
+
+                <Footer />
 
             </Router>
         );
