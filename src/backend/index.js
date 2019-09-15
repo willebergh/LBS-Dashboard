@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const session = require("./config/session");
 
-const logger = require("./src/logger");
-const routes = require("./src/routes");
-const database = require("./src/database");
+const logger = require("./logger");
+const routes = require("./routes");
+const database = require("./database");
 
 app.use(express.json());
+app.use(session)
 app.use(routes);
 
 database.init();
