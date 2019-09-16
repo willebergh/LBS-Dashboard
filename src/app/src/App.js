@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Dashboard from "./components/Dashboard";
 import Setup from "./components/Setup";
 import io from "socket.io-client";
-const socket = io("http://158.174.73.128:5000");
+const socket = io("http://localhost:5000");
 
 class App extends Component {
     render() {
