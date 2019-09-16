@@ -1,47 +1,31 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from "@material-ui/core";
+import { Switch, Route } from "react-router-dom";
 
 class TabList extends Component {
     constructor() {
         super();
         this.state = {
             tabs: [],
-            currentTab: null
+            currentTab: 0
         }
 
-        this.handleClick = this.handleClick.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-        this.setState({ tabs: props.tabs, currentTab: props.currentTab });
-    }
-
-    handleClick(e) {
-        this.setState({ currentTab: e.target.index })
+    handleChange(e, value) {
+        this.setState({ currentTab: value });
     }
 
     render() {
         return (
-            <Tabs value={this.state.currentTab}>
-                {
-                    this.state.tabs.map((tab, i) => {
-                        return (
-                            <Tab onCLick={this.handleClick} label={tab.label} index={i} />
-                        )
-                    })
-                }
+            <Tabs onChange={this.handleChange} value={this.state.currentTab}>
+
+                <Tab index={0} label="Overview" />
+
             </Tabs>
         )
     }
 }
-
-const tabs = {
-    "/admin/dashboars": [
-        "add",
-        "test",
-        "something-else"
-    ]
-}
-
 
 export default TabList;

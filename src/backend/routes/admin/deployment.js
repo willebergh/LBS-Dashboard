@@ -6,7 +6,7 @@ const DeploymentConfig = require("../../models/DeploymentConfig");
 const NewDashboard = require("../../models/NewDashboard");
 
 router.post("/new", async (req, res) => {
-    const { users, name, restaurant, station, weather } = req.body;
+    const { owner, name, restaurant, station, weather } = req.body;
     const config = await DeploymentConfig.findOne({ name });
 
     if (config) {
@@ -14,7 +14,7 @@ router.post("/new", async (req, res) => {
     } else {
         const key = uuidv4();
         var newConfig = new DeploymentConfig({
-            admins: users, key, name, restaurant, station, weather
+            owner, key, name, restaurant, station, weather
         });
         newConfig.save()
             .then(() => {
@@ -27,7 +27,7 @@ router.post("/new", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-    const { code, key, name, user } = req.body;
+    const { code, key, name, owner } = req.body;
     NewDashboard.findOne({ code })
         .then(newDashboard => {
             if (!newDashboard) {
@@ -38,8 +38,8 @@ router.post("/add", async (req, res) => {
                         if (!config) {
                             return res.status(200).json({ msg: "invalid-key" });
                         } else {
-                            const { name: deploymentName, restaurant, station, weather, admins } = config;
-                            const admin = admins.find(admin => admin.uid === user.uid);
+                            const { name: deploymentName, restaurant, station, weather } = config;
+                            const isOwner = config.owner === owner;
                             if (!admin) {
                                 return res.status(200).json({ msg: "unauthorized" });
                             } else {
@@ -59,6 +59,17 @@ router.post("/add", async (req, res) => {
                     })
             }
         });
+});
+
+router.get("/get-all/:uid", (req, res) => {
+    const owner = req.params.uid;
+    DeploymentConfig.findOne({ owner })
+        .then(config => {
+            if (!config) {
+                return res.status(200).json({ msg: "configs-not-found" });
+
+            }
+        })
 });
 
 module.exports = router;

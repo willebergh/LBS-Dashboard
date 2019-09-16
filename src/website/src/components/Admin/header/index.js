@@ -115,11 +115,7 @@ function Header(props) {
                 elevation={0}
             >
 
-                <TabList currentTab={1} tabs={[
-                    { label: "test" },
-                    { label: "test" },
-                    { label: "test" },
-                ]} />
+                <TabList />
 
             </AppBar>
 

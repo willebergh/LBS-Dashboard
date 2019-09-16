@@ -10,9 +10,12 @@ import Navigator from './Navigator';
 import Header from './header';
 
 import { Switch, Route } from "react-router-dom";
+import axios from "axios";
+
 import Dashboards from "./dashboards";
 import Users from "./users";
 import Settings from "./settings";
+import Deployments from './Deployments';
 
 function Copyright() {
     return (
@@ -166,61 +169,83 @@ const styles = {
     },
 };
 
-const routes = [
-    { path: "/admin/dashboards", component: Dashboards },
-    { path: "/admin/users", component: Users },
-    { path: "/admin/settings", component: Settings },
-]
+class Paperbase extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            mobileOpen: false,
+            routes: [
+                { path: "/admin/deployments", component: Deployments },
+                { path: "/admin/dashboards", component: Dashboards },
+                { path: "/admin/users", component: Users },
+                { path: "/admin/settings", component: Settings },
+            ]
+        }
 
-function Paperbase(props) {
-    const { classes } = props;
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+        this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
+    }
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    componentDidMount() {
+        const uid = JSON.parse(localStorage.getItem("user")).uid;
+        axios.get(`/admin/deployment/get-all/${uid}`)
+            .then(res => {
+                if (!res.data.deployments) {
+                    this.setState({ deployments: "nothing" });
+                } else {
+                    this.setState({ deployments: res.data.deployments });
+                }
+            })
+    }
 
-    return (
-        <ThemeProvider theme={theme}>
-            <div className={classes.root}>
-                <CssBaseline />
-                <nav className={classes.drawer}>
-                    <Hidden smUp implementation="js">
-                        <Navigator
-                            PaperProps={{ style: { width: drawerWidth } }}
-                            variant="temporary"
-                            open={mobileOpen}
-                            onClose={handleDrawerToggle}
-                        />
-                    </Hidden>
-                    <Hidden xsDown implementation="css">
-                        <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-                    </Hidden>
-                </nav>
-                <div className={classes.app}>
+    handleDrawerToggle() {
+        this.setState({ mobileOpen: !this.state.mobileOpen });
+    }
 
-                    <Header onDrawerToggle={handleDrawerToggle} />
+    render() {
+        const { classes } = this.props;
+        const { mobileOpen } = this.state;
+        return (
+            <ThemeProvider theme={theme} >
+                <div className={classes.root}>
+                    <CssBaseline />
+                    <nav className={classes.drawer}>
+                        <Hidden smUp implementation="js">
+                            <Navigator
+                                PaperProps={{ style: { width: drawerWidth } }}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={this.handleDrawerToggle}
+                            />
+                        </Hidden>
+                        <Hidden xsDown implementation="css">
+                            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                        </Hidden>
+                    </nav>
+                    <div className={classes.app}>
 
-                    <main className={classes.main}>
+                        <Header onDrawerToggle={this.handleDrawerToggle} />
 
-                        <Switch>
-                            {
-                                routes.map(r => {
-                                    return <Route path={r.path} component={r.component} />
-                                })
-                            }
-                        </Switch>
+                        <main className={classes.main}>
 
-                    </main>
+                            <Switch>
+                                {
+                                    this.state.routes.map(r => {
+                                        return <Route path={r.path} component={r.component} />
+                                    })
+                                }
+                            </Switch>
 
-                    <footer className={classes.footer}>
-                        <Copyright />
-                    </footer>
+                        </main>
 
+                        <footer className={classes.footer}>
+                            <Copyright />
+                        </footer>
+
+                    </div>
                 </div>
-            </div>
-        </ThemeProvider>
-    );
+            </ThemeProvider>
+        );
+    }
 }
 
 Paperbase.propTypes = {

@@ -82,18 +82,20 @@ function Navigator(props) {
                 <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
                     LBS-Dashboard
                 </ListItem>
-                <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                    <ListItemIcon className={classes.itemIcon}>
-                        <HomeIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                        classes={{
-                            primary: classes.itemPrimary,
-                        }}
-                    >
-                        Deployment Overview
+                <CustomLink to="/admin/deployments">
+                    <ListItem className={clsx(classes.item, classes.itemCategory)}>
+                        <ListItemIcon className={classes.itemIcon}>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                            classes={{
+                                primary: classes.itemPrimary,
+                            }}
+                        >
+                            Deployments
                     </ListItemText>
-                </ListItem>
+                    </ListItem>
+                </CustomLink>
                 {categories.map(({ id, children }) => (
                     <React.Fragment key={id}>
                         <ListItem className={classes.categoryHeader}>
@@ -110,7 +112,7 @@ function Navigator(props) {
                                 <ListItem
                                     key={childId}
                                     button
-                                    className={clsx(classes.item, window.location.pathname === path && classes.itemActiveItem)}
+                                    className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
                                 >
                                     <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
                                     <ListItemText
