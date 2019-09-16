@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const DeploymentConfigSchema = new mongoose.Schema({
+    admins: {
+        type: Array,
+        required: true,
+    },
     key: {
         type: String,
         unique: true,
