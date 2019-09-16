@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import fire from "./config/fire";
 
 import Header from "./components/Header";
@@ -47,18 +47,29 @@ export default class App extends Component {
         return (
             <Router>
 
-                <Header user={this.state.user} />
-                <Route exact path="/" component={Home} />
 
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/logout" component={Logout} />
+                {
+                    window.location.pathname.startsWith("/admin") ? (
+                        <PrivateRoute path="/admin" component={Admin} />
 
-                <Route exact path="/" component={Footer} />
+                    ) : (
 
-                <PrivateRoute exact path="/admin" component={Admin} />
+                            <div>
+                                <Header user={this.state.user} />
+
+                                <Route exact path="/" component={Home} />
+                                <Route exact path="/login" component={Login} />
+                                <Route exact path="/logout" component={Logout} />
+
+                                <Footer />
+                            </div>
+
+                        )
+                }
+
 
 
             </Router>
         );
     }
-}
+}   

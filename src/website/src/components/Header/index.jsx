@@ -2,7 +2,6 @@ import React, { Component, useState } from 'react';
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Button, Collapse } from "react-bootstrap";
-import "./style.css";
 
 class Header extends Component {
     constructor() {
