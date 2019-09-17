@@ -1,31 +1,45 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Tabs, Tab } from "@material-ui/core";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Link, withRouter } from "react-router-dom";
+import LinkButton from "../../LinkButton";
 
 class TabList extends Component {
     constructor() {
         super();
-        this.state = {
-            tabs: [],
-            currentTab: 0
-        }
 
         this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(e, value) {
-        this.setState({ currentTab: value });
+        this.props.history.push(value);
     }
 
     render() {
         return (
-            <Tabs onChange={this.handleChange} value={this.state.currentTab}>
+            <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
 
-                <Tab index={0} label="Overview" />
+                {
+                    tabLinks[window.location.pathname.split("/")[2].toLowerCase()].map(link => {
+                        return <Tab label={link.label} value={link.value} />
+                    })
+                }
 
             </Tabs>
         )
     }
 }
 
-export default TabList;
+const tabLinks = {
+    "dashboards": [
+        { label: "Overview", value: "/admin/dashboards/overview" },
+        { label: "Test", value: "/admin/dashboards/test" }
+    ],
+    "users": [
+        { label: "Overview", value: "/admin/users/overview" },
+    ],
+    "settings": [
+        { label: "Overview", value: "/admin/settings/overview" },
+    ]
+}
+
+export default withRouter(TabList);

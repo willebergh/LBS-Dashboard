@@ -42,7 +42,7 @@ const styles = theme => ({
 });
 
 function Title() {
-    const str = window.location.pathname.replace("/admin/", "");
+    const str = window.location.pathname.split("/")[2];
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 

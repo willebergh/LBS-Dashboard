@@ -17,9 +17,9 @@ const categories = [
     {
         id: 'Deployment',
         children: [
-            { id: "Dashboards", icon: <DashboardRoundedIcon />, path: "/admin/dashboards" },
-            { id: "Users", icon: <PeopleIcon />, path: "/admin/users" },
-            { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings" },
+            { id: "Dashboards", icon: <DashboardRoundedIcon />, path: "/admin/dashboards/overview" },
+            { id: "Users", icon: <PeopleIcon />, path: "/admin/users/overview" },
+            { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
         ],
     },
 ];
