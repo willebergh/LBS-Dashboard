@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import moment from "moment";
 import axios from "axios";
-
 
 class FoodMenu extends Component {
     constructor() {
@@ -13,26 +11,19 @@ class FoodMenu extends Component {
     }
 
     componentDidMount() {
-        this.clock();
+        this.initState();
+        this.initListener();
     }
 
-    clock() {
+    initState() {
         axios.get("/api/restaurant/jonsjacob")
-            .then(res => {
-                this.setState({ menuItems: res.data.today.menu, restaurant: res.data.displayName });
-                this.props.hasLoaded("FoodMenu")
-            })
-        setInterval(() => {
-            const time = moment().format("HH:mm:ss");
-            if (time === "00:00:00") this.updateState();
-        }, 1000)
+            .then(res => this.setState({ menuItems: res.data.today.menu, restaurant: res.data.displayName }))
+            .then(() => this.props.hasLoaded("restaurant"))
     }
 
-    updateState() {
-        axios.get("/api/restaurant/jonsjacob")
-            .then(res => {
-                this.setState({ menuItems: res.data.today.menu, restaurant: res.data.displayName })
-            })
+    initListener() {
+        const socket = this.props.socket;
+        socket.on("update-restaurant", data => this.setState({ menuItems: data.today.menu, restaurant: data.displayName }));
     }
 
     render() {

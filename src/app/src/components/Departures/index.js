@@ -7,23 +7,19 @@ import NextDeparture from "./NextDeparture";
 class NextDepartures extends Component {
 
     componentDidMount() {
-        this.clock();
+        this.initState();
+        this.initListener();
     }
 
-    clock() {
-        axios.get("/api/sl/realtime/3404")
-            .then(res => {
-                this.setState({ data: res.data })
-                this.props.hasLoaded("Departures")
-            })
-        setInterval(() => {
-            this.updateState();
-        }, 1000 * 60)
-    }
-
-    updateState() {
+    initState() {
         axios.get("/api/sl/realtime/3404")
             .then(res => this.setState({ data: res.data }))
+            .then(() => this.props.hasLoaded("stations"))
+    }
+
+    initListener() {
+        const socket = this.props.socket;
+        socket.on("update-station", data => this.setState({ data }))
     }
 
     transportType() {
@@ -33,7 +29,7 @@ class NextDepartures extends Component {
     }
 
     render() {
-        if (!this.state) return "";
+        if (!this.state) return null;
         const departures = this.state.data[this.transportType()];
         return (
             <div id="slRealTime">

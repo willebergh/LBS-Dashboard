@@ -17,28 +17,20 @@ class Weather extends Component {
     }
 
     componentDidMount() {
-        this.clock();
+        this.initState();
+        this.initListener();
     }
 
-    clock() {
+    initState() {
         axios.get("/api/weather/stockholm")
-            .then(res => {
-                this.setState({ data: res.data });
-                this.updateTheme();
-                this.props.hasLoaded("Weather");
-            })
-        setInterval(() => {
-            this.updateTheme();
-            const time = moment().format("mm:ss");
-            if (time === "01:00") this.updateState();
-        }, 1000)
+            .then(res => this.setState({ data: res.data }))
+            .then(() => this.updateTheme())
+            .then(() => this.props.hasLoaded("weather"))
     }
 
-    updateState() {
-        axios.get("/api/weather/stockholm")
-            .then(res => {
-                this.setState({ data: res.data })
-            })
+    initListener() {
+        const socket = this.props.socket;
+        socket.on("update-weather", data => this.setState({ data }));
     }
 
     updateTheme() {

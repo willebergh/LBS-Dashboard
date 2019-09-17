@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from "moment";
-import { EventEmitter } from 'events';
 
 class CurrentTimeAndDate extends Component {
     constructor() {

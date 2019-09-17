@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import anime from "animejs";
-import moment from "moment";
 
 // Components
 import Loading from "./Loading"
@@ -32,13 +31,12 @@ class Dashboard extends Component {
     socketListener() {
         const socket = this.props.socket;
         const config = JSON.parse(localStorage.getItem("dashboard-config"));
-        socket.emit("dashboard-reconnect", config);
-        socket.on("dashboard-connected", data => console.log(data));
+        socket.emit("dashboard-connect", config);
         socket.on("update-connected-dashboards", data => console.log(data));
     }
 
     async hasLoaded(component) {
-        const { loadedComponents, isTimelineOpened } = this.state;
+        const { loadedComponents } = this.state;
         console.log(component)
         loadedComponents.push(component)
         if (loadedComponents.length === 4) {
@@ -79,9 +77,9 @@ class Dashboard extends Component {
                 {isDashboardOpening ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} theme={theme} />}
                 <div id="grid">
                     <CurrentTimeAndDate hasLoaded={this.hasLoaded} />
-                    <Weather hasLoaded={this.hasLoaded} theme={theme} updateTheme={this.updateTheme} />
-                    <Departures hasLoaded={this.hasLoaded} station="3404" transportType="bus" />
-                    <FoodMenu hasLoaded={this.hasLoaded} />
+                    <Weather hasLoaded={this.hasLoaded} socket={this.props.socket} theme={theme} updateTheme={this.updateTheme} />
+                    <Departures hasLoaded={this.hasLoaded} socket={this.props.socket} station="3404" transportType="bus" />
+                    <FoodMenu hasLoaded={this.hasLoaded} socket={this.props.socket} />
                 </div>
             </div>
         );

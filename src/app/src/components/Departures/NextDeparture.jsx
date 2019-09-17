@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Odometer from "react-odometerjs";
 
 class NextDeparture extends Component {
 
