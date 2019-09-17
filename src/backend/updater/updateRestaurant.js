@@ -1,8 +1,8 @@
 const $ = require("cheerio");
 const moment = require("moment");
 const rp = require("request-promise");
-const logger = require("../../logger");
-const Restaurant = require("../../models/Restaurant");
+const logger = require("../logger");
+const Restaurant = require("../models/Restaurant");
 
 module.exports = async function (name) {
     logger.log(`Updating restaurant ${name}...`.yellow, "Updater");

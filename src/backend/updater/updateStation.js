@@ -1,9 +1,9 @@
 const axios = require("axios");
-const logger = require("../../logger");
-const Station = require("../../models/Station");
+const logger = require("../logger");
+const Station = require("../models/Station");
 require("dotenv").config();
 
-module.exports = async function (siteId) {
+module.exports = async function (siteId, io) {
     if (!siteId) return;
 
     logger.log(`Updating station ${siteId}...`.yellow, "Updater");
@@ -20,7 +20,10 @@ module.exports = async function (siteId) {
         await Station.deleteOne({ _id: station._id });
         const newStation = new Station(data);
         newStation.save()
-            .then(() => logger.log(`Updated station ${siteId}`.green, "Updater"))
+            .then(() => {
+                logger.log(`Updated station ${siteId}`.green, "Updater");
+                io.in(`station-${siteId}`).emit("update-station", data);
+            })
             .catch(err => logger.error(err, "Updater"))
     }
 }

@@ -1,6 +1,6 @@
 const axios = require("axios");
-const logger = require("../../logger");
-const Forecast = require("../../models/Forecast");
+const logger = require("../logger");
+const Forecast = require("../models/Forecast");
 require("dotenv").config();
 const colors = require("colors");
 
@@ -15,13 +15,19 @@ module.exports = async function (city) {
     if (!forecast) {
         const newForecast = new Forecast(data);
         newForecast.save()
-            .then(() => logger.log(`Added a new forecast from ${city} to the database`.green, "Updater"))
+            .then(() => {
+                logger.log(`Added a new forecast from ${city} to the database`.green, "Updater");
+                return data;
+            })
             .catch(err => logger.error(err, "Updater"))
     } else {
         await Forecast.deleteOne({ city });
         const newForecast = new Forecast(data);
         newForecast.save()
-            .then(() => logger.log(`Updated the forecast in ${city}`.green, "Updater"))
+            .then(() => {
+                logger.log(`Updated the forecast in ${city}`.green, "Updater");
+                return data;
+            })
             .catch(err => logger.error(err, "Updater"))
     }
 }

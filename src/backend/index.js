@@ -1,20 +1,23 @@
 const express = require("express");
 const app = express();
 const server = require("http").createServer(app);
-const websocket = require("./websocket")
+const WebSocket = require("./websocket")
 const cors = require("cors");
 const session = require("./config/session");
 
 const logger = require("./logger");
 const routes = require("./routes");
 const database = require("./database");
+const Updater = require("./updater");
 
 app.use(express.json());
 app.use(session)
 app.use(routes);
 
 database.init();
-websocket.init(server);
+const webSocket = new WebSocket(server);
+webSocket.init();
+
 
 const PORT = process.env.PORT || 5000
 server.listen(PORT, () => {

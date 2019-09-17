@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const logger = require("../logger");
-const Updater = require("./updater");
 require("dotenv").config();
 
 function init() {
@@ -10,8 +9,6 @@ function init() {
     })
         .then(() => {
             logger.success("Connected to database successfully", "MongoDB");
-            const updater = new Updater();
-            updater.init();
         })
         .catch(err => {
             logger.error(err, "MongoDB");

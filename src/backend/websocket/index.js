@@ -1,64 +1,74 @@
 const logger = require("../logger");
 const NewDashboard = require("../models/NewDashboard");
 
-module.exports.init = function (server) {
-    const io = require("socket.io")(server);
-    global.websocket = io;
-    startWebsocket();
-}
-
-function startWebsocket() {
-    const io = global.websocket;
-    setTimeout(() => {
-
-    }, 2000)
-    io.on("connection", socket => {
-
-        logger.success("New connection", "WebSocket", socket.id);
-
-        socket.on("new-dashboard", code => onNewDashboard(socket, code));
-        socket.on("dashboard-reconnect", data => onDashboardReconnect(socket, data));
-
-        socket.on("disconnect", reason => onDisconnect(socket, reason));
-
-    })
-}
-
-function onNewDashboard(socket, code) {
-    const newDashboard = new NewDashboard({
-        socketid: socket.id, code
+module.exports.emitById = function (socketid, event, data) {
+    return new Promise(async (resolve, reject) => {
+        const io = global.websocket;
+        await io.to(socketid).emit(event, data);
+        resolve();
     });
-    newDashboard.save()
-        .then(() => console.log("Saved " + code + " to the database"))
-        .catch(err => console.log(err))
 }
 
-function onDashboardReconnect(socket, data) {
-    const io = global.websocket;
-    socket.join(data.key);
-    socket.name = data.dashboardName;
-    socket.key = data.key;
+const Server = require('socket.io');
+const Updater = require("../updater");
+module.exports = class io extends Server {
+    constructor(server) {
+        super(server);
+    }
 
-    io.in(data.key).clients((err, c) => {
-        const connectedDashboards = [];
-        c.forEach(c => {
-            connectedDashboards.push(io.of("/").connected[c].name)
+    init() {
+        const updater = new Updater(this);
+        updater.init();
+        this.on("connection", socket => {
+            logger.success("New connection", "WebSocket", socket.id);
+            handleSocket(this, socket);
         })
-        io.in(data.key).emit("update-connected-dashboards", connectedDashboards);
-    })
+    }
+
 }
 
-function onDisconnect(socket, reason) {
-    const io = global.websocket;
-    io.in(socket.key).clients((err, c) => {
-        const connectedDashboards = [];
-        c.forEach(c => {
-            connectedDashboards.push(io.of("/").connected[c].name)
+function handleSocket(io, socket) {
+    socket.on("new-dashboard", onNewDashboard);
+    socket.on("dashboard-connect", onDashboardConnect);
+    socket.on("disconnect", onDisconnect);
+
+    function onNewDashboard(code) {
+        const newDashboard = new NewDashboard({
+            socketid: socket.id, code
+        });
+        newDashboard.save()
+            .then(() => console.log("Saved " + code + " to the database"))
+            .catch(err => console.log(err))
+    }
+
+    function onDashboardConnect(data) {
+        socket.join(`restaurant-${data.restaurants}`);
+        socket.join(`station-${data.station}`);
+        socket.join(`weather-${data.weather}`);
+        socket.join(data.key);
+        socket.name = data.dashboardName;
+        socket.key = data.key;
+
+        io.in(data.key).clients((err, c) => {
+            const connectedDashboards = [];
+            c.forEach(c => {
+                connectedDashboards.push(io.of("/").connected[c].name)
+            })
+            io.in(data.key).emit("update-connected-dashboards", connectedDashboards);
         })
-        io.in(socket.key).emit("update-connected-dashboards", connectedDashboards);
-    })
-    logger.loading(reason, "WebSocket", socket.id, "Disconnected");
-    socket.disconnect();
+    }
+
+    function onDisconnect(reason) {
+        io.in(socket.key).clients((err, c) => {
+            const connectedDashboards = [];
+            c.forEach(c => {
+                connectedDashboards.push(io.of("/").connected[c].name)
+            })
+            io.in(socket.key).emit("update-connected-dashboards", connectedDashboards);
+        })
+        logger.loading(reason, "WebSocket", socket.id, "Disconnected");
+        socket.disconnect();
+    }
 }
 
 module.exports.emitById = function (socketid, event, data) {
