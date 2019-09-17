@@ -14,7 +14,7 @@ class Dashboard extends Component {
         this.state = {
             loadedComponents: [],
             isAllComponentsLoaded: false,
-            isDashboardOpening: false,
+            isDashboardOpen: false,
             theme: "light",
         }
 
@@ -45,24 +45,26 @@ class Dashboard extends Component {
     }
 
     openDashboard() {
-        this.setState({ isDashboardOpening: true })
-        anime({
-            targets: "#currentTimeAndDate .row, #currentWeather .body, #currentWeather .footer, #slRealTime .header, #foodMenu .header",
-            translateY: -100,
-            opacity: [1, 0],
-            direction: 'reverse',
-            easing: "easeInExpo",
-            delay: anime.stagger(100)
-        });
+        if (!this.state.isDashboardOpen) {
+            this.setState({ isDashboardOpen: true })
+            anime({
+                targets: "#currentTimeAndDate .row, #currentWeather .body, #currentWeather .footer, #slRealTime .header, #foodMenu .header",
+                translateY: -100,
+                opacity: [1, 0],
+                direction: 'reverse',
+                easing: "easeInExpo",
+                delay: anime.stagger(100)
+            });
 
-        anime({
-            targets: ".futureWeather .column, #slRealTime .nextDeparture .display, #slRealTime .departure, #foodMenu .body",
-            translateY: 100,
-            opacity: [1, 0],
-            direction: 'reverse',
-            easing: "easeInExpo",
-            delay: anime.stagger(100)
-        });
+            anime({
+                targets: ".futureWeather .column, #slRealTime .nextDeparture .display, #slRealTime .departure, #foodMenu .body",
+                translateY: 100,
+                opacity: [1, 0],
+                direction: 'reverse',
+                easing: "easeInExpo",
+                delay: anime.stagger(100)
+            });
+        }
     }
 
     updateTheme(theme) {
@@ -70,11 +72,11 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { isAllComponentsLoaded, isDashboardOpening, theme } = this.state;
+        const { isAllComponentsLoaded, isDashboardOpen, theme } = this.state;
 
         return (
             <div style={themes[theme]}>
-                {isDashboardOpening ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} theme={theme} />}
+                {isDashboardOpen ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} theme={theme} />}
                 <div id="grid">
                     <CurrentTimeAndDate hasLoaded={this.hasLoaded} />
                     <Weather hasLoaded={this.hasLoaded} socket={this.props.socket} theme={theme} updateTheme={this.updateTheme} />

@@ -4,7 +4,7 @@ class Departure extends Component {
     render() {
         const { destination, displayTime, lineNumber } = this.props;
         return (
-            <div className="departure fadeIn">
+            <div className="departure fadeIn" >
                 <div>
                     <span className="lineNr">
                         {lineNumber}
