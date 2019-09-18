@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import fire from "./config/fire";
+import axios from "axios";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -34,6 +35,11 @@ export default class App extends Component {
                     uid: user.uid,
                     providerData: user.providerData,
                 }
+                axios({
+                    method: "post",
+                    url: "/api/auth/login",
+                    data: { idToken: user.ma }
+                });
                 this.setState({ user: userData })
                 localStorage.setItem("user", JSON.stringify(userData));
             } else {

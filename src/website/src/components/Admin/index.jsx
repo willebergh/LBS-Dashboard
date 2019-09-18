@@ -12,10 +12,9 @@ import Header from './header';
 import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
-import Dashboards from "./dashboards";
 import Users from "./users";
 import Settings from "./settings";
-import Deployments from './Deployments';
+import Deployment from './Deployment';
 
 function Copyright() {
     return (
@@ -169,32 +168,25 @@ const styles = {
     },
 };
 
-class Paperbase extends React.Component {
+class Admin extends React.Component {
     constructor() {
         super();
         this.state = {
             mobileOpen: false,
             routes: [
-                { path: "/admin/deployments", component: Deployments },
-                { path: "/admin/dashboards", component: Dashboards },
                 { path: "/admin/users", component: Users },
                 { path: "/admin/settings", component: Settings },
-            ]
+                { path: "/admin/:deployment", component: Deployment },
+            ],
+            deployments: []
         }
 
         this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
     }
 
     componentDidMount() {
-        const uid = JSON.parse(localStorage.getItem("user")).uid;
-        axios.get(`/admin/deployment/get-all/${uid}`)
-            .then(res => {
-                if (!res.data.deployments) {
-                    this.setState({ deployments: "nothing" });
-                } else {
-                    this.setState({ deployments: res.data.deployments });
-                }
-            })
+        axios.get(`/api/user/get-deployments`)
+            .then(res => this.setState({ deployments: res.data }))
     }
 
     handleDrawerToggle() {
@@ -218,7 +210,7 @@ class Paperbase extends React.Component {
                             />
                         </Hidden>
                         <Hidden xsDown implementation="css">
-                            <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                            <Navigator PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
                         </Hidden>
                     </nav>
                     <div className={classes.app}>
@@ -228,11 +220,11 @@ class Paperbase extends React.Component {
                         <main className={classes.main}>
 
                             <Switch>
-                                {
-                                    this.state.routes.map(r => {
-                                        return <Route path={r.path} component={r.component} />
-                                    })
-                                }
+
+                                <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
+                                <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+                                <Route path={"/admin/:deployment"} render={(props) => <Deployment {...props} deployments={this.state.deployments} />} />
+
                             </Switch>
 
                         </main>
@@ -248,8 +240,8 @@ class Paperbase extends React.Component {
     }
 }
 
-Paperbase.propTypes = {
+Admin.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Paperbase);
+export default withStyles(styles)(Admin);

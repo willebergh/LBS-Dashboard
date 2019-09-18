@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,18 +10,21 @@ import {
     DashboardRounded as DashboardRoundedIcon
 } from "@material-ui/icons";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 
+
+const deploymentLinks = [
+    { id: "Dashboards", icon: <DashboardRoundedIcon />, category: "/dashboards", path: "/overview" },
+];
 
 const categories = [
     {
-        id: 'Deployment',
-        children: [
-            { id: "Dashboards", icon: <DashboardRoundedIcon />, path: "/admin/dashboards/overview" },
+        id: "Other", links: [
             { id: "Users", icon: <PeopleIcon />, path: "/admin/users/overview" },
             { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
-        ],
-    },
+        ]
+    }
 ];
 
 const styles = theme => ({
@@ -73,67 +76,97 @@ function CustomLink({ children, ...props }) {
     )
 }
 
-function Navigator(props) {
-    const { classes, ...other } = props;
+class Navigator extends Component {
+    constructor(props) {
+        super(props);
+    }
 
-    return (
-        <Drawer variant="permanent" {...other}>
-            <List disablePadding>
-                <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
-                    LBS-Dashboard
-                </ListItem>
-                <CustomLink to="/admin/deployments">
-                    <ListItem className={clsx(classes.item, classes.itemCategory)}>
-                        <ListItemIcon className={classes.itemIcon}>
-                            <HomeIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            classes={{
-                                primary: classes.itemPrimary,
-                            }}
-                        >
-                            Deployments
-                    </ListItemText>
+    render() {
+        const { } = this.props;
+        const { deployments, classes, ...other } = this.props;
+        return (
+            <Drawer variant="permanent" {...other}>
+                <List disablePadding>
+                    <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
+                        LBS-Dashboard
                     </ListItem>
-                </CustomLink>
-                {categories.map(({ id, children }) => (
-                    <React.Fragment key={id}>
-                        <ListItem className={classes.categoryHeader}>
-                            <ListItemText
-                                classes={{
-                                    primary: classes.categoryHeaderPrimary,
-                                }}
-                            >
-                                {id}
-                            </ListItemText>
-                        </ListItem>
-                        {children.map(({ id: childId, icon, path }) => (
-                            <CustomLink to={path} >
-                                <ListItem
-                                    key={childId}
-                                    button
-                                    className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
+
+                    {deployments ? deployments.map(({ name }) => (
+                        <React.Fragment key={name}>
+                            <ListItem className={classes.categoryHeader}>
+                                <ListItemText
+                                    classes={{
+                                        primary: classes.categoryHeaderPrimary,
+                                    }}
                                 >
-                                    <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                                    <ListItemText
-                                        classes={{
-                                            primary: classes.itemPrimary,
-                                        }}
+                                    {name.replace(/-/g, " ")}
+                                </ListItemText>
+                            </ListItem>
+
+                            {deploymentLinks.map(({ id, icon, category, path }, i) => (
+                                <CustomLink to={`/admin/${name}${category}${path}`} >
+                                    <ListItem
+                                        key={i}
+                                        button
+                                        className={clsx(classes.item, window.location.pathname.startsWith(`/admin/${name}${category}`) && classes.itemActiveItem)}
                                     >
+                                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                                        <ListItemText
+                                            classes={{
+                                                primary: classes.itemPrimary,
+                                            }}
+                                        >
 
-                                        {childId}
+                                            {id}
 
-                                    </ListItemText>
-                                </ListItem>
-                            </CustomLink>
-                        ))}
+                                        </ListItemText>
+                                    </ListItem>
+                                </CustomLink>
+                            ))}
 
-                        <Divider className={classes.divider} />
-                    </React.Fragment>
-                ))}
-            </List>
-        </Drawer>
-    );
+                            <Divider className={classes.divider} />
+                        </React.Fragment>
+                    )) : null}
+
+                    {categories.map(({ id, links }) => (
+                        <React.Fragment key={id}>
+                            <ListItem className={classes.categoryHeader}>
+                                <ListItemText
+                                    classes={{
+                                        primary: classes.categoryHeaderPrimary,
+                                    }}
+                                >
+                                    {id}
+                                </ListItemText>
+                            </ListItem>
+                            {links.map(({ id, icon, path }, i) => (
+                                <CustomLink to={path} >
+                                    <ListItem
+                                        key={i}
+                                        button
+                                        className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
+                                    >
+                                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                                        <ListItemText
+                                            classes={{
+                                                primary: classes.itemPrimary,
+                                            }}
+                                        >
+
+                                            {id}
+
+                                        </ListItemText>
+                                    </ListItem>
+                                </CustomLink>
+                            ))}
+                            <Divider className={classes.divider} />
+                        </React.Fragment>
+                    ))}
+
+                </List>
+            </Drawer>
+        );
+    }
 }
 
 Navigator.propTypes = {

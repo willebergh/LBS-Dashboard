@@ -15,12 +15,14 @@ class TabList extends Component {
     }
 
     render() {
+        const path = window.location.pathname.replace(/\//gi, ",/").split(",");
+        const menuLink = path.length - 2;
         return (
             <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
 
                 {
-                    tabLinks[window.location.pathname.split("/")[2].toLowerCase()].map(link => {
-                        return <Tab label={link.label} value={link.value} />
+                    tabLinks[path[menuLink].toLowerCase()].map(link => {
+                        return <Tab label={link.label} value={path[1] + (path.length > 4 ? path[2] : "") + path[menuLink] + link.value} />
                     })
                 }
 
@@ -30,15 +32,15 @@ class TabList extends Component {
 }
 
 const tabLinks = {
-    "dashboards": [
-        { label: "Overview", value: "/admin/dashboards/overview" },
-        { label: "Test", value: "/admin/dashboards/test" }
+    "/dashboards": [
+        { label: "Overview", value: "/overview" },
+        { label: "Test", value: "/test" }
     ],
-    "users": [
-        { label: "Overview", value: "/admin/users/overview" },
+    "/users": [
+        { label: "Overuuuview", value: "/overview" },
     ],
-    "settings": [
-        { label: "Overview", value: "/admin/settings/overview" },
+    "/settings": [
+        { label: "Oversssview", value: "/overview" },
     ]
 }
 
