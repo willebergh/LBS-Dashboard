@@ -69,7 +69,17 @@ router.post("/add", async (req, res) => {
                                             .then(() => {
                                                 newDashboard.delete()
                                                     .then(() => {
-                                                        res.status(200).json({ msg: "success" });
+                                                        DeploymentConfig.connectedDashboards = [
+                                                            ...DeploymentConfig.connectedDashboards, name
+                                                        ]
+                                                        DeploymentConfig.save()
+                                                            .then(() => {
+                                                                return res.status(200).json({ msg: "success" });
+                                                            })
+                                                            .catch(err => {
+                                                                return res.status(200).json(err);
+                                                            })
+
                                                     });
                                             })
                                             .catch(err => {

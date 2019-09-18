@@ -19,6 +19,9 @@ const DeploymentConfigSchema = new mongoose.Schema({
     },
     weather: {
         type: String
+    },
+    connectedDashboards: {
+        type: Array
     }
 });
 
