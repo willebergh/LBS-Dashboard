@@ -5,8 +5,8 @@ const admin = require("../../config/firebase-admin");
 router.post("/login", (req, res) => {
     const idToken = req.body.idToken;
     admin.auth().verifyIdToken(idToken)
-        .then(() => {
-            req.session.idToken = idToken;
+        .then(decodedToken => {
+            req.session.user_uid = decodedToken.uid;
             req.session.save(err => {
                 if (err) throw err;
                 res.status(200).json({ msg: "success" })

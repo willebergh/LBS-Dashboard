@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const DeploymentConfigSchema = new mongoose.Schema({
-    owner: {
-        type: String,
-        required: true
-    },
     key: {
         type: String,
         unique: true,

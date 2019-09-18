@@ -1,13 +1,7 @@
 const logger = require("../logger");
 const NewDashboard = require("../models/NewDashboard");
 
-module.exports.emitById = function (socketid, event, data) {
-    return new Promise(async (resolve, reject) => {
-        const io = global.websocket;
-        await io.to(socketid).emit(event, data);
-        resolve();
-    });
-}
+
 
 const Server = require('socket.io');
 const Updater = require("../updater");
@@ -70,6 +64,7 @@ function handleSocket(io, socket) {
         socket.disconnect();
     }
 }
+
 
 module.exports.emitById = function (socketid, event, data) {
     return new Promise(async (resolve, reject) => {

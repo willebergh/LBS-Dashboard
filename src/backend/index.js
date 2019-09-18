@@ -16,6 +16,7 @@ app.use(routes);
 
 database.init();
 const webSocket = new WebSocket(server);
+global.websocket = webSocket;
 webSocket.init();
 
 
