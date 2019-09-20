@@ -51,55 +51,61 @@ router.post("/add", async (req, res) => {
                 const user_uid = req.session.user_uid;
                 User.findOne({ uid: user_uid })
                     .then(user => {
-                        const findUserKey = user.deployments.find(k => k === key);
-                        if (!findUserKey) {
-                            return res.status(200).json({ msg: "unathorized" });
+
+                        if (!user) {
+                            return res.status(200).json({ msg: "unathorized" })
                         } else {
 
 
-                            DeploymentConfig.findOne({ key })
-                                .then(config => {
-                                    if (!config) {
-                                        return res.status(200).json({ msg: "invalid-key" });
-                                    } else {
-                                        const { name: deploymentName, restaurant, station, weather } = config;
-                                        const data = { key, dashboardName: name, deploymentName, restaurant, station, weather };
+                            const findUserKey = user.deployments.find(k => k === key);
+                            if (!findUserKey) {
+                                return res.status(200).json({ msg: "unathorized" });
+                            } else {
 
-                                        websocket.emitById(newDashboard.socketid, "new-dashboard-add", data)
-                                            .then(() => {
-                                                newDashboard.delete()
-                                                    .then(() => {
-                                                        DeploymentConfig.connectedDashboards = [
-                                                            ...DeploymentConfig.connectedDashboards, name
-                                                        ]
-                                                        DeploymentConfig.save()
-                                                            .then(() => {
-                                                                return res.status(200).json({ msg: "success" });
-                                                            })
-                                                            .catch(err => {
-                                                                return res.status(200).json(err);
-                                                            })
 
-                                                    });
-                                            })
-                                            .catch(err => {
-                                                return res.status(200).json(err);
-                                            })
-                                    }
-                                })
+                                DeploymentConfig.findOne({ key })
+                                    .then(config => {
+                                        if (!config) {
+                                            return res.status(200).json({ msg: "invalid-key" });
+                                        } else {
+                                            const { name: deploymentName, restaurant, station, weather } = config;
+                                            const data = { key, dashboardName: name, deploymentName, restaurant, station, weather };
+
+                                            websocket.emitById(newDashboard.socketid, "new-dashboard-add", data)
+                                                .then(() => {
+                                                    newDashboard.delete();
+                                                    config.connectedDashboards = [
+                                                        ...config.connectedDashboards, name
+                                                    ]
+                                                    config.save()
+                                                        .then(() => {
+                                                            res.status(200).json({ msg: "success" });
+                                                        })
+                                                        .catch(err => {
+                                                            return res.status(200).json(err);
+                                                        })
+                                                })
+                                                .catch(err => {
+                                                    return res.status(200).json(err);
+                                                })
+                                        }
+                                    })
+                            }
                         }
                     })
             }
         });
 });
 
-router.get("/get-all/:uid", (req, res) => {
-    const owner = req.params.uid;
-    DeploymentConfig.findOne({ owner })
+router.get("/get/:key", (req, res) => {
+    const key = req.params.key;
+    DeploymentConfig.findOne({ key })
+        .select("-_id -__v")
         .then(config => {
             if (!config) {
-                return res.status(200).json({ msg: "configs-not-found" });
-
+                return res.status(200).json({ msg: "config-not-found" });
+            } else {
+                return res.status(200).json({ msg: "success", deployment: config })
             }
         })
 });
