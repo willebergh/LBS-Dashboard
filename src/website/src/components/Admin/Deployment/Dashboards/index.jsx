@@ -10,7 +10,7 @@ class Dashboards extends Component {
 
                 <Route
                     path="/admin/:deployment/dashboards/overview"
-                    render={(props) => <Overview {...props} />}
+                    render={(props) => <Overview deployment={this.props.deployment} {...props} />}
                 />
                 <Route
                     path="/admin/:deployment/dashboards/test"

@@ -16,15 +16,22 @@ class Deployment extends Component {
     }
 
     render() {
+        const { deployments } = this.props;
         return (
             <Switch>
 
-                <Route
-                    path="/admin/:deployment/dashboards"
-                    render={(props) => (
-                        <Dashboards deployment={this.findDeployment(props.match.params.deployment)}{...props} />
-                    )}
-                />
+                {
+                    deployments.map(deployment => {
+                        return (
+                            <Route
+                                path={`/admin/${deployment.name}/dashboards`}
+                                render={props => (
+                                    <Dashboards deployment={deployment} {...props} />
+                                )}
+                            />
+                        );
+                    })
+                }
 
             </Switch>
         );

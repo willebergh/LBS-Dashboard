@@ -9,6 +9,8 @@ import Link from '@material-ui/core/Link';
 import Navigator from './Navigator';
 import Header from './header';
 
+import { CircularProgress } from "@material-ui/core"
+
 import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
@@ -146,6 +148,12 @@ const styles = {
         display: 'flex',
         minHeight: '100vh',
     },
+    loading: {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)"
+    },
     drawer: {
         [theme.breakpoints.up('sm')]: {
             width: drawerWidth,
@@ -178,15 +186,21 @@ class Admin extends React.Component {
                 { path: "/admin/settings", component: Settings },
                 { path: "/admin/:deployment", component: Deployment },
             ],
-            deployments: []
+            deployments: [],
+            loading: false,
         }
 
         this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
     }
 
+    componentWillMount() {
+        this.setState({ loading: true })
+    }
+
     componentDidMount() {
         axios.get(`/api/user/get-deployments`)
-            .then(res => this.setState({ deployments: res.data }))
+            .then(res => this.setState({ deployments: res.data, loading: false }))
+            .catch(err => console.log(err));
     }
 
     handleDrawerToggle() {
@@ -197,44 +211,55 @@ class Admin extends React.Component {
         const { classes } = this.props;
         const { mobileOpen } = this.state;
         return (
+
             <ThemeProvider theme={theme} >
-                <div className={classes.root}>
-                    <CssBaseline />
-                    <nav className={classes.drawer}>
-                        <Hidden smUp implementation="js">
-                            <Navigator
-                                PaperProps={{ style: { width: drawerWidth } }}
-                                variant="temporary"
-                                open={mobileOpen}
-                                onClose={this.handleDrawerToggle}
-                            />
-                        </Hidden>
-                        <Hidden xsDown implementation="css">
-                            <Navigator PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
-                        </Hidden>
-                    </nav>
-                    <div className={classes.app}>
+                {
+                    this.state.loading ? (
+                        <div className={classes.loading}>
+                            <CircularProgress />
+                        </div>
+                    ) : (
+                            <div className={classes.root}>
+                                <CssBaseline />
+                                <nav className={classes.drawer}>
+                                    <Hidden smUp implementation="js">
+                                        <Navigator
+                                            PaperProps={{ style: { width: drawerWidth } }}
+                                            variant="temporary"
+                                            open={mobileOpen}
+                                            onClose={this.handleDrawerToggle}
+                                        />
+                                    </Hidden>
+                                    <Hidden xsDown implementation="css">
+                                        <Navigator PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
+                                    </Hidden>
+                                </nav>
+                                <div className={classes.app}>
 
-                        <Header onDrawerToggle={this.handleDrawerToggle} />
+                                    <Header onDrawerToggle={this.handleDrawerToggle} />
 
-                        <main className={classes.main}>
+                                    <main className={classes.main}>
 
-                            <Switch>
+                                        <Switch>
 
-                                <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
-                                <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
-                                <Route path={"/admin/:deployment"} render={(props) => <Deployment {...props} deployments={this.state.deployments} />} />
+                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
+                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+                                            <Route path={"/admin/:deployment"} render={(props) => (
+                                                <Deployment {...props} deployments={this.state.deployments} />
+                                            )} />
 
-                            </Switch>
+                                        </Switch>
 
-                        </main>
+                                    </main>
 
-                        <footer className={classes.footer}>
-                            <Copyright />
-                        </footer>
+                                    <footer className={classes.footer}>
+                                        <Copyright />
+                                    </footer>
 
-                    </div>
-                </div>
+                                </div>
+                            </div>
+                        )
+                }
             </ThemeProvider>
         );
     }
