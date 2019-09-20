@@ -1,0 +1,22 @@
+{
+  "name": "lbs-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-app": "start cmd /k \"cd .\\src\\app && npm start\"",
+    "dev-website": "start cmd /k \"cd .\\src\\website && npm start\"",
+    "dev-backend": "start cmd /k \"cd .\\src\\backend && nodemon index.js\"",
+    "dev-all": "npm run dev-app && npm run dev-website && npm run dev-backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willebergh/lbs-dashboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/willebergh/lbs-dashboard/issues"
+  },
+  "homepage": "https://github.com/willebergh/lbs-dashboard#readme"
+}
