@@ -33,6 +33,7 @@ class Dashboard extends Component {
         const config = JSON.parse(localStorage.getItem("dashboard-config"));
         socket.emit("dashboard-connect", config);
         socket.on("update-connected-dashboards", data => console.log(data));
+        socket.on("dashboard-identified", () => console.log("IT'S ME!"))
     }
 
     async hasLoaded(component) {
