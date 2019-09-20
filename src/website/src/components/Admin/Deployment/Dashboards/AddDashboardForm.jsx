@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from "axios";
 import {
-    FormGroup,
+    FormControl,
     Button,
     TextField,
     Paper,
-    Typography
+    Typography,
+    Grid
 } from "@material-ui/core";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import ButtonProgress from "../../ButtonProgress";
@@ -37,17 +38,16 @@ class AddDashboardDialog extends Component {
     handleCancel(e) {
         e.preventDefault();
         this.setState({ code: "", name: "" });
-        this.props.handleToggle();
+        this.props.onEditingCanceled("add");
     }
 
     handleSubmit(e) {
         e.preventDefault();
         this.setState({ loading: true })
         const { code, name } = this.state;
-        this.props.onEditingApproved("add", { name: "TEST NAME" })
+        this.props.onEditingApproved("add", { name })
 
-        /**
-         * axios({
+        axios({
             method: "post",
             url: "/admin/deployment/add",
             data: { code, name, key: this.props.dKey }
@@ -56,7 +56,6 @@ class AddDashboardDialog extends Component {
                 this.setState({ loading: false });
                 if (res.data.msg === "success") return this.props.onSuccess();
             })
-         */
 
     }
 
@@ -64,65 +63,67 @@ class AddDashboardDialog extends Component {
         const { classes, open, handleToggle } = this.props;
         return (
             <Paper className={classes.paper}>
-                <Typography variant="h5" component="h3">
-                    Add a new Dashboard
-                </Typography>
-                <Typography component="p">
-                    Please enter the code that's shown on the dashboards screen that you want to add,
-                    then give your new dashboard a name so you can identify it.
-                </Typography>
-                <form onSubmit={this.handleSubmit}>
-                    <FormGroup>
-                        <TextField
-                            variant="outlined"
-                            margin="dense"
-                            id="code"
-                            label="Code"
-                            type="text"
-                            name="code"
-                            value={this.state.code}
-                            onChange={this.handleChange}
-                            fullWidth
-                        />
-                    </FormGroup>
+                <Grid container justify="space-around">
 
-                    <FormGroup>
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            label="Name"
-                            type="text"
-                            name="name"
-                            value={this.state.name}
-                            onChange={this.handleChange}
-                            fullWidth
-                        />
-                    </FormGroup>
+                    <Grid item style={{ maxWidth: "50%" }}>
+                        <Typography variant="h6" component="h3">
+                            Add a new Dashboard
+                        </Typography>
+                        <Typography component="p">
+                            Please enter the code that's shown on the dashboards screen that you want to add,
+                            then give your new dashboard a name so you can identify it.
+                        </Typography>
+                    </Grid>
 
+                    <Grid item style={{ maxWidth: "50%" }}>
+                        <form onSubmit={this.handleSubmit}>
+                            <FormControl>
 
-                    <Button
-                        type="button"
-                        onClick={this.handleCancel}
-                        type="submit"
-                        color="primary"
-                        disabled={this.state.loading}
-                    >
-                        Cancel
-                         </Button>
+                                <TextField
+                                    id="name"
+                                    type="text"
+                                    name="name"
+                                    label="Name"
+                                    margin="dense"
+                                    variant="outlined"
+                                    value={this.state.name}
+                                    onChange={this.handleChange}
+                                />
 
-                    <ButtonProgress
-                        text="Add"
-                        type="submit"
-                        color="primary"
-                        variant="contained"
-                        loading={this.state.loading}
-                    />
+                                <TextField
+                                    id="code"
+                                    type="text"
+                                    name="code"
+                                    label="Code"
+                                    margin="dense"
+                                    variant="outlined"
+                                    value={this.state.code}
+                                    onChange={this.handleChange}
+                                />
 
-                    <Button>
-                        TEST
-                    </Button>
+                                <Button
+                                    type="submit"
+                                    color="primary"
+                                    variant="contained"
+                                    disabled={this.state.loading}
+                                >
+                                    Add
+                                </Button>
 
-                </form>
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    onClick={this.handleCancel}
+                                    disabled={this.state.loading}
+                                >
+                                    Cancel
+                                </Button>
+
+                            </FormControl>
+                        </form>
+                    </Grid>
+
+                </Grid>
             </Paper>
         )
     }

@@ -17,9 +17,11 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TableRow
+    TableRow,
+    InputBase
 } from "@material-ui/core";
-import MaterialTable from 'material-table';
+import MaterialTable, { MTableToolbar, MTableHeader } from 'material-table';
+import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
 
 
@@ -52,84 +54,85 @@ class Overview extends Component {
     constructor() {
         super();
         this.state = {
-            AddDashboardDialog_open: false
+            columns: [
+                { title: 'Name', field: 'name' },
+            ],
+            data: [],
         }
 
+        this.handleIdentifyDashboard = this.handleIdentifyDashboard.bind(this);
         this.AddDashboardDialog_toggle = this.AddDashboardDialog_toggle.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ deployment: props.deployment })
+        const data = props.deployment.connectedDashboards.map(cd => { return { name: cd } });
+        this.setState({ deployment: props.deployment, data })
     }
 
     AddDashboardDialog_toggle() {
         this.setState({ AddDashboardDialog_open: !this.state.AddDashboardDialog_open });
     }
 
+    handleIdentifyDashboard() {
+        console.log("handleIdentifyDashboard")
+    }
+
     render() {
         const { classes, deployment } = this.props;
         return (
             <Paper className={classes.paper}>
-                <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
-                    <Toolbar >
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item>
-                                <SearchIcon className={classes.block} color="inherit" />
-                            </Grid>
-                            <Grid item xs>
-                                <TextField
-                                    fullWidth
-                                    placeholder="Search by email address, phone number, or user UID"
-                                    InputProps={{
-                                        disableUnderline: true,
-                                        className: classes.searchInput,
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Button onClick={this.AddDashboardDialog_toggle} variant="contained" color="primary" className={classes.addUser}>
-                                    Add Dashboard
-                                </Button>
 
-                                <Tooltip title="Reload">
-                                    <IconButton>
-                                        <RefreshIcon className={classes.block} color="inherit" />
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>
-                        </Grid>
-                    </Toolbar>
+                <MaterialTable
+                    title="Overview"
+                    columns={this.state.columns}
+                    data={this.state.data}
+                    icons={{
+                        Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>,
+                    }}
+                    actions={[
+                        { icon: () => <MyLocationIcon />, onClick: this.handleIdentifyDashboard, tooltip: "Identify a dashboard" }
+                    ]}
+                    options={{
+                        addRowPosition: "first",
+                        searchFieldStyle: {
+                            width: "100%"
+                        },
+                        headerStyle: {
+                            backgroundColor: "#f5f5f5",
+                            fontWeight: 600,
+                        },
+                        actionsColumnIndex: -1
 
-                </AppBar>
-                <div className={classes.contentWrapper}>
-
-
-                    <MaterialTableTesting />
-                    <MaterialTableDemo />
-
-                    <MaterialTable
-                        title=""
-                        columns={[
-                            { title: 'Name', field: 'name' },
-                            { title: "Code", field: "code", hidden: true }
-                        ]}
-                        data={deployment.connectedDashboards.map(d => { return { name: d } })}
-                        icons={{
-                            Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>
-                        }}
-                        editable={{
-                            onRowAdd: newData =>
-                                new Promise(resolve => {
-                                    console.log(newData);
+                    }}
+                    components={{
+                        Toolbar: props => (
+                            <AppBar position="static" color="default" elevation={0}>
+                                <MTableToolbar {...props} />
+                            </AppBar>
+                        ),
+                        EditRow: props => (
+                            <tr>
+                                <td colspan={this.state.columns.length + 1}>
+                                    <AddDashboardForm {...props} />
+                                </td>
+                            </tr>
+                        ),
+                        Header: props => (
+                            <MTableHeader className={classes.searchBar} {...props} />
+                        )
+                    }}
+                    editable={{
+                        onRowAdd: newData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    const data = [...this.state.data];
+                                    data.push(newData);
+                                    this.setState({ ...this.state, data });
                                     resolve();
-                                })
-                        }}
-
-
-                    />
-
-
-                </div>
+                                }, 600);
+                            }),
+                    }}
+                />
             </Paper>
         );
     }
@@ -142,7 +145,7 @@ Overview.propTypes = {
 export default withStyles(styles)(Overview);
 
 
-function MaterialTableTesting() {
+function MaterialTableTesting({ classes }) {
     const [state, setState] = React.useState({
         columns: [
             { title: 'Name', field: 'name' },
@@ -167,6 +170,7 @@ function MaterialTableTesting() {
 
     return (
         <MaterialTable
+            color="default"
             title="Editable Example"
             columns={state.columns}
             data={state.data}
@@ -174,16 +178,27 @@ function MaterialTableTesting() {
                 Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>
             }}
             components={{
+                Toolbar: props => (
+                    <AppBar position="static" color="default" elevation={0}>
+                        <MTableToolbar {...props} />
+                    </AppBar>
+                ),
                 EditRow: props => (
                     <tr>
                         <td colspan={state.columns.length + 1}>
                             <AddDashboardForm {...props} />
                         </td>
                     </tr>
+                ),
+                Header: props => (
+                    <MTableHeader className={classes.searchBar} {...props} />
                 )
             }}
             options={{
                 addRowPosition: "first",
+                searchFieldStyle: {
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                }
 
             }}
             editable={{
