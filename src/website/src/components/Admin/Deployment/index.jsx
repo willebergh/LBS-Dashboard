@@ -16,7 +16,7 @@ class Deployment extends Component {
     }
 
     render() {
-        const { deployments } = this.props;
+        const { deployments, socket } = this.props;
         return (
             <Switch>
 
@@ -26,7 +26,7 @@ class Deployment extends Component {
                             <Route
                                 path={`/admin/${deployment.name}/dashboards`}
                                 render={props => (
-                                    <Dashboards deployment={deployment} {...props} />
+                                    <Dashboards deployment={deployment} socket={socket} {...props} />
                                 )}
                             />
                         );

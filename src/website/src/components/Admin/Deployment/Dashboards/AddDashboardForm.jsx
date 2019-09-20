@@ -45,8 +45,6 @@ class AddDashboardDialog extends Component {
         e.preventDefault();
         this.setState({ loading: true })
         const { code, name } = this.state;
-        this.props.onEditingApproved("add", { name })
-
         axios({
             method: "post",
             url: "/admin/deployment/add",
@@ -54,9 +52,8 @@ class AddDashboardDialog extends Component {
         })
             .then(res => {
                 this.setState({ loading: false });
-                if (res.data.msg === "success") return this.props.onSuccess();
+                if (res.data.msg === "success") return this.props.onEditingApproved("add", { name });
             })
-
     }
 
     render() {

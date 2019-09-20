@@ -55,7 +55,8 @@ class Overview extends Component {
         super();
         this.state = {
             columns: [
-                { title: 'Name', field: 'name' },
+                { title: "Name", field: "name" },
+                { title: "Status", field: "status" },
             ],
             data: [],
         }
@@ -73,8 +74,10 @@ class Overview extends Component {
         this.setState({ AddDashboardDialog_open: !this.state.AddDashboardDialog_open });
     }
 
-    handleIdentifyDashboard() {
-        console.log("handleIdentifyDashboard")
+    handleIdentifyDashboard(e, rowData) {
+        const socket = this.props.socket;
+        const data = { key: this.props.deployment.key, name: rowData.name };
+        socket.emit("identify-dashboard", data)
     }
 
     render() {
@@ -113,7 +116,7 @@ class Overview extends Component {
                         EditRow: props => (
                             <tr>
                                 <td colspan={this.state.columns.length + 1}>
-                                    <AddDashboardForm {...props} />
+                                    <AddDashboardForm dKey={deployment.key} {...props} />
                                 </td>
                             </tr>
                         ),

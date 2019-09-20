@@ -18,6 +18,9 @@ import Users from "./users";
 import Settings from "./settings";
 import Deployment from './Deployment';
 
+import io from "socket.io-client";
+const socket = io("http://localhost:5000");
+
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -245,7 +248,7 @@ class Admin extends React.Component {
                                             <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
                                             <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
                                             <Route path={"/admin/:deployment"} render={(props) => (
-                                                <Deployment {...props} deployments={this.state.deployments} />
+                                                <Deployment deployments={this.state.deployments} socket={socket} {...props} />
                                             )} />
 
                                         </Switch>
