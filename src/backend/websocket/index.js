@@ -24,6 +24,7 @@ module.exports = class io extends Server {
 function handleSocket(io, socket) {
     socket.on("new-dashboard", onNewDashboard);
     socket.on("dashboard-connect", onDashboardConnect);
+    socket.on("identify-dashboard", onIdentifyDashboard)
     socket.on("disconnect", onDisconnect);
 
     function onNewDashboard(code) {
@@ -49,6 +50,17 @@ function handleSocket(io, socket) {
                 connectedDashboards.push(io.of("/").connected[c].name)
             })
             io.in(data.key).emit("update-connected-dashboards", connectedDashboards);
+        })
+    }
+
+    function onIdentifyDashboard(data) {
+        io.in(data.key).clients(async (err, c) => {
+            const connectedDashboards = [];
+            await c.forEach(c => {
+                connectedDashboards.push({ socketId: c, name: io.of("/").connected[c].name })
+            })
+            const identified = connectedDashboards.find(cd => cd.name === data.name);
+            io.to(identified.socketId).emit("dashboard-identified")
         })
     }
 
