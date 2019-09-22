@@ -1,5 +1,8 @@
 const logger = require("../logger");
-const NewDashboard = require("../models/NewDashboard");
+const reqAuth = require("../middleware/reqAuth");
+
+const dashboardSocket = require("./dashboardSocket");
+const newDashboardSocket = require("./newDashboardSocket");
 
 
 
@@ -13,75 +16,32 @@ module.exports = class io extends Server {
     init() {
         const updater = new Updater(this);
         updater.init();
-        this.on("connection", socket => {
+
+        this.handleNewDashboardSocket();
+        this.handleDashboardSocket();
+    }
+
+    handleNewDashboardSocket() {
+        this.of("/new-dashboards").on("connection", socket => {
             logger.success("New connection", "WebSocket", socket.id);
-            handleSocket(this, socket);
+            newDashboardSocket(this, socket);
+        })
+    }
+
+    handleDashboardSocket() {
+        this.of("/dashboards").use(reqAuth.websocket).on("connection", socket => {
+            logger.success("New connection", "WebSocket", socket.id);
+            dashboardSocket(this, socket);
         })
     }
 
 }
 
-function handleSocket(io, socket) {
-    socket.on("new-dashboard", onNewDashboard);
-    socket.on("dashboard-connect", onDashboardConnect);
-    socket.on("identify-dashboard", onIdentifyDashboard)
-    socket.on("disconnect", onDisconnect);
 
-    function onNewDashboard(code) {
-        const newDashboard = new NewDashboard({
-            socketid: socket.id, code
-        });
-        newDashboard.save()
-            .then(() => console.log("Saved " + code + " to the database"))
-            .catch(err => console.log(err))
-    }
-
-    function onDashboardConnect(data) {
-        socket.join(`restaurant-${data.restaurants}`);
-        socket.join(`station-${data.station}`);
-        socket.join(`weather-${data.weather}`);
-        socket.join(data.key);
-        socket.name = data.dashboardName;
-        socket.key = data.key;
-
-        io.in(data.key).clients((err, c) => {
-            const connectedDashboards = [];
-            c.forEach(c => {
-                connectedDashboards.push(io.of("/").connected[c].name)
-            })
-            io.in(data.key).emit("update-connected-dashboards", connectedDashboards);
-        })
-    }
-
-    function onIdentifyDashboard(data) {
-        io.in(data.key).clients(async (err, c) => {
-            const connectedDashboards = [];
-            await c.forEach(c => {
-                connectedDashboards.push({ socketId: c, name: io.of("/").connected[c].name })
-            })
-            const identified = connectedDashboards.find(cd => cd.name === data.name);
-            io.to(identified.socketId).emit("dashboard-identified")
-        })
-    }
-
-    function onDisconnect(reason) {
-        io.in(socket.key).clients((err, c) => {
-            const connectedDashboards = [];
-            c.forEach(c => {
-                connectedDashboards.push(io.of("/").connected[c].name)
-            })
-            io.in(socket.key).emit("update-connected-dashboards", connectedDashboards);
-        })
-        logger.loading(reason, "WebSocket", socket.id, "Disconnected");
-        socket.disconnect();
-    }
-}
-
-
-module.exports.emitById = function (socketid, event, data) {
+module.exports.emitById = function (namespace, socketId, event, data) {
     return new Promise(async (resolve, reject) => {
         const io = global.websocket;
-        await io.to(socketid).emit(event, data);
+        await io.of(namespace).to(socketId).emit(event, data);
         resolve();
     });
 }

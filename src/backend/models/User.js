@@ -13,6 +13,9 @@ const UserSchema = new mongoose.Schema({
     },
     deployments: {
         type: Array
+    },
+    refreshToken: {
+        type: String
     }
 });
 

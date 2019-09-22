@@ -5,6 +5,9 @@ const websocket = require("../../websocket");
 const DeploymentConfig = require("../../models/DeploymentConfig");
 const NewDashboard = require("../../models/NewDashboard");
 const User = require("../../models/User");
+const jwt = require("jsonwebtoken");
+const randToken = require("rand-token");
+require("dotenv").config();
 
 router.post("/new", async (req, res) => {
     const user_uid = req.session.user_uid;
@@ -68,14 +71,19 @@ router.post("/add", async (req, res) => {
                                         if (!config) {
                                             return res.status(200).json({ msg: "invalid-key" });
                                         } else {
-                                            const { name: deploymentName, restaurant, station, weather } = config;
-                                            const data = { key, dashboardName: name, deploymentName, restaurant, station, weather };
 
-                                            websocket.emitById(newDashboard.socketid, "new-dashboard-add", data)
+                                            const { name: deploymentName, restaurant, station, weather } = config;
+
+                                            const token = jwt.sign({ key, dashboardName: name, deploymentName }, process.env.JWT_SECRET, { expiresIn: 20 });
+                                            const refreshToken = randToken.uid(256);
+
+                                            const data = { key, dashboardName: name, deploymentName, restaurant, station, weather, token, refreshToken };
+
+                                            websocket.emitById("/new-dashboards", newDashboard.socketid, "new-dashboard-add", data)
                                                 .then(() => {
                                                     newDashboard.delete();
                                                     config.connectedDashboards = [
-                                                        ...config.connectedDashboards, name
+                                                        ...config.connectedDashboards, { name, refreshToken }
                                                     ]
                                                     config.save()
                                                         .then(() => {
