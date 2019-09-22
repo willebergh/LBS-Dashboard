@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import anime from "animejs";
+import axios from "axios";
 
 // Components
 import Loading from "./Loading"
@@ -7,6 +8,8 @@ import Weather from "./Weather";
 import FoodMenu from "./FoodMenu";
 import Departures from "./Departures";
 import CurrentTimeAndDate from "./CurrentTimeAndDate";
+
+import io from "socket.io-client";
 
 class Dashboard extends Component {
     constructor() {
@@ -16,6 +19,7 @@ class Dashboard extends Component {
             isAllComponentsLoaded: false,
             isDashboardOpen: false,
             theme: "light",
+            loading: true
         }
 
         this.hasLoaded = this.hasLoaded.bind(this);
@@ -25,15 +29,37 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.socketListener();
+        this.initSocket();
     }
 
-    socketListener() {
-        const socket = this.props.socket;
+    initSocket() {
         const config = JSON.parse(localStorage.getItem("dashboard-config"));
-        socket.emit("dashboard-connect", config);
-        socket.on("update-connected-dashboards", data => console.log(data));
-        socket.on("dashboard-identified", () => console.log("IT'S ME!"))
+        const socket = io("http://localhost:5000/dashboards", { query: { token: config.token } });
+
+        socket.on("error", err => {
+            if (err.message === "jwt expired") {
+                return this.refreshToken(config);
+            }
+        });
+
+        socket.on("connect", () => {
+            console.log("Successfully connected to socket!");
+            this.socket = socket; this.setState({ loading: false });
+            this.socket.emit("dashboard-connect", config);
+            this.socket.on("update-connected-dashboards", data => console.log(data));
+            this.socket.on("dashboard-identified", () => console.log("IT'S ME!"))
+        });
+    }
+
+    refreshToken(config) {
+        axios({ method: "post", url: "/api/auth/refresh-token", data: { config } })
+            .then(res => {
+                if (res.data.msg === "success" && res.data.config) {
+                    localStorage.setItem("dashboard-config", JSON.stringify(res.data.config));
+                    return this.initSocket();
+                }
+            })
+            .catch(err => console.log(err))
     }
 
     async hasLoaded(component) {
@@ -73,6 +99,9 @@ class Dashboard extends Component {
     }
 
     render() {
+
+        if (this.state.loading) return "loading";
+
         const { isAllComponentsLoaded, isDashboardOpen, theme } = this.state;
 
         return (
@@ -80,9 +109,9 @@ class Dashboard extends Component {
                 {isDashboardOpen ? null : <Loading play={isAllComponentsLoaded} timelineClosed={this.openDashboard} theme={theme} />}
                 <div id="grid">
                     <CurrentTimeAndDate hasLoaded={this.hasLoaded} />
-                    <Weather hasLoaded={this.hasLoaded} socket={this.props.socket} theme={theme} updateTheme={this.updateTheme} />
-                    <Departures hasLoaded={this.hasLoaded} socket={this.props.socket} station="3404" transportType="bus" />
-                    <FoodMenu hasLoaded={this.hasLoaded} socket={this.props.socket} />
+                    <Weather hasLoaded={this.hasLoaded} socket={this.socket} theme={theme} updateTheme={this.updateTheme} />
+                    <Departures hasLoaded={this.hasLoaded} socket={this.socket} station="3404" transportType="bus" />
+                    <FoodMenu hasLoaded={this.hasLoaded} socket={this.socket} />
                 </div>
             </div>
         );

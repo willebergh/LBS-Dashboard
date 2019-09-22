@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import io from "socket.io-client";
+const socket = io("http://localhost:5000/new-dashboards");
 
 class Setup extends Component {
     constructor() {
@@ -12,13 +14,13 @@ class Setup extends Component {
         this.socketListener();
         this.createCode(6)
             .then(code => {
-                this.props.socket.emit("new-dashboard", code);
+                socket.emit("new-dashboard", code);
                 this.setState({ code });
             })
     }
 
     socketListener() {
-        this.props.socket.on("new-dashboard-add", data => {
+        socket.on("new-dashboard-add", data => {
             localStorage.setItem("dashboard-config", JSON.stringify(data));
             window.location.reload();
         })
