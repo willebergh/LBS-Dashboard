@@ -66,7 +66,7 @@ class Overview extends Component {
     }
 
     componentWillReceiveProps(props) {
-        const data = props.deployment.connectedDashboards.map(cd => { return { name: cd } });
+        const data = props.deployment.connectedDashboards.map(cd => { return cd });
         this.setState({ deployment: props.deployment, data })
     }
 
