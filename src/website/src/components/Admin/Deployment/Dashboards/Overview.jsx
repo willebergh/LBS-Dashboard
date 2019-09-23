@@ -25,7 +25,7 @@ import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
 
 
-import AddDashboardForm from "./AddDashboardForm";
+import EditRow from "../../EditRow";
 
 const styles = theme => ({
     paper: {
@@ -66,8 +66,7 @@ class Overview extends Component {
     }
 
     componentWillReceiveProps(props) {
-        const data = props.deployment.connectedDashboards.map(cd => { return cd });
-        this.setState({ deployment: props.deployment, data })
+
     }
 
     AddDashboardDialog_toggle() {
@@ -88,12 +87,26 @@ class Overview extends Component {
                 <MaterialTable
                     title="Overview"
                     columns={this.state.columns}
-                    data={this.state.data}
+                    data={query =>
+                        new Promise((resolve, reject) => {
+                            axios.get(`/admin/deployment/get/${this.props.deployment.key}/dashboards/${query.pageSize}}/${query.page + 1}`)
+                                .then(res => {
+
+                                    const data = res.data.data;
+                                    console.log(data);
+                                    return resolve({
+                                        data: data.data,
+                                        page: data.page - 1,
+                                        totalCount: data.totalCount
+                                    })
+                                })
+                        })
+                    }
                     icons={{
                         Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>,
                     }}
                     actions={[
-                        { icon: () => <MyLocationIcon />, onClick: this.handleIdentifyDashboard, tooltip: "Identify a dashboard" }
+                        { icon: () => <MyLocationIcon />, onClick: this.handleIdentifyDashboard, tooltip: "Identify dashboard" },
                     ]}
                     options={{
                         addRowPosition: "first",
@@ -113,13 +126,7 @@ class Overview extends Component {
                                 <MTableToolbar {...props} />
                             </AppBar>
                         ),
-                        EditRow: props => (
-                            <tr>
-                                <td colspan={this.state.columns.length + 1}>
-                                    <AddDashboardForm dKey={deployment.key} {...props} />
-                                </td>
-                            </tr>
-                        ),
+                        EditRow: props => <EditRow dKey={deployment.key} {...props} />,
                         Header: props => (
                             <MTableHeader className={classes.searchBar} {...props} />
                         )
@@ -132,6 +139,24 @@ class Overview extends Component {
                                     data.push(newData);
                                     this.setState({ ...this.state, data });
                                     resolve();
+                                }, 600);
+                            }),
+                        onRowUpdate: (newData, oldData) =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    resolve();
+                                    const data = [...this.state.data];
+                                    data[data.indexOf(oldData)] = newData;
+                                    this.setState({ ...this.state, data });
+                                }, 600);
+                            }),
+                        onRowDelete: oldData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    resolve();
+                                    const data = [...this.state.data];
+                                    data.splice(data.indexOf(oldData), 1);
+                                    this.setState({ ...this.state, data });
                                 }, 600);
                             }),
                     }}
@@ -189,7 +214,7 @@ function MaterialTableTesting({ classes }) {
                 EditRow: props => (
                     <tr>
                         <td colspan={state.columns.length + 1}>
-                            <AddDashboardForm {...props} />
+                            <EditRow {...props} />
                         </td>
                     </tr>
                 ),
