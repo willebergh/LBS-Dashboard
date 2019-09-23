@@ -26,15 +26,14 @@ class DeleteRow extends Component {
     }
 
     handleDelete() {
+        const { dKey, data } = this.props;
         axios({
             method: "post",
             url: "/admin/deployment/delete",
-            data: { key: this.props.dKey, dashboardName: this.props.data.name }
+            data: { key: dKey, dashboardName: data.name }
         }).then(res => {
-            console.log(res.data)
-            if (res.data.msg === "error") {
-                this.props.onEditingCanceled("delete");
-            } else {
+            if (res.data.msg === "success") {
+                this.props.socket.emit("delete-dashboard", { key: dKey, name: data.name });
                 this.props.onEditingApproved("delete");
             }
         })

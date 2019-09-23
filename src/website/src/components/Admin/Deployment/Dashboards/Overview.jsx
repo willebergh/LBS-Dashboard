@@ -1,25 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
-import SearchIcon from '@material-ui/icons/Search';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    InputBase
-} from "@material-ui/core";
 import MaterialTable, { MTableToolbar, MTableHeader } from 'material-table';
 import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
@@ -59,18 +43,57 @@ class Overview extends Component {
                 { title: "Status", field: "status" },
             ],
             data: [],
+            isLoading: false,
+            key: null
         }
 
+        this.tableRef = React.createRef();
         this.handleIdentifyDashboard = this.handleIdentifyDashboard.bind(this);
-        this.AddDashboardDialog_toggle = this.AddDashboardDialog_toggle.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-
+    componentDidMount() {
+        this.updateTable();
+        this.initSocketListener();
     }
 
-    AddDashboardDialog_toggle() {
-        this.setState({ AddDashboardDialog_open: !this.state.AddDashboardDialog_open });
+    componentDidUpdate(prevProps) {
+        if (this.props.deployment.key !== prevProps.deployment.key) {
+            this.updateTable();
+            this.initSocketListener();
+        }
+    }
+
+    updateTable() {
+        return new Promise(resolve => {
+            this.setState({ isLoading: true })
+            axios.get(`/admin/deployment/get/${this.props.deployment.key}/dashboards`)
+                .then(res => {
+                    this.setState({ data: res.data.dashboards })
+                    if (this.state.data.length !== 0) {
+                        this.props.socket.emit("get-connected-dashboards", { key: this.props.deployment.key })
+                    } else {
+                        this.setState({ isLoading: false })
+                    }
+                })
+                .then(() => resolve())
+        })
+    }
+
+    initSocketListener() {
+        const socket = this.props.socket;
+        socket.emit("admin-connect", { key: this.props.deployment.key });
+        socket.on("update-connected-dashboards", data => this.handleUpdateConnectedDashboards(data));
+    }
+
+    handleUpdateConnectedDashboards(data) {
+        const newArr = this.state.data.map((dashboard, i) => {
+            if (data.find(d => d === dashboard.name)) {
+                return { ...dashboard, status: "Online" };
+            } else {
+                return { ...dashboard, status: "Offline" };
+            }
+        })
+        this.setState({ data: newArr, isLoading: false });
     }
 
     handleIdentifyDashboard(e, rowData) {
@@ -86,27 +109,16 @@ class Overview extends Component {
 
                 <MaterialTable
                     title="Overview"
+                    isLoading={this.state.isLoading}
+                    tableRef={this.tableRef}
                     columns={this.state.columns}
-                    data={query =>
-                        new Promise((resolve, reject) => {
-                            axios.get(`/admin/deployment/get/${this.props.deployment.key}/dashboards/${query.pageSize}}/${query.page + 1}`)
-                                .then(res => {
-
-                                    const data = res.data.data;
-                                    console.log(data);
-                                    return resolve({
-                                        data: data.data,
-                                        page: data.page - 1,
-                                        totalCount: data.totalCount
-                                    })
-                                })
-                        })
-                    }
+                    data={this.state.data}
                     icons={{
                         Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>,
                     }}
                     actions={[
                         { icon: () => <MyLocationIcon />, onClick: this.handleIdentifyDashboard, tooltip: "Identify dashboard" },
+                        { icon: 'refresh', tooltip: 'Refresh Data', isFreeAction: true, onClick: () => this.updateTable() },
                     ]}
                     options={{
                         addRowPosition: "first",
@@ -126,38 +138,26 @@ class Overview extends Component {
                                 <MTableToolbar {...props} />
                             </AppBar>
                         ),
-                        EditRow: props => <EditRow dKey={deployment.key} {...props} />,
+                        EditRow: props => <EditRow socket={this.props.socket} dKey={deployment.key} {...props} />,
                         Header: props => (
                             <MTableHeader className={classes.searchBar} {...props} />
                         )
                     }}
                     editable={{
-                        onRowAdd: newData =>
+                        onRowAdd: () =>
                             new Promise(resolve => {
-                                setTimeout(() => {
-                                    const data = [...this.state.data];
-                                    data.push(newData);
-                                    this.setState({ ...this.state, data });
-                                    resolve();
-                                }, 600);
+                                this.updateTable()
+                                    .then(() => resolve())
                             }),
-                        onRowUpdate: (newData, oldData) =>
+                        onRowUpdate: () =>
                             new Promise(resolve => {
-                                setTimeout(() => {
-                                    resolve();
-                                    const data = [...this.state.data];
-                                    data[data.indexOf(oldData)] = newData;
-                                    this.setState({ ...this.state, data });
-                                }, 600);
+                                this.updateTable()
+                                    .then(() => resolve())
                             }),
-                        onRowDelete: oldData =>
+                        onRowDelete: () =>
                             new Promise(resolve => {
-                                setTimeout(() => {
-                                    resolve();
-                                    const data = [...this.state.data];
-                                    data.splice(data.indexOf(oldData), 1);
-                                    this.setState({ ...this.state, data });
-                                }, 600);
+                                this.updateTable()
+                                    .then(() => resolve())
                             }),
                     }}
                 />
@@ -171,155 +171,3 @@ Overview.propTypes = {
 };
 
 export default withStyles(styles)(Overview);
-
-
-function MaterialTableTesting({ classes }) {
-    const [state, setState] = React.useState({
-        columns: [
-            { title: 'Name', field: 'name' },
-            { title: 'Surname', field: 'surname' },
-            { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-            {
-                title: 'Birth Place',
-                field: 'birthCity',
-                lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-            },
-        ],
-        data: [
-            { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-            {
-                name: 'Zerya Betül',
-                surname: 'Baran',
-                birthYear: 2017,
-                birthCity: 34,
-            },
-        ],
-    });
-
-    return (
-        <MaterialTable
-            color="default"
-            title="Editable Example"
-            columns={state.columns}
-            data={state.data}
-            icons={{
-                Add: props => <Button variant="contained" color="primary" {...props} >Add Dashboard</Button>
-            }}
-            components={{
-                Toolbar: props => (
-                    <AppBar position="static" color="default" elevation={0}>
-                        <MTableToolbar {...props} />
-                    </AppBar>
-                ),
-                EditRow: props => (
-                    <tr>
-                        <td colspan={state.columns.length + 1}>
-                            <EditRow {...props} />
-                        </td>
-                    </tr>
-                ),
-                Header: props => (
-                    <MTableHeader className={classes.searchBar} {...props} />
-                )
-            }}
-            options={{
-                addRowPosition: "first",
-                searchFieldStyle: {
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                }
-
-            }}
-            editable={{
-                onRowAdd: newData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data.push(newData);
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-                onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data[data.indexOf(oldData)] = newData;
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-                onRowDelete: oldData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data.splice(data.indexOf(oldData), 1);
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-            }}
-        />
-    );
-}
-
-
-function MaterialTableDemo() {
-    const [state, setState] = React.useState({
-        columns: [
-            { title: 'Name', field: 'name' },
-            { title: 'Surname', field: 'surname' },
-            { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-            {
-                title: 'Birth Place',
-                field: 'birthCity',
-                lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-            },
-        ],
-        data: [
-            { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-            {
-                name: 'Zerya Betül',
-                surname: 'Baran',
-                birthYear: 2017,
-                birthCity: 34,
-            },
-        ],
-    });
-
-    return (
-        <MaterialTable
-            title="Editable Example"
-            columns={state.columns}
-            data={state.data}
-            editable={{
-                onRowAdd: newData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data.push(newData);
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-                onRowUpdate: (newData, oldData) =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data[data.indexOf(oldData)] = newData;
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-                onRowDelete: oldData =>
-                    new Promise(resolve => {
-                        setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data.splice(data.indexOf(oldData), 1);
-                            setState({ ...state, data });
-                        }, 600);
-                    }),
-            }}
-        />
-    );
-}
