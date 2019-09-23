@@ -19,7 +19,8 @@ class Dashboard extends Component {
             isAllComponentsLoaded: false,
             isDashboardOpen: false,
             theme: "light",
-            loading: true
+            loading: true,
+            isIdentifying: false
         }
 
         this.hasLoaded = this.hasLoaded.bind(this);
@@ -47,7 +48,8 @@ class Dashboard extends Component {
             this.socket = socket; this.setState({ loading: false });
             this.socket.emit("dashboard-connect", config);
             this.socket.on("update-connected-dashboards", data => console.log(data));
-            this.socket.on("dashboard-identified", () => console.log("IT'S ME!"))
+            this.socket.on("dashboard-identified", () => this.onDashboardIdentified());
+            this.socket.on("dashboard-delete", this.onDashboardDelete);
         });
     }
 
@@ -60,6 +62,29 @@ class Dashboard extends Component {
                 }
             })
             .catch(err => console.log(err))
+    }
+
+    onDashboardIdentified() {
+        if (this.state.isIdentifying) {
+            return;
+        } else {
+            this.setState({ isIdentifying: true });
+            var i = 0;
+            const interval = setInterval(() => {
+                i++;
+                if (i > 6) {
+                    this.setState({ isIdentifying: false });
+                    return clearInterval(interval);
+                } else {
+                    this.updateTheme(this.state.theme === "light" ? "dark" : "light");
+                }
+            }, 500)
+        }
+    }
+
+    onDashboardDelete() {
+        localStorage.removeItem("dashboard-config");
+        window.location.reload();
     }
 
     async hasLoaded(component) {
