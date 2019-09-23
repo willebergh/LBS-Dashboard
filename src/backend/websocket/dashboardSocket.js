@@ -2,7 +2,6 @@ const logger = require("../logger");
 
 module.exports = function handleDashboardSocket(io, socket) {
     socket.on("dashboard-connect", onDashboardConnect);
-    socket.on("identify-dashboard", onIdentifyDashboard)
     socket.on("disconnect", onDisconnect);
 
     function onDashboardConnect(data) {
@@ -13,33 +12,22 @@ module.exports = function handleDashboardSocket(io, socket) {
         socket.name = data.dashboardName;
         socket.key = data.key;
 
-        io.in(data.key).clients((err, c) => {
+        io.of("/dashboards").in(data.key).clients((err, c) => {
             const connectedDashboards = [];
             c.forEach(c => {
-                connectedDashboards.push(io.of("/").connected[c].name)
+                connectedDashboards.push(io.of("/dashboards").connected[c].name)
             })
-            io.in(data.key).emit("update-connected-dashboards", connectedDashboards);
-        })
-    }
-
-    function onIdentifyDashboard(data) {
-        io.in(data.key).clients(async (err, c) => {
-            const connectedDashboards = [];
-            await c.forEach(c => {
-                connectedDashboards.push({ socketId: c, name: io.of("/").connected[c].name })
-            })
-            const identified = connectedDashboards.find(cd => cd.name === data.name);
-            io.to(identified.socketId).emit("dashboard-identified")
+            io.of("/admin").in(data.key).emit("update-connected-dashboards", connectedDashboards);
         })
     }
 
     function onDisconnect(reason) {
-        io.in(socket.key).clients((err, c) => {
+        io.of("/dashboards").in(socket.key).clients((err, c) => {
             const connectedDashboards = [];
             c.forEach(c => {
-                connectedDashboards.push(io.of("/").connected[c].name)
+                connectedDashboards.push(io.of("/dashboards").connected[c].name)
             })
-            io.in(socket.key).emit("update-connected-dashboards", connectedDashboards);
+            io.of("/admin").in(socket.key).emit("update-connected-dashboards", connectedDashboards);
         })
         logger.loading(reason, "WebSocket", socket.id, "Disconnected");
         socket.disconnect();

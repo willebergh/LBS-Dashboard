@@ -3,6 +3,7 @@ const reqAuth = require("../middleware/reqAuth");
 
 const dashboardSocket = require("./dashboardSocket");
 const newDashboardSocket = require("./newDashboardSocket");
+const adminSocket = require("./adminSocket");
 
 
 
@@ -19,6 +20,7 @@ module.exports = class io extends Server {
 
         this.handleNewDashboardSocket();
         this.handleDashboardSocket();
+        this.handleAdminSocket();
     }
 
     handleNewDashboardSocket() {
@@ -32,6 +34,13 @@ module.exports = class io extends Server {
         this.of("/dashboards").use(reqAuth.websocket).on("connection", socket => {
             logger.success("New connection", "WebSocket", socket.id);
             dashboardSocket(this, socket);
+        })
+    }
+
+    handleAdminSocket() {
+        this.of("/admin").on("connection", socket => {
+            logger.success("New connection", "WebSocket", socket.id);
+            adminSocket(this, socket);
         })
     }
 
