@@ -29,14 +29,14 @@ router.get("/logout", (req, res) => {
 });
 
 router.post("/refresh-token", (req, res) => {
-    const { refreshToken, key, name } = req.body.config;
+    const { refreshToken, key, dashboardName, deploymentName } = req.body.config;
 
     DeploymentConfig.findOne({ key })
         .then(config => {
             if (!config) {
                 return res.json({ msg: "invalid-key" })
             } else {
-                const token = jwt.sign({ key, name }, process.env.JWT_SECRET, { expiresIn: 20 });
+                const token = jwt.sign({ key, dashboardName, deploymentName }, process.env.JWT_SECRET, { expiresIn: 20 });
                 const newRefreshToken = randToken.uid(256);
 
                 const newArr = config.connectedDashboards.map(cd => {
@@ -50,7 +50,7 @@ router.post("/refresh-token", (req, res) => {
                 config.save()
                     .then(() => {
                         const { name: deploymentName, restaurant, station, weather } = config;
-                        const data = { key, dashboardName: name, deploymentName, restaurant, station, weather, token, refreshToken };
+                        const data = { key, dashboardName, deploymentName, restaurant, station, weather, token, refreshToken };
                         return res.json({ msg: "success", config: data });
                     })
                     .catch(err => console.log(err));

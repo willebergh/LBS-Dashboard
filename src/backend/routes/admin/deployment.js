@@ -115,7 +115,7 @@ router.post("/delete", (req, res) => {
             } else {
                 const findUserKey = user.deployments.find(k => k === key);
                 if (!findUserKey) {
-                    return res.status(200).json({ msg: "unathorized2" });
+                    return res.status(200).json({ msg: "unathorized" });
                 } else {
                     DeploymentConfig.updateOne({ key },
                         {
@@ -149,7 +149,7 @@ router.get("/get/:key", (req, res) => {
         })
 });
 
-router.get("/get/:key/dashboards/:pageSize/:pageNr", (req, res) => {
+router.get("/get/:key/dashboards", (req, res) => {
     const { key, pageSize, pageNr } = req.params;
     DeploymentConfig.findOne({ key })
         .select("-_id -__v")
@@ -167,7 +167,16 @@ router.get("/get/:key/dashboards/:pageSize/:pageNr", (req, res) => {
                     dashboardPages.push({ page: p, data: temparray, totalCount: dashboards.length });
                 }
 
-                return res.status(200).json({ msg: "success", data: dashboardPages.find(p => p.page === parseInt(pageNr)) })
+                const data = () => {
+                    const page = dashboardPages.find(p => p.page === parseInt(pageNr));
+                    return page ? page : {
+                        data: [],
+                        page: 0,
+                        totalCount: 0
+                    }
+                }
+
+                return res.status(200).json({ msg: "success", dashboards })
             }
         })
 })
