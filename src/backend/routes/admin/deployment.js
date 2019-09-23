@@ -105,6 +105,37 @@ router.post("/add", async (req, res) => {
         });
 });
 
+router.post("/delete", (req, res) => {
+    const { key, dashboardName } = req.body;
+    const user_uid = req.session.user_uid;
+    User.findOne({ uid: user_uid })
+        .then(user => {
+            if (!user) {
+                return res.status(200).json({ msg: "unathorized" })
+            } else {
+                const findUserKey = user.deployments.find(k => k === key);
+                if (!findUserKey) {
+                    return res.status(200).json({ msg: "unathorized2" });
+                } else {
+                    DeploymentConfig.updateOne({ key },
+                        {
+                            "$pull":
+                            {
+                                "connectedDashboards":
+                                    { "name": dashboardName }
+                            }
+                        }, { safe: true, multi: true }, (err, obj) => {
+                            if (err) {
+                                return res.json({ msg: "error", error: err })
+                            } else {
+                                return res.json({ msg: "success" });
+                            }
+                        });
+                }
+            }
+        })
+});
+
 router.get("/get/:key", (req, res) => {
     const key = req.params.key;
     DeploymentConfig.findOne({ key })
@@ -117,5 +148,28 @@ router.get("/get/:key", (req, res) => {
             }
         })
 });
+
+router.get("/get/:key/dashboards/:pageSize/:pageNr", (req, res) => {
+    const { key, pageSize, pageNr } = req.params;
+    DeploymentConfig.findOne({ key })
+        .select("-_id -__v")
+        .then(config => {
+            if (!config) {
+                return res.status(200).json({ msg: "config-not-found" });
+            } else {
+                const dashboards = config.connectedDashboards.map(cd => {
+                    return { name: cd.name }
+                })
+
+                var dashboardPages = []
+                for (var i = 0, p = 1; i < dashboards.length; i += parseInt(pageSize), p++) {
+                    var temparray = dashboards.slice(i, i + parseInt(pageSize));
+                    dashboardPages.push({ page: p, data: temparray, totalCount: dashboards.length });
+                }
+
+                return res.status(200).json({ msg: "success", data: dashboardPages.find(p => p.page === parseInt(pageNr)) })
+            }
+        })
+})
 
 module.exports = router;
