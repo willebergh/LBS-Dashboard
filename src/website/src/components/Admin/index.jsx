@@ -242,6 +242,7 @@ class Admin extends React.Component {
                                             variant="temporary"
                                             open={mobileOpen}
                                             onClose={this.handleDrawerToggle}
+                                            deployments={this.state.deployments}
                                         />
                                     </Hidden>
                                     <Hidden xsDown implementation="css">
