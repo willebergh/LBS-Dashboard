@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import io from "socket.io-client";
-const socket = io("http://localhost:5000/new-dashboards");
+const socket = io("/new-dashboards");
 
 class Setup extends Component {
     constructor() {

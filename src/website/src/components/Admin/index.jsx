@@ -21,7 +21,7 @@ import Deployment from './Deployment';
 import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
 
 import io from "socket.io-client";
-const socket = io("http://localhost:5000/admin");
+const socket = io("/admin");
 
 function Copyright() {
     return (

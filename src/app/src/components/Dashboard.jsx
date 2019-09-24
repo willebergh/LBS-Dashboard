@@ -35,7 +35,7 @@ class Dashboard extends Component {
 
     initSocket() {
         const config = JSON.parse(localStorage.getItem("dashboard-config"));
-        const socket = io("http://localhost:5000/dashboards", { query: { token: config.token } });
+        const socket = io("/dashboards", { query: { token: config.token } });
 
         socket.on("error", err => {
             if (err.message === "jwt expired") {
