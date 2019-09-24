@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
-import MaterialTable, { MTableToolbar, MTableHeader } from 'material-table';
+import MaterialTable, { MTableToolbar, MTableHeader, MTableBodyRow, MTableActions } from 'material-table';
 import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
 
@@ -32,6 +33,12 @@ const styles = theme => ({
     contentWrapper: {
         margin: '40px 16px',
     },
+    status: {
+        color: "white",
+        padding: "8px",
+        borderRadius: "8px",
+        width: "60px"
+    }
 });
 
 class Overview extends Component {
@@ -39,8 +46,24 @@ class Overview extends Component {
         super();
         this.state = {
             columns: [
+                {
+                    title: "Status", field: "status", render: r => (
+                        <span className={this.props.classes.status} style={r.status === "Online" ? { backgroundColor: "#3cd178" } : { backgroundColor: "#767676" }}>
+                            {r.status}
+                        </span>
+                    ),
+                    cellStyle: {
+                        width: 60,
+                        alignText: "center",
+                        paddingRight: 0
+                    },
+                    headerStyle: {
+                        width: 60,
+                        alignText: "center",
+                        paddingRight: 0
+                    }
+                },
                 { title: "Name", field: "name" },
-                { title: "Status", field: "status" },
             ],
             data: [],
             isLoading: false,
@@ -139,9 +162,7 @@ class Overview extends Component {
                             </AppBar>
                         ),
                         EditRow: props => <EditRow socket={this.props.socket} dKey={deployment.key} {...props} />,
-                        Header: props => (
-                            <MTableHeader className={classes.searchBar} {...props} />
-                        )
+                        Header: props => <MTableHeader className={classes.searchBar} {...props} />,
                     }}
                     editable={{
                         onRowAdd: () =>
