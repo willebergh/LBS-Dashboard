@@ -17,15 +17,9 @@ import { Link } from "react-router-dom";
 
 
 
-const deploymentLinks = [
-    { id: "Dashboards", icon: <DashboardRoundedIcon />, category: "/dashboards", path: "/overview" },
-    { id: "Config", icon: <BuildRoundedIcon />, category: "/config", path: "/deployment" }
-];
-
 const categories = [
     {
         id: "Other", links: [
-            { id: "Create new deployment", icon: <NewFolderIcon />, path: "/admin/new-deployment" },
             { id: "Users", icon: <PeopleIcon />, path: "/admin/users/overview" },
             { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
         ]
@@ -100,51 +94,43 @@ class Navigator extends Component {
                             <ListItemIcon className={classes.itemIcon}>
                                 <HomeIcon />
                             </ListItemIcon>
-                            <ListItemText
-                                classes={{
-                                    primary: classes.itemPrimary,
-                                }}
-                            >
+                            <ListItemText classes={{ primary: classes.itemPrimary, }}>
                                 Home
                             </ListItemText>
                         </ListItem>
                     </CustomLink>
 
-                    {deployments ? deployments.map(({ name }) => (
-                        <React.Fragment key={name}>
-                            <ListItem className={classes.categoryHeader}>
-                                <ListItemText
-                                    classes={{
-                                        primary: classes.categoryHeaderPrimary,
-                                    }}
-                                >
-                                    {name.replace(/-/g, " ")}
+                    <ListItem className={classes.categoryHeader}>
+                        <ListItemText classes={{ primary: classes.categoryHeaderPrimary, }}>
+                            Deployments
+                        </ListItemText>
+                    </ListItem>
+
+                    {deployments.map((d, i) => (
+                        <CustomLink key={i} to={`/admin/${d.name}/dashboards`} >
+                            <ListItem button className={clsx(classes.item, window.location.pathname.startsWith(`/admin/${d.name}`) && classes.itemActiveItem)}>
+                                <ListItemIcon className={classes.itemIcon}>
+                                    {window.location.pathname.startsWith(`/admin/${d.name}`) ? <FolderOpenIcon /> : <FolderIcon />}
+                                </ListItemIcon>
+                                <ListItemText classes={{ primary: classes.itemPrimary }}>
+                                    {d.displayName}
                                 </ListItemText>
                             </ListItem>
+                        </CustomLink>
+                    ))}
 
-                            {deploymentLinks.map(({ id, icon, category, path }, i) => (
-                                <CustomLink key={i} to={`/admin/${name}${category}${path}`} >
-                                    <ListItem
-                                        button
-                                        className={clsx(classes.item, window.location.pathname.startsWith(`/admin/${name}${category}`) && classes.itemActiveItem)}
-                                    >
-                                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                                        <ListItemText
-                                            classes={{
-                                                primary: classes.itemPrimary,
-                                            }}
-                                        >
+                    <CustomLink to="/admin/new-deployment">
+                        <ListItem button className={clsx(classes.item, window.location.pathname === ("/admin/new-deployment") && classes.itemActiveItem)}>
+                            <ListItemIcon className={classes.itemIcon}>
+                                <NewFolderIcon />
+                            </ListItemIcon>
+                            <ListItemText classes={{ primary: classes.itemPrimary }}>
+                                Create new deployment
+                            </ListItemText>
+                        </ListItem>
+                    </CustomLink>
 
-                                            {id}
-
-                                        </ListItemText>
-                                    </ListItem>
-                                </CustomLink>
-                            ))}
-
-                            <Divider className={classes.divider} />
-                        </React.Fragment>
-                    )) : null}
+                    <Divider className={classes.divider} />
 
                     {categories.map(({ id, links }) => (
                         <React.Fragment key={id}>
