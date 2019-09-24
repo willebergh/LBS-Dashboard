@@ -14,14 +14,14 @@ router.post("/new", async (req, res) => {
     if (!user_uid) {
         return res.status(200).json({ msg: "unathorized" });
     } else {
-        const { name, restaurant, station, weather } = req.body;
+        const { name, displayName, restaurant, station, weather } = req.body;
         const config = await DeploymentConfig.findOne({ name });
         if (config) {
             res.status(200).json({ msg: `Deployment already exists: ${name}` });
         } else {
             const key = uuidv4();
             var newConfig = new DeploymentConfig({
-                key, name, restaurant, station, weather
+                key, name, displayName, restaurant, station, weather
             });
             const user = await User.findOne({ uid: user_uid });
             user.deployments = [...user.deployments, key];
@@ -177,6 +177,34 @@ router.get("/get/:key/dashboards", (req, res) => {
                 }
 
                 return res.status(200).json({ msg: "success", dashboards })
+            }
+        })
+})
+
+router.post("/update/:key", (req, res) => {
+    const key = req.params.key;
+    const newConfig = req.body;
+    const user_uid = req.session.user_uid;
+    User.findOne({ uid: user_uid })
+        .then(user => {
+            if (!user) {
+                return res.status(200).json({ msg: "unathorized" })
+            } else {
+                const findUserKey = user.deployments.find(k => k === key);
+                if (!findUserKey) {
+                    return res.status(200).json({ msg: "unathorized" });
+                } else {
+                    DeploymentConfig.updateOne({ key }, {
+                        name: newConfig.name,
+                        displayName: newConfig.displayName,
+                        restaurant: newConfig.restaurant,
+                        station: newConfig.station,
+                        weather: newConfig.weather
+                    }, {}, (err, updatedConfig) => {
+                        if (err) throw err;
+                        return res.status(200).json({ msg: "success", updatedConfig });
+                    })
+                }
             }
         })
 })

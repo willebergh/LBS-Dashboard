@@ -11,6 +11,9 @@ const DeploymentConfigSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    displayName: {
+        type: String
+    },
     restaurant: {
         type: String,
     },
