@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from "@material-ui/core";
-import { withRouter } from "react-router-dom";
+import { withRouter, Switch, Route } from "react-router-dom";
 
 class TabList extends Component {
     constructor() {
@@ -14,36 +14,26 @@ class TabList extends Component {
     }
 
     render() {
-        const path = window.location.pathname.replace(/\//gi, ",/").split(",");
-        const menuLink = path.length - 2;
         return (
-            <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
+            <Switch>
 
-                {
-                    tabLinks[path[menuLink].toLowerCase()] ? tabLinks[path[menuLink].toLowerCase()].map((link, i) => {
-                        return <Tab key={i} label={link.label} value={path[1] + (path.length > 4 ? path[2] : "") + path[menuLink] + link.value} />
-                    }) : null
-                }
+                <Route path={["/admin/new-deployment", "/admin/users", "/admin/settings"]} render={props => (
+                    <Tabs>
+                        <Tab />
+                    </Tabs>
+                )} />
 
-            </Tabs>
+                <Route path="/admin/:deployment" render={props => (
+                    <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
+                        <Tab label="Dashboards" value={`/admin/${props.match.params.deployment}/dashboards`} />
+                        <Tab label="Config" value={`/admin/${props.match.params.deployment}/config`} />
+                    </Tabs>
+                )} />
+
+
+            </Switch>
         )
     }
-}
-
-const tabLinks = {
-    "/dashboards": [
-        { label: "Overview", value: "/overview" },
-        { label: "Test", value: "/test" }
-    ],
-    "/config": [
-        { label: "Deployment", value: "/deployment" },
-    ],
-    "/users": [
-        { label: "Overview", value: "/overview" },
-    ],
-    "/settings": [
-        { label: "Overview", value: "/overview" },
-    ]
 }
 
 export default withRouter(TabList);
