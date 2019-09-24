@@ -14,6 +14,7 @@ import { CircularProgress } from "@material-ui/core"
 import { Switch, Route } from "react-router-dom";
 import axios from "axios";
 
+import Home from "./Home";
 import Users from "./users";
 import Settings from "./settings";
 import Deployment from './Deployment';
@@ -202,7 +203,7 @@ class Admin extends React.Component {
 
     componentDidMount() {
         axios.get(`/api/user/get-deployments`)
-            .then(res => this.setState({ deployments: res.data, loading: false }))
+            .then(res => { this.setState({ deployments: res.data.deployments, loading: false }) })
             .catch(err => console.log(err));
     }
 
@@ -245,11 +246,17 @@ class Admin extends React.Component {
 
                                         <Switch>
 
+                                            <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
                                             <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
                                             <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
-                                            <Route path={"/admin/:deployment"} render={(props) => (
-                                                <Deployment deployments={this.state.deployments} socket={socket} {...props} />
-                                            )} />
+                                            {this.state.deployments.length !== 0 ? (
+                                                <Route path={"/admin/:deployment"} render={(props) => (
+                                                    <Deployment
+                                                        deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
+                                                        socket={socket} {...props}
+                                                    />
+                                                )} />
+                                            ) : null}
 
                                         </Switch>
 

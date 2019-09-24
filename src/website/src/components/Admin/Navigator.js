@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import {
+    Home as HomeIcon,
     People as PeopleIcon,
     Settings as SettingsIcon,
     DashboardRounded as DashboardRoundedIcon,
@@ -89,6 +90,21 @@ class Navigator extends Component {
                     <ListItem className={clsx(classes.firebase, classes.item, classes.itemCategory)}>
                         LBS-Dashboard
                     </ListItem>
+
+                    <CustomLink to="/admin">
+                        <ListItem className={clsx(classes.item, classes.itemCategory, window.location.pathname === "/admin" && classes.itemActiveItem)}>
+                            <ListItemIcon className={classes.itemIcon}>
+                                <HomeIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                classes={{
+                                    primary: classes.itemPrimary,
+                                }}
+                            >
+                                Project Overview
+                            </ListItemText>
+                        </ListItem>
+                    </CustomLink>
 
                     {deployments ? deployments.map(({ name }) => (
                         <React.Fragment key={name}>
