@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 
 // Components
-import Dashboards from "./Dashboards/";
+import Dashboards from "./Dashboards";
 import DeploymentConfigForm from "../Forms/DeploymentConfigForm";
 
 class Deployment extends Component {
