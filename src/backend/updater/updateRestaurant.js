@@ -4,7 +4,7 @@ const rp = require("request-promise");
 const logger = require("../logger");
 const Restaurant = require("../models/Restaurant");
 
-module.exports = async function (name) {
+module.exports = async function (name, io) {
     logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
 
     const data = await getData(name);
@@ -20,7 +20,10 @@ module.exports = async function (name) {
 
         const newRestaurant = new Restaurant(data);
         newRestaurant.save()
-            .then(() => logger.log(`Updated restaurant ${name}`.green, "Updater"))
+            .then(() => {
+                logger.log(`Updated restaurant ${name}`.green, "Updater");
+                io.of("/dashboards").in(`restaurant-${name}`).emit("update-station", data)
+            })
             .catch(err => logger.error(err, "Updater"))
     }
 

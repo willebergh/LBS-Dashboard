@@ -22,7 +22,7 @@ module.exports = async function (siteId, io) {
         newStation.save()
             .then(() => {
                 logger.log(`Updated station ${siteId}`.green, "Updater");
-                io.in(`station-${siteId}`).emit("update-station", data);
+                io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
             })
             .catch(err => logger.error(err, "Updater"))
     }

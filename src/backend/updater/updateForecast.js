@@ -4,7 +4,7 @@ const Forecast = require("../models/Forecast");
 require("dotenv").config();
 const colors = require("colors");
 
-module.exports = async function (city) {
+module.exports = async function (city, io) {
     if (!city) return;
 
     logger.log(`Updating forecast in ${city}`.yellow, "Updater");
@@ -17,7 +17,6 @@ module.exports = async function (city) {
         newForecast.save()
             .then(() => {
                 logger.log(`Added a new forecast from ${city} to the database`.green, "Updater");
-                return data;
             })
             .catch(err => logger.error(err, "Updater"))
     } else {
@@ -26,7 +25,7 @@ module.exports = async function (city) {
         newForecast.save()
             .then(() => {
                 logger.log(`Updated the forecast in ${city}`.green, "Updater");
-                return data;
+                io.of("/dashboards").in(`weather-${city}`).emit("update-weather", data)
             })
             .catch(err => logger.error(err, "Updater"))
     }
