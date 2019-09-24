@@ -10,7 +10,7 @@ import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
 
 
-import EditRow from "../../EditRow";
+import EditRow from "../EditRow";
 
 const styles = theme => ({
     paper: {
