@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from "react-router";
-import { Link } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 
 class Header extends Component {

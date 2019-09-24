@@ -6,8 +6,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-import Navigator from './Navigator';
-import Header from './header';
+import Sidebar from './Sidebar';
+import Header from './Header';
 
 import { CircularProgress } from "@material-ui/core"
 
@@ -239,7 +239,7 @@ class Admin extends React.Component {
                                 <CssBaseline />
                                 <nav className={classes.drawer}>
                                     <Hidden smUp implementation="js">
-                                        <Navigator
+                                        <Sidebar
                                             PaperProps={{ style: { width: drawerWidth } }}
                                             variant="temporary"
                                             open={mobileOpen}
@@ -247,7 +247,7 @@ class Admin extends React.Component {
                                         />
                                     </Hidden>
                                     <Hidden xsDown implementation="css">
-                                        <Navigator PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
+                                        <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
                                     </Hidden>
                                 </nav>
                                 <div className={classes.app}>

@@ -5,7 +5,7 @@ import {
     Paper, Typography
 } from "@material-ui/core";
 import axios from "axios";
-import { withRouter } from 'react-router'
+import { withRouter } from "react-router-dom";
 
 
 const styles = {
