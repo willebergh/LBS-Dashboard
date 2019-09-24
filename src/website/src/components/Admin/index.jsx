@@ -262,6 +262,8 @@ class Admin extends React.Component {
                                             <Route exact path="/admin/new-deployment" render={props => (
                                                 <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
                                             )} />
+                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
+                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
                                             {this.state.deployments.length !== 0 ? (
                                                 <Route path={"/admin/:deployment"} render={(props) => (
                                                     <Deployment
@@ -271,8 +273,7 @@ class Admin extends React.Component {
                                                     />
                                                 )} />
                                             ) : null}
-                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
-                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+
 
                                         </Switch>
 
