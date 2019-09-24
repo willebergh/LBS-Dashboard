@@ -4,11 +4,14 @@ import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import {
-    Home as HomeIcon,
-    People as PeopleIcon,
-    Settings as SettingsIcon,
+    HomeRounded as HomeIcon,
+    PeopleRounded as PeopleIcon,
+    SettingsRounded as SettingsIcon,
     DashboardRounded as DashboardRoundedIcon,
-    BuildRounded as BuildRoundedIcon
+    BuildRounded as BuildRoundedIcon,
+    FolderRounded as FolderIcon,
+    FolderOpenRounded as FolderOpenIcon,
+    CreateNewFolderRounded as NewFolderIcon,
 } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 
@@ -22,6 +25,7 @@ const deploymentLinks = [
 const categories = [
     {
         id: "Other", links: [
+            { id: "Create new deployment", icon: <NewFolderIcon />, path: "/admin/new-deployment" },
             { id: "Users", icon: <PeopleIcon />, path: "/admin/users/overview" },
             { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
         ]
@@ -101,7 +105,7 @@ class Navigator extends Component {
                                     primary: classes.itemPrimary,
                                 }}
                             >
-                                Project Overview
+                                Home
                             </ListItemText>
                         </ListItem>
                     </CustomLink>

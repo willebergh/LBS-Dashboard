@@ -18,6 +18,7 @@ import Home from "./Home";
 import Users from "./users";
 import Settings from "./settings";
 import Deployment from './Deployment';
+import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
 
 import io from "socket.io-client";
 const socket = io("http://localhost:5000/admin");
@@ -195,6 +196,7 @@ class Admin extends React.Component {
         }
 
         this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
+        this.updateDeployments = this.updateDeployments.bind(this);
     }
 
     componentWillMount() {
@@ -202,13 +204,23 @@ class Admin extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/user/get-deployments`)
-            .then(res => { this.setState({ deployments: res.data.deployments, loading: false }) })
-            .catch(err => console.log(err));
+        this.updateDeployments();
     }
 
     handleDrawerToggle() {
         this.setState({ mobileOpen: !this.state.mobileOpen });
+    }
+
+    updateDeployments(callback) {
+        this.setState({ loading: true });
+        axios.get(`/api/user/get-deployments`)
+            .then(res => {
+                setTimeout(() => {
+                    this.setState({ deployments: res.data.deployments, loading: false });
+                    if (typeof callback === "function") callback();
+                }, 1)
+            })
+            .catch(err => console.log(err));
     }
 
     render() {
@@ -247,16 +259,20 @@ class Admin extends React.Component {
                                         <Switch>
 
                                             <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
-                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
-                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+                                            <Route exact path="/admin/new-deployment" render={props => (
+                                                <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
+                                            )} />
                                             {this.state.deployments.length !== 0 ? (
                                                 <Route path={"/admin/:deployment"} render={(props) => (
                                                     <Deployment
                                                         deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
+                                                        updateDeployments={this.updateDeployments}
                                                         socket={socket} {...props}
                                                     />
                                                 )} />
                                             ) : null}
+                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
+                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
 
                                         </Switch>
 

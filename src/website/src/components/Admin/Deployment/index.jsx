@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 // Components
 import Dashboards from "./Dashboards/";
@@ -20,16 +20,27 @@ class Deployment extends Component {
 
     render() {
         const { deployment, socket } = this.props;
+
+        if (!deployment) {
+            return (
+                <Route render={props => (
+                    <Redirect to="/admin" />
+                )} />
+            )
+        }
+
         return (
             <Switch>
 
-                <Route path={"/admin/:deployment/dashboards"} render={props => (
+                <Route path={`/admin/${deployment.name}/dashboards`} render={props => (
                     <Dashboards deployment={deployment} socket={socket} {...props} />
                 )} />
 
-                <Route path="/admin/:deployment/config" render={props => (
-                    <DeploymentConfigForm deployment={deployment} socket={socket} {...props} />
+                <Route path={`/admin/${deployment.name}/config`} render={props => (
+                    <DeploymentConfigForm updateDeployments={this.props.updateDeployments} deployment={deployment} socket={socket} {...props} />
                 )} />
+
+
 
             </Switch>
         );

@@ -5,6 +5,7 @@ import {
     Paper, Typography
 } from "@material-ui/core";
 import axios from "axios";
+import { withRouter } from 'react-router'
 
 
 const styles = {
@@ -41,7 +42,8 @@ class Config extends Component {
                 restaurants: [],
                 stations: [],
                 weathers: [],
-            }
+            },
+            loading: false
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -53,167 +55,197 @@ class Config extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.deployment.key !== prevProps.deployment.key) {
-            this.updateState();
+        if (!this.props.newDeployment) {
+            if (this.props.deployment.key !== prevProps.deployment.key) {
+                this.updateState();
+            }
         }
     }
 
     updateState() {
-        this.setState({
-            values: {
-                deploymentName: this.props.deployment.name,
-                displayName: this.props.deployment.displayName,
-                restaurant: this.props.deployment.restaurant,
-                station: this.props.deployment.station,
-                weather: this.props.deployment.weather
-            }
-        })
+        if (!this.props.newDeployment) {
+            this.setState({
+                values: {
+                    deploymentName: this.props.deployment.name,
+                    displayName: this.props.deployment.displayName,
+                    restaurant: this.props.deployment.restaurant,
+                    station: this.props.deployment.station,
+                    weather: this.props.deployment.weather
+                }
+            })
+        }
         axios.get("/api/available/all")
             .then(res => this.setState({ available: res.data.available }));
     }
 
     handleChange(e) {
-        this.setState({ values: { ...this.state.values, [e.target.id]: e.target.value } })
+        this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } })
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        const { values } = this.state;
-        console.log(values)
+        const { deploymentName, displayName, restaurant, station, weather } = this.state.values;
+        const url = this.props.newDeployment ? "/admin/deployment/new" : `/admin/deployment/update/${this.props.deployment.key}`;
+        axios({
+            method: "post", url, data: {
+                name: deploymentName, displayName, restaurant, station, weather
+            }
+        }).then(res => {
+            if (res.data.msg === "success") {
+                this.deploymentWillUpdate();
+            }
+        })
+    }
+
+    deploymentWillUpdate() {
+        this.props.updateDeployments(() => {
+            this.props.history.replace(`/admin/${this.state.values.deploymentName}/config/deployment`)
+        })
     }
 
     render() {
-        const { classes } = this.props
+        const { classes, newDeployment } = this.props
         const { available } = this.state;
         const { deploymentName, displayName, restaurant, station, weather, } = this.state.values
         return (
             <Paper className={classes.paper}>
-                <form className={classes.container} onSubmit={this.handleSubmit} noValidate autoComplete="off">
+                {this.state.loading ? (
+                    "loading..."
+                ) : (
+                        <form className={classes.container} onSubmit={this.handleSubmit} noValidate autoComplete="off">
 
-                    <FormGroup className={classes.formGroup}>
-                        <Typography variant="h6" component="h3">
-                            Deployment config for {this.props.deployment.name}
-                        </Typography>
-                        <Typography component="p">
-                            To change what data is being displayed on all dashboards for this deployment ({this.props.deployment.name}),
-                            just change the config down below.
-                        </Typography>
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <Typography variant="h6" component="h3">
+                                    {newDeployment ? (
+                                        "Setup new deployment config"
+                                    ) : (
+                                            "Deployment config for " + this.props.deployment.name
+                                        )}
+                                </Typography>
+                                <Typography component="p">
+                                    {newDeployment ? (
+                                        "Choose what data is going to be displayed on all dashboards for this deployment. The config can be changed in the future"
+                                    ) : (
+                                            "To change what data is being displayed on all dashboards for this deployment (" + this.props.deployment.name + "), just change the config down below."
+                                        )}
+                                </Typography>
+                            </FormGroup>
 
-                    <FormGroup className={classes.formGroup}>
-                        <TextField
-                            margin="dense"
-                            variant="outlined"
-                            id="deploymentName"
-                            label="Deployment name"
-                            value={deploymentName}
-                            onChange={this.handleChange}
-                            helperText="Deployment name is a unique name that identifies a deployment. It's used for example in the url of the deployment."
-                        />
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <TextField
+                                    margin="dense"
+                                    variant="outlined"
+                                    name="deploymentName"
+                                    label="Deployment name"
+                                    value={deploymentName}
+                                    onChange={this.handleChange}
+                                    helperText="Deployment name is a unique name that identifies a deployment. It's used for example in the url of the deployment."
+                                />
+                            </FormGroup>
 
-                    <FormGroup className={classes.formGroup}>
-                        <TextField
-                            margin="dense"
-                            variant="outlined"
-                            id="displayName"
-                            label="Display name"
-                            value={displayName}
-                            onChange={this.handleChange}
-                            helperText="Display name is what's going to be shown to the user."
-                        />
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <TextField
+                                    margin="dense"
+                                    variant="outlined"
+                                    name="displayName"
+                                    label="Display name"
+                                    value={displayName}
+                                    onChange={this.handleChange}
+                                    helperText="Display name is what's going to be shown to the user."
+                                />
+                            </FormGroup>
 
-                    <FormGroup className={classes.formGroup}>
-                        <TextField
-                            select
-                            margin="dense"
-                            variant="outlined"
-                            id="restaurant"
-                            label="Restaurant"
-                            value={restaurant}
-                            onChange={this.handleChange}
-                            helperText="Which restaurant to get data from."
-                            SelectProps={{
-                                MenuProps: {
-                                    className: classes.menu,
-                                },
-                            }}
-                        >
-                            {available.restaurants.map(option => (
-                                <MenuItem key={option.value} value={option.id}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <TextField
+                                    select
+                                    margin="dense"
+                                    variant="outlined"
+                                    name="restaurant"
+                                    label="Restaurant"
+                                    value={restaurant}
+                                    onChange={this.handleChange}
+                                    helperText="Which restaurant to get data from."
+                                    SelectProps={{
+                                        MenuProps: {
+                                            className: classes.menu,
+                                        },
+                                    }}
+                                >
+                                    {available.restaurants.map(option => (
+                                        <MenuItem key={option.value} value={option.id}>
+                                            {option.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </FormGroup>
 
-                    <FormGroup className={classes.formGroup}>
-                        <TextField
-                            select
-                            margin="dense"
-                            variant="outlined"
-                            id="station"
-                            label="Station"
-                            value={station}
-                            onChange={this.handleChange}
-                            helperText="The site-id of what station to get real time data from."
-                            SelectProps={{
-                                MenuProps: {
-                                    className: classes.menu,
-                                },
-                            }}
-                        >
-                            {available.stations.map(option => (
-                                <MenuItem key={option.value} value={option.id}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <TextField
+                                    select
+                                    margin="dense"
+                                    variant="outlined"
+                                    name="station"
+                                    label="Station"
+                                    value={station}
+                                    onChange={this.handleChange}
+                                    helperText="The site-id of what station to get real time data from."
+                                    SelectProps={{
+                                        MenuProps: {
+                                            className: classes.menu,
+                                        },
+                                    }}
+                                >
+                                    {available.stations.map(option => (
+                                        <MenuItem key={option.value} value={option.id}>
+                                            {option.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </FormGroup>
 
-                    <FormGroup className={classes.formGroup}>
-                        <TextField
-                            select
-                            margin="dense"
-                            variant="outlined"
-                            id="weather"
-                            label="Weather"
-                            value={weather}
-                            onChange={this.handleChange}
-                            helperText=" Which city to get weather data from."
-                            SelectProps={{
-                                MenuProps: {
-                                    className: classes.menu,
-                                },
-                            }}
-                        >
-                            {available.weathers.map(option => (
-                                <MenuItem key={option.value} value={option.id}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </FormGroup>
+                            <FormGroup className={classes.formGroup}>
+                                <TextField
+                                    select
+                                    margin="dense"
+                                    variant="outlined"
+                                    name="weather"
+                                    label="Weather"
+                                    value={weather}
+                                    onChange={this.handleChange}
+                                    helperText=" Which city to get weather data from."
+                                    SelectProps={{
+                                        MenuProps: {
+                                            className: classes.menu,
+                                        },
+                                    }}
+                                >
+                                    {available.weathers.map(option => (
+                                        <MenuItem key={option.value} value={option.id}>
+                                            {option.name}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </FormGroup>
 
 
 
-                    <Button
-                        type="submit"
-                        color="primary"
-                        variant="contained"
-                    >
-                        Update
-                    </Button>
-                    <Button
-                        color="primary"
-                    >
-                        Cancel
-                    </Button>
-                </form>
+                            <Button
+                                type="submit"
+                                color="primary"
+                                variant="contained"
+                            >
+                                {newDeployment ? "Create" : "Update"}
+                            </Button>
+                            <Button
+                                color="primary"
+                            >
+                                Cancel
+                            </Button>
+                        </form>
+                    )}
             </Paper>
         )
     }
 }
 
-export default withStyles(styles)(Config);
+export default withStyles(styles)(withRouter(Config));
