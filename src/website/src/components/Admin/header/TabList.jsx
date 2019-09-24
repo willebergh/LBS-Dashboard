@@ -1,7 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Tabs, Tab } from "@material-ui/core";
-import { Switch, Route, Link, withRouter } from "react-router-dom";
-import LinkButton from "../../LinkButton";
+import { withRouter } from "react-router-dom";
 
 class TabList extends Component {
     constructor() {
@@ -21,9 +20,9 @@ class TabList extends Component {
             <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
 
                 {
-                    tabLinks[path[menuLink].toLowerCase()].map(link => {
-                        return <Tab label={link.label} value={path[1] + (path.length > 4 ? path[2] : "") + path[menuLink] + link.value} />
-                    })
+                    tabLinks[path[menuLink].toLowerCase()] ? tabLinks[path[menuLink].toLowerCase()].map((link, i) => {
+                        return <Tab key={i} label={link.label} value={path[1] + (path.length > 4 ? path[2] : "") + path[menuLink] + link.value} />
+                    }) : null
                 }
 
             </Tabs>
@@ -36,11 +35,14 @@ const tabLinks = {
         { label: "Overview", value: "/overview" },
         { label: "Test", value: "/test" }
     ],
+    "/config": [
+        { label: "Deployment", value: "/deployment" },
+    ],
     "/users": [
-        { label: "Overuuuview", value: "/overview" },
+        { label: "Overview", value: "/overview" },
     ],
     "/settings": [
-        { label: "Oversssview", value: "/overview" },
+        { label: "Overview", value: "/overview" },
     ]
 }
 

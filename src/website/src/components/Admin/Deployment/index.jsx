@@ -21,9 +21,10 @@ class Deployment extends Component {
             <Switch>
 
                 {
-                    deployments.map(deployment => {
+                    deployments.map((deployment, i) => {
                         return (
                             <Route
+                                key={i}
                                 path={`/admin/${deployment.name}/dashboards`}
                                 render={props => (
                                     <Dashboards deployment={deployment} socket={socket} {...props} />

@@ -4,18 +4,18 @@ import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import { Divider, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import {
-    Home as HomeIcon,
     People as PeopleIcon,
     Settings as SettingsIcon,
-    DashboardRounded as DashboardRoundedIcon
+    DashboardRounded as DashboardRoundedIcon,
+    BuildRounded as BuildRoundedIcon
 } from "@material-ui/icons";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 
 
 const deploymentLinks = [
     { id: "Dashboards", icon: <DashboardRoundedIcon />, category: "/dashboards", path: "/overview" },
+    { id: "Config", icon: <BuildRoundedIcon />, category: "/config", path: "/deployment" }
 ];
 
 const categories = [
@@ -77,12 +77,11 @@ function CustomLink({ children, ...props }) {
 }
 
 class Navigator extends Component {
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
     }
 
     render() {
-        const { } = this.props;
         const { deployments, classes, ...other } = this.props;
         return (
             <Drawer variant="permanent" {...other}>
@@ -104,9 +103,8 @@ class Navigator extends Component {
                             </ListItem>
 
                             {deploymentLinks.map(({ id, icon, category, path }, i) => (
-                                <CustomLink to={`/admin/${name}${category}${path}`} >
+                                <CustomLink key={i} to={`/admin/${name}${category}${path}`} >
                                     <ListItem
-                                        key={i}
                                         button
                                         className={clsx(classes.item, window.location.pathname.startsWith(`/admin/${name}${category}`) && classes.itemActiveItem)}
                                     >
@@ -140,9 +138,8 @@ class Navigator extends Component {
                                 </ListItemText>
                             </ListItem>
                             {links.map(({ id, icon, path }, i) => (
-                                <CustomLink to={path} >
+                                <CustomLink key={i} to={path} >
                                     <ListItem
-                                        key={i}
                                         button
                                         className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
                                     >
