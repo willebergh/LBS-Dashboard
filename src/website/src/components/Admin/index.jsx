@@ -215,10 +215,8 @@ class Admin extends React.Component {
         this.setState({ loading: true });
         axios.get(`/api/user/get-deployments`)
             .then(res => {
-                setTimeout(() => {
-                    this.setState({ deployments: res.data.deployments, loading: false });
-                    if (typeof callback === "function") callback();
-                }, 1)
+                this.setState({ deployments: res.data.deployments, loading: false });
+                if (typeof callback === "function") callback();
             })
             .catch(err => console.log(err));
     }

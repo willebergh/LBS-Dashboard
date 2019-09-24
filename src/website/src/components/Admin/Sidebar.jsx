@@ -7,8 +7,6 @@ import {
     HomeRounded as HomeIcon,
     PeopleRounded as PeopleIcon,
     SettingsRounded as SettingsIcon,
-    DashboardRounded as DashboardRoundedIcon,
-    BuildRounded as BuildRoundedIcon,
     FolderRounded as FolderIcon,
     FolderOpenRounded as FolderOpenIcon,
     CreateNewFolderRounded as NewFolderIcon,
@@ -76,10 +74,6 @@ function CustomLink({ children, ...props }) {
 }
 
 class Navigator extends Component {
-    constructor() {
-        super();
-    }
-
     render() {
         const { deployments, classes, ...other } = this.props;
         return (

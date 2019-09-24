@@ -77,9 +77,9 @@ class Footer extends Component {
                                     This site was published by
                                 </div>
                                 <div className="text-center d-inline">
-                                    <a href="https://willebergh.io" target="_blank">William Bergh</a>
+                                    <a href="https://willebergh.io" target="_blank" rel="noopener noreferrer">William Bergh</a>
                                     {" & "}
-                                    <a href="https://www.lbs.se/stockholmnorra/" target="_blank">
+                                    <a href="https://www.lbs.se/stockholmnorra/" target="_blank" rel="noopener noreferrer">
                                         LBS Stockholm Norra
                                     </a>.
                                 </div>

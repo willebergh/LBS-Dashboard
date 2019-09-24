@@ -99,7 +99,7 @@ class Config extends Component {
 
     deploymentWillUpdate() {
         this.props.updateDeployments(() => {
-            this.props.history.replace(`/admin/${this.state.values.deploymentName}/config/deployment`)
+            this.props.history.replace(`/admin/${this.state.values.deploymentName}/config`)
         })
     }
 
@@ -172,7 +172,7 @@ class Config extends Component {
                                     }}
                                 >
                                     {available.restaurants.map(option => (
-                                        <MenuItem key={option.value} value={option.id}>
+                                        <MenuItem key={option.id} value={option.id}>
                                             {option.name}
                                         </MenuItem>
                                     ))}
@@ -196,7 +196,7 @@ class Config extends Component {
                                     }}
                                 >
                                     {available.stations.map(option => (
-                                        <MenuItem key={option.value} value={option.id}>
+                                        <MenuItem key={option.id} value={option.id}>
                                             {option.name}
                                         </MenuItem>
                                     ))}
@@ -220,7 +220,7 @@ class Config extends Component {
                                     }}
                                 >
                                     {available.weathers.map(option => (
-                                        <MenuItem key={option.value} value={option.id}>
+                                        <MenuItem key={option.id} value={option.id}>
                                             {option.name}
                                         </MenuItem>
                                     ))}

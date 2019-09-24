@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
-import MaterialTable, { MTableToolbar, MTableHeader, MTableBodyRow, MTableActions } from 'material-table';
+import MaterialTable, { MTableToolbar, MTableHeader } from 'material-table';
 import { MyLocation as MyLocationIcon } from "@material-ui/icons";
 import axios from "axios"
 
