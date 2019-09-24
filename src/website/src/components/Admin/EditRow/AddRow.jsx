@@ -8,8 +8,7 @@ import {
     Typography,
     Grid
 } from "@material-ui/core";
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import ButtonProgress from "../ButtonProgress";
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     paper: {

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
-import { Form, Button, Label } from "react-bootstrap";
 import "./style.css";
 import axios from "axios";
 
@@ -49,7 +48,7 @@ class Login extends Component {
     }
 
     render() {
-        const { errorCode, errorMsg } = this.state;
+        const { errorCode } = this.state;
         if (this.state.redirect) return <Redirect to="/" />
         return (
             <div className="container d-flex flex-column" style={{ marginTop: "-88px" }}>
