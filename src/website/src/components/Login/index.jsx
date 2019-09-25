@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
 import "./style.css";
 import axios from "axios";
@@ -28,22 +27,22 @@ class Login extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(data => {
-
-                fire.auth().currentUser.getIdToken(true)
-                    .then(idToken => {
-                        axios({
-                            method: "post",
-                            url: "/api/auth/login",
-                            data: { idToken }
-                        });
-                        this.setState({ redirect: true })
-                    })
+        axios({
+            method: "post",
+            url: "/api/auth/login",
+            data: {
+                email: this.state.email,
+                password: this.state.password
+            }
+        })
+            .then(res => {
+                if (res.data.user) {
+                    localStorage.setItem("user", JSON.stringify(res.data.user));
+                    this.setState({ redirect: true })
+                }
             })
             .catch(err => {
-                this.setState({ errorMsg: err.message, errorCode: err.code })
-                console.log(err)
+                this.setState({ errorCode: true })
             })
     }
 

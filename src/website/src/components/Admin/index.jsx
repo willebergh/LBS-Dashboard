@@ -11,7 +11,7 @@ import Header from './Header';
 
 import { CircularProgress } from "@material-ui/core"
 
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import axios from "axios";
 
 import Home from "./Home";
@@ -21,7 +21,7 @@ import Deployment from './Deployment';
 import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
 
 import io from "socket.io-client";
-const socket = io("/admin");
+
 
 function Copyright() {
     return (
@@ -193,18 +193,42 @@ class Admin extends React.Component {
             ],
             deployments: [],
             loading: false,
+            loginRedirect: false
         }
 
         this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
         this.updateDeployments = this.updateDeployments.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.setState({ loading: true })
+        this.initSocket()
     }
 
-    componentDidMount() {
-        this.updateDeployments();
+    initSocket() {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) return this.setState({ loading: false, loginRedirect: true })
+        const socket = io("/admin", { query: { token: user.token } });
+        socket.on("error", err => {
+            if (err.message === "jwt expired") {
+                return this.refreshToken(user);
+            }
+        });
+        socket.on("connect", () => {
+            console.log("Successfully connected to socket!");
+            this.socket = socket; this.setState({ loading: false });
+            this.updateDeployments();
+        });
+    }
+
+    refreshToken(user) {
+        axios({ method: "post", url: "/api/auth/refresh-token", data: { user } })
+            .then(res => {
+                if (res.data.msg === "success" && res.data.user) {
+                    return this.initSocket();
+                }
+            })
+            .catch(err => console.log(err))
     }
 
     handleDrawerToggle() {
@@ -232,59 +256,61 @@ class Admin extends React.Component {
                         <div className={classes.loading}>
                             <CircularProgress />
                         </div>
+                    ) : this.state.loginRedirect ? (
+                        <Redirect to="/login" />
                     ) : (
-                            <div className={classes.root}>
-                                <CssBaseline />
-                                <nav className={classes.drawer}>
-                                    <Hidden smUp implementation="js">
-                                        <Sidebar
-                                            PaperProps={{ style: { width: drawerWidth } }}
-                                            variant="temporary"
-                                            open={mobileOpen}
-                                            onClose={this.handleDrawerToggle}
-                                            deployments={this.state.deployments}
-                                        />
-                                    </Hidden>
-                                    <Hidden xsDown implementation="css">
-                                        <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
-                                    </Hidden>
-                                </nav>
-                                <div className={classes.app}>
+                                <div className={classes.root}>
+                                    <CssBaseline />
+                                    <nav className={classes.drawer}>
+                                        <Hidden smUp implementation="js">
+                                            <Sidebar
+                                                PaperProps={{ style: { width: drawerWidth } }}
+                                                variant="temporary"
+                                                open={mobileOpen}
+                                                onClose={this.handleDrawerToggle}
+                                                deployments={this.state.deployments}
+                                            />
+                                        </Hidden>
+                                        <Hidden xsDown implementation="css">
+                                            <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
+                                        </Hidden>
+                                    </nav>
+                                    <div className={classes.app}>
 
-                                    <Header onDrawerToggle={this.handleDrawerToggle} />
+                                        <Header onDrawerToggle={this.handleDrawerToggle} />
 
-                                    <main className={classes.main}>
+                                        <main className={classes.main}>
 
-                                        <Switch>
+                                            <Switch>
 
-                                            <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
-                                            <Route exact path="/admin/new-deployment" render={props => (
-                                                <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
-                                            )} />
-                                            <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
-                                            <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
-                                            {this.state.deployments.length !== 0 ? (
-                                                <Route path={"/admin/:deployment"} render={(props) => (
-                                                    <Deployment
-                                                        deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
-                                                        updateDeployments={this.updateDeployments}
-                                                        socket={socket} {...props}
-                                                    />
+                                                <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
+                                                <Route exact path="/admin/new-deployment" render={props => (
+                                                    <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
                                                 )} />
-                                            ) : null}
+                                                <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
+                                                <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+                                                {this.state.deployments.length !== 0 ? (
+                                                    <Route path={"/admin/:deployment"} render={(props) => (
+                                                        <Deployment
+                                                            deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
+                                                            updateDeployments={this.updateDeployments}
+                                                            socket={this.socket} {...props}
+                                                        />
+                                                    )} />
+                                                ) : null}
 
 
-                                        </Switch>
+                                            </Switch>
 
-                                    </main>
+                                        </main>
 
-                                    <footer className={classes.footer}>
-                                        <Copyright />
-                                    </footer>
+                                        <footer className={classes.footer}>
+                                            <Copyright />
+                                        </footer>
 
+                                    </div>
                                 </div>
-                            </div>
-                        )
+                            )
                 }
             </ThemeProvider>
         );

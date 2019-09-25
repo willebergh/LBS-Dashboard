@@ -14,5 +14,6 @@ module.exports = session({
     },
     store: store,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    rolling: true
 });

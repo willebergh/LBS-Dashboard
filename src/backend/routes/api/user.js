@@ -3,9 +3,10 @@ const router = express.Router();
 const User = require("../../models/User");
 const DeploymentConfig = require("../../models/DeploymentConfig");
 const mongoose = require("mongoose");
+const reqAuth = require("../../middleware/reqAuth");
 
 router.get("/get-deployments", async (req, res) => {
-    const uid = req.session.user_uid;
+    const uid = req.session.user.id;
     const user = await User.findOne({ uid });
 
     try {
@@ -21,6 +22,15 @@ router.get("/get-deployments", async (req, res) => {
     }
 
 
-})
+});
+
+router.get("/me", reqAuth.jwt, (req, res) => {
+    const uid = res.locals.user.uid;
+    User.findOne({ uid })
+        .select("-_id -__v -password")
+        .then(user => {
+            return res.status(200).json({ msg: "success", user })
+        })
+});
 
 module.exports = router;

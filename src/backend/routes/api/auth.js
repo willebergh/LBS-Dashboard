@@ -1,25 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const admin = require("../../config/firebase-admin");
 const jwt = require("jsonwebtoken");
 const randToken = require("rand-token");
+const bcrypt = require("bcrypt");
 const DeploymentConfig = require("../../models/DeploymentConfig");
+const User = require("../../models/User");
 require("dotenv").config();
-
-router.post("/login", (req, res) => {
-    const idToken = req.body.idToken;
-    admin.auth().verifyIdToken(idToken)
-        .then(decodedToken => {
-            req.session.user_uid = decodedToken.uid;
-            req.session.save(err => {
-                if (err) throw err;
-                res.status(200).json({ msg: "success" })
-            })
-        })
-        .catch(err => {
-            res.send(err)
-        });
-});
 
 router.get("/logout", (req, res) => {
     req.session.destroy(err => {
@@ -70,6 +56,103 @@ router.get("/me", (req, res) => {
         }
         return res.json(decoded);
     }
+});
+
+
+router.post("/login", (req, res) => {
+    const { username, email, password, remember } = req.body;
+    const identifier = username ? { username } : { email }
+    User.findOne(identifier)
+        .then(user => {
+            if (!user) {
+                return res.status(401).json({
+                    msg: "error",
+                    error: {
+                        type: "unauthorized",
+                        msg: username ? "Wrong username or password" : "Wrong email or password"
+                    }
+                })
+            }
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (!result) {
+                    return res.status(401).json({
+                        msg: "error",
+                        error: {
+                            type: "unauthorized",
+                            msg: username ? "Wrong username or password" : "Wrong email or password"
+                        }
+                    })
+                } else {
+                    try {
+                        let payload = { user: { uid: user.uid, roles: user.roles } };
+                        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
+                        res.cookie("token", token, { httpOnly: true });
+
+                        req.session.user = { ...payload.user };
+
+                        const refreshToken = remember ? randToken.uid(256) : undefined;
+                        const { uid, username, email, fullName, roles, deployments } = user;
+                        return res.status(200).json({
+                            msg: "success", user: {
+                                uid, username, email, fullName, roles, deployments, token, refreshToken
+                            }
+                        });
+
+                    } catch (err) {
+                        return res.status(200).json({
+                            msg: "error",
+                            error: {
+                                type: "token",
+                                msg: err.message
+                            }
+                        })
+                    }
+                }
+            })
+        })
+});
+
+router.post("/register", (req, res) => {
+    const { username, email, password, fullName } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(200).json({ msg: "empty-fields" });
+    }
+
+    User.findOne({ $or: [{ username }, { email }] })
+        .then(user => {
+            if (user) {
+                if (user.username === username) {
+                    return res.status(200).json({ msg: "username-taken" })
+                } else {
+                    return res.status(200).json({ msg: "email-taken" })
+                }
+            } else {
+
+                const saltRounds = 10;
+                bcrypt.genSalt(saltRounds, (err, salt) => {
+                    bcrypt.hash(password, salt, (err, hashedPassword) => {
+
+                        const uid = randToken.uid(32);
+                        var newUser = new User({
+                            uid, username, email, password: hashedPassword, fullName, roles: { "user": "user" }
+                        });
+                        newUser.save()
+                            .then(() => {
+                                const payload = { user: { uid, roles: { "user": "user" } } };
+                                const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
+                                res.cookie("token", token, { httpOnly: true });
+
+                                let user = { uid, username, email, fullName };
+                                return res.status(200).json({ msg: "success", user: { ...user, token } });
+                            })
+
+                    });
+                });
+
+
+            }
+        })
 });
 
 module.exports = router;

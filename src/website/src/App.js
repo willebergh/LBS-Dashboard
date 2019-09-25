@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import fire from "./config/fire";
 import axios from "axios";
 
@@ -20,7 +20,7 @@ export default class App extends Component {
     }
 
     componentDidMount() {
-        this.authListener();
+        //this.authListener();
     }
 
     authListener() {
@@ -53,27 +53,22 @@ export default class App extends Component {
         return (
             <Router>
 
+                <Switch>
+                    <Route path="/admin" component={Admin} />
 
-                {
-                    window.location.pathname.startsWith("/admin") ? (
-                        <PrivateRoute path="/admin" component={Admin} />
+                    <Route path="/" render={props => (
+                        <React.Fragment>
+                            <Header user={this.state.user} />
 
-                    ) : (
+                            <Route exact path="/" component={Home} />
+                            <Route exact path="/login" component={Login} />
+                            <Route exact path="/logout" component={Logout} />
 
-                            <div>
-                                <Header user={this.state.user} />
+                            <Footer />
+                        </React.Fragment>
+                    )} />
 
-                                <Route exact path="/" component={Home} />
-                                <Route exact path="/login" component={Login} />
-                                <Route exact path="/logout" component={Logout} />
-
-                                <Footer />
-                            </div>
-
-                        )
-                }
-
-
+                </Switch>
 
             </Router>
         );

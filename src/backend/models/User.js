@@ -6,10 +6,26 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
     email: {
         type: String,
         required: true,
         unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    fullName: {
+        type: String
+    },
+    roles: {
+        type: Object,
+        required: true
     },
     deployments: {
         type: Array

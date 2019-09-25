@@ -10,7 +10,7 @@ const randToken = require("rand-token");
 require("dotenv").config();
 
 router.post("/new", async (req, res) => {
-    const user_uid = req.session.user_uid;
+    const user_uid = req.session.user.id;
     if (!user_uid) {
         return res.status(200).json({ msg: "unathorized" });
     } else {
@@ -51,7 +51,7 @@ router.post("/add", async (req, res) => {
             } else {
 
 
-                const user_uid = req.session.user_uid;
+                const user_uid = req.session.user.id;
                 User.findOne({ uid: user_uid })
                     .then(user => {
 
@@ -107,7 +107,7 @@ router.post("/add", async (req, res) => {
 
 router.post("/delete", (req, res) => {
     const { key, dashboardName } = req.body;
-    const user_uid = req.session.user_uid;
+    const user_uid = req.session.user.id;
     User.findOne({ uid: user_uid })
         .then(user => {
             if (!user) {
@@ -184,7 +184,7 @@ router.get("/get/:key/dashboards", (req, res) => {
 router.post("/update/:key", (req, res) => {
     const key = req.params.key;
     const newConfig = req.body;
-    const user_uid = req.session.user_uid;
+    const user_uid = req.session.user.id;
     User.findOne({ uid: user_uid })
         .then(user => {
             if (!user) {
