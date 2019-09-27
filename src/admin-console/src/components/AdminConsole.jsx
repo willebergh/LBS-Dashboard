@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { createMuiTheme, withStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
@@ -21,7 +21,6 @@ import Deployment from './Deployment';
 import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
 
 import io from "socket.io-client";
-
 
 function Copyright() {
     return (
@@ -181,7 +180,7 @@ const styles = {
     },
 };
 
-class Admin extends React.Component {
+class AdminConsole extends Component {
     constructor() {
         super();
         this.state = {
@@ -201,34 +200,20 @@ class Admin extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ loading: true })
-        this.initSocket()
+        this.setState({ loading: true });
+        this.initSocket();
     }
 
     initSocket() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) return this.setState({ loading: false, loginRedirect: true })
-        const socket = io("/admin", { query: { token: user.token } });
+        const socket = io("/admin");
         socket.on("error", err => {
-            if (err.message === "jwt expired") {
-                return this.refreshToken(user);
-            }
+            console.log(err);
         });
         socket.on("connect", () => {
             console.log("Successfully connected to socket!");
             this.socket = socket; this.setState({ loading: false });
             this.updateDeployments();
         });
-    }
-
-    refreshToken(user) {
-        axios({ method: "post", url: "/api/auth/refresh-token", data: { user } })
-            .then(res => {
-                if (res.data.msg === "success" && res.data.user) {
-                    return this.initSocket();
-                }
-            })
-            .catch(err => console.log(err))
     }
 
     handleDrawerToggle() {
@@ -317,8 +302,8 @@ class Admin extends React.Component {
     }
 }
 
-Admin.propTypes = {
+AdminConsole.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Admin);
+export default withStyles(styles)(AdminConsole);

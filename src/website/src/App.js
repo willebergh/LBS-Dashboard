@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import fire from "./config/fire";
 import axios from "axios";
 
 import Header from "./components/Header";
@@ -20,33 +19,12 @@ export default class App extends Component {
     }
 
     componentDidMount() {
-        //this.authListener();
+        this.initUserState();
     }
 
-    authListener() {
-        fire.auth().onAuthStateChanged(user => {
-            if (user) {
-                var userData = {
-                    displayName: user.displayName,
-                    email: user.email,
-                    emailVerified: user.emailVerified,
-                    photoURL: user.photoURL,
-                    isAnonymous: user.isAnonymous,
-                    uid: user.uid,
-                    providerData: user.providerData,
-                }
-                axios({
-                    method: "post",
-                    url: "/api/auth/login",
-                    data: { idToken: user.ma }
-                });
-                this.setState({ user: userData })
-                localStorage.setItem("user", JSON.stringify(userData));
-            } else {
-                this.setState({ user: null })
-                localStorage.removeItem("user")
-            }
-        })
+    initUserState() {
+        axios.get("/api/user/me")
+            .then(res => this.setState({ user: res.data.user }))
     }
 
     render() {
@@ -54,7 +32,6 @@ export default class App extends Component {
             <Router>
 
                 <Switch>
-                    <Route path="/admin" component={Admin} />
 
                     <Route path="/" render={props => (
                         <React.Fragment>

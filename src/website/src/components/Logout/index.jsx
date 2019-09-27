@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import fire from "../../config/fire";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 
@@ -12,11 +11,7 @@ class Logout extends Component {
     }
 
     componentDidMount() {
-        fire.auth().signOut()
-            .then(() => {
-                axios.get("/api/auth/logout")
-                    .then(() => this.setState({ redirect: true }))
-            })
+
     }
 
     render() {
