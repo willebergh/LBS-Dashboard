@@ -6,10 +6,9 @@ const mongoose = require("mongoose");
 const reqAuth = require("../../middleware/reqAuth");
 
 router.get("/get-deployments", async (req, res) => {
-    const uid = req.session.user.id;
-    const user = await User.findOne({ uid });
-
     try {
+        const uid = req.session.user.uid;
+        const user = await User.findOne({ uid });
         await DeploymentConfig.find({
             "key": {
                 $in: user.deployments.map(deployment => { return deployment })

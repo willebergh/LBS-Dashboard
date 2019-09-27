@@ -7,6 +7,7 @@ const NewDashboard = require("../../models/NewDashboard");
 const User = require("../../models/User");
 const jwt = require("jsonwebtoken");
 const randToken = require("rand-token");
+const reqAuth = require("../../middleware/reqAuth");
 require("dotenv").config();
 
 router.post("/new", async (req, res) => {
@@ -42,7 +43,7 @@ router.post("/new", async (req, res) => {
     }
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", reqAuth, async (req, res) => {
     const { code, key, name } = req.body;
     NewDashboard.findOne({ code })
         .then(newDashboard => {
@@ -51,7 +52,7 @@ router.post("/add", async (req, res) => {
             } else {
 
 
-                const user_uid = req.session.user.id;
+                const user_uid = req.session.user.uid;
                 User.findOne({ uid: user_uid })
                     .then(user => {
 
@@ -107,33 +108,26 @@ router.post("/add", async (req, res) => {
 
 router.post("/delete", (req, res) => {
     const { key, dashboardName } = req.body;
-    const user_uid = req.session.user.id;
-    User.findOne({ uid: user_uid })
-        .then(user => {
-            if (!user) {
-                return res.status(200).json({ msg: "unathorized" })
-            } else {
-                const findUserKey = user.deployments.find(k => k === key);
-                if (!findUserKey) {
-                    return res.status(200).json({ msg: "unathorized" });
-                } else {
-                    DeploymentConfig.updateOne({ key },
-                        {
-                            "$pull":
-                            {
-                                "connectedDashboards":
-                                    { "name": dashboardName }
-                            }
-                        }, { safe: true, multi: true }, (err, obj) => {
-                            if (err) {
-                                return res.json({ msg: "error", error: err })
-                            } else {
-                                return res.json({ msg: "success" });
-                            }
-                        });
+    const user = req.session.user;
+    const findUserKey = user.deployments.find(k => k === key);
+    if (!findUserKey) {
+        return res.status(200).json({ msg: "unathorized" });
+    } else {
+        DeploymentConfig.updateOne({ key },
+            {
+                "$pull":
+                {
+                    "connectedDashboards":
+                        { "name": dashboardName }
                 }
-            }
-        })
+            }, { safe: true, multi: true }, (err, obj) => {
+                if (err) {
+                    return res.json({ msg: "error", error: err })
+                } else {
+                    return res.json({ msg: "success" });
+                }
+            });
+    }
 });
 
 router.get("/get/:key", (req, res) => {

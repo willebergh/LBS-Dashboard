@@ -1,7 +1,13 @@
 const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
 require("dotenv").config();
 
 function reqAuth(req, res, next) {
+    if (req.session.user) {
+        return next();
+    } else {
+        return res.status(401).json({ msg: "unauthorized" });
+    }
 }
 
 module.exports = reqAuth;
@@ -47,4 +53,22 @@ function error(type, msg) {
     typeof type === "string" ? obj.type = type : null;
     typeof msg === "string" ? obj.msg = msg : null;
     return obj;
+}
+
+module.exports.websocket.cookie = function (socket, next) {
+    try {
+        var token = cookie.parse(socket.handshake.headers.cookie).token;
+        if (!token) throw { message: "no-token" };
+        var decoded = jwt.verify(token, process.env.JWT_SECRET)
+    } catch (err) {
+        console.log(err);
+        let error = new Error("authentication-error");
+        error.data = {
+            type: "authentication-error",
+            message: err.message
+        };
+        return next(error);
+    }
+    socket.decoded = decoded;
+    next();
 }

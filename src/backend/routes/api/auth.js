@@ -8,6 +8,7 @@ const User = require("../../models/User");
 require("dotenv").config();
 
 router.get("/logout", (req, res) => {
+    res.clearCookie("token");
     req.session.destroy(err => {
         if (err) throw err;
         res.status(200).json({ msg: "success" });
@@ -84,7 +85,7 @@ router.post("/login", (req, res) => {
                     })
                 } else {
                     try {
-                        let payload = { user: { uid: user.uid, roles: user.roles } };
+                        let payload = { user: { uid: user.uid, roles: user.roles, deployments: user.deployments } };
                         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
                         res.cookie("token", token, { httpOnly: true });
 

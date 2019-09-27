@@ -38,7 +38,7 @@ module.exports = class io extends Server {
     }
 
     handleAdminSocket() {
-        this.of("/admin").on("connection", socket => {
+        this.of("/admin").use(reqAuth.websocket.cookie).on("connection", socket => {
             logger.success("New connection", "WebSocket", socket.id);
             adminSocket(this, socket);
         })
