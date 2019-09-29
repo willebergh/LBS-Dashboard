@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 const categories = [
     {
         id: "Other", links: [
-            { id: "Users", icon: <PeopleIcon />, path: "/admin/users/overview" },
+            { id: "Profile", icon: <PeopleIcon />, path: "/admin/profile" },
             { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
         ]
     }

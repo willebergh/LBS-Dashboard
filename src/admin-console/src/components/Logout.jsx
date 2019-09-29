@@ -15,18 +15,13 @@ class Logout extends Component {
         axios.post("/api/auth/logout")
             .then(res => {
                 if (res.data.msg === "success") {
-                    //window.location.reload();
+                    this.props.updateAuthState(null);
                 }
             })
     }
 
     render() {
-        const { redirect } = this.state;
-        if (redirect) {
-            //return <Redirect to="/login" />
-        } else {
-            return <Loading />
-        }
+        return <Loading />
     }
 }
 

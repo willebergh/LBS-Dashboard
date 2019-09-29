@@ -1,53 +1,45 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import axios from "axios";
+import { Route, Switch } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Home from "./components/Home";
-import Login from "./components/Login"
-import Logout from "./components/Logout";
-import PrivateRoute from "./middleware/PrivateRoute";
-import Admin from "./components/Admin";
+import Theme from "./components/Theme";
+import Header from "./components/Layout/Header";
+import Footer from "./components/Layout/Footer";
+import Landing from "./components/Landing";
 
-export default class App extends Component {
+
+
+const style = theme => ({
+    root: {
+        minHeight: "100vh",
+    }
+})
+
+class App extends Component {
     constructor() {
         super();
-        this.state = {
-            user: null
-        }
     }
 
-    componentDidMount() {
-        this.initUserState();
-    }
-
-    initUserState() {
-        axios.get("/api/user/me")
-            .then(res => this.setState({ user: res.data.user }))
-    }
 
     render() {
+        const { classes } = this.props;
         return (
-            <Router>
+            <Theme>
+                <div className={classes.root}>
+                    <Header />
 
-                <Switch>
 
-                    <Route path="/" render={props => (
-                        <React.Fragment>
-                            <Header user={this.state.user} />
+                    <Switch>
 
-                            <Route exact path="/" component={Home} />
-                            <Route exact path="/login" component={Login} />
-                            <Route exact path="/logout" component={Logout} />
+                        <Route exact path="/" component={Landing} />
 
-                            <Footer />
-                        </React.Fragment>
-                    )} />
+                    </Switch>
 
-                </Switch>
-
-            </Router>
+                    <Footer />
+                </div>
+            </Theme>
         );
     }
-}   
+}
+
+export default withStyles(style)(App);

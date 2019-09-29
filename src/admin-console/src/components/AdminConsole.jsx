@@ -1,149 +1,21 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { createMuiTheme, withStyles } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Hidden from '@material-ui/core/Hidden';
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import Sidebar from './Sidebar';
-import Header from './Header';
-
-import { CircularProgress } from "@material-ui/core"
-
 import { Switch, Route, Redirect } from "react-router-dom";
+import { CssBaseline, Hidden, CircularProgress } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import io from "socket.io-client";
 import axios from "axios";
 
+import { ThemeProvider, theme } from "./Theme";
+import Loading from "./Loading";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
 import Home from "./Home";
-import Users from "./users";
+import Profile from "./Profile";
 import Settings from "./settings";
 import Deployment from './Deployment';
 import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
-
-import io from "socket.io-client";
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                LBS-Dashboard
-                </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
-let theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: '#63ccff',
-            main: '#009be5',
-            dark: '#006db3',
-        },
-    },
-    typography: {
-        h5: {
-            fontWeight: 500,
-            fontSize: 26,
-            letterSpacing: 0.5,
-        },
-    },
-    shape: {
-        borderRadius: 8,
-    },
-    props: {
-        MuiTab: {
-            disableRipple: true,
-        },
-    },
-    mixins: {
-        toolbar: {
-            minHeight: 48,
-        },
-    },
-});
-
-theme = {
-    ...theme,
-    overrides: {
-        MuiDrawer: {
-            paper: {
-                backgroundColor: '#18202c',
-            },
-        },
-        MuiButton: {
-            label: {
-                textTransform: 'none',
-            },
-            contained: {
-                boxShadow: 'none',
-                '&:active': {
-                    boxShadow: 'none',
-                },
-            },
-        },
-        MuiTabs: {
-            root: {
-                marginLeft: theme.spacing(1),
-            },
-            indicator: {
-                height: 3,
-                borderTopLeftRadius: 3,
-                borderTopRightRadius: 3,
-                backgroundColor: theme.palette.common.white,
-            },
-        },
-        MuiTab: {
-            root: {
-                textTransform: 'none',
-                margin: '0 16px',
-                minWidth: 0,
-                padding: 0,
-                [theme.breakpoints.up('md')]: {
-                    padding: 0,
-                    minWidth: 0,
-                },
-            },
-        },
-        MuiIconButton: {
-            root: {
-                padding: theme.spacing(1),
-            },
-        },
-        MuiTooltip: {
-            tooltip: {
-                borderRadius: 4,
-            },
-        },
-        MuiDivider: {
-            root: {
-                backgroundColor: '#404854',
-            },
-        },
-        MuiListItemText: {
-            primary: {
-                fontWeight: theme.typography.fontWeightMedium,
-            },
-        },
-        MuiListItemIcon: {
-            root: {
-                color: 'inherit',
-                marginRight: 0,
-                '& svg': {
-                    fontSize: 20,
-                },
-            },
-        },
-        MuiAvatar: {
-            root: {
-                width: 32,
-                height: 32,
-            },
-        },
-    },
-};
+import Copyright from "./Copyright";
 
 const drawerWidth = 256;
 
@@ -185,11 +57,6 @@ class AdminConsole extends Component {
         super();
         this.state = {
             mobileOpen: false,
-            routes: [
-                { path: "/admin/users", component: Users },
-                { path: "/admin/settings", component: Settings },
-                { path: "/admin/:deployment", component: Deployment },
-            ],
             deployments: [],
             loading: false,
             loginRedirect: false
@@ -231,72 +98,64 @@ class AdminConsole extends Component {
     }
 
     render() {
-        const { classes } = this.props;
-        const { mobileOpen } = this.state;
+        const { classes, user } = this.props;
+        const { loading, loginRedirect, mobileOpen } = this.state;
         return (
 
-            <ThemeProvider theme={theme} >
-                {
-                    this.state.loading ? (
-                        <div className={classes.loading}>
-                            <CircularProgress />
-                        </div>
-                    ) : this.state.loginRedirect ? (
-                        <Redirect to="/login" />
-                    ) : (
-                                <div className={classes.root}>
-                                    <CssBaseline />
-                                    <nav className={classes.drawer}>
-                                        <Hidden smUp implementation="js">
-                                            <Sidebar
-                                                PaperProps={{ style: { width: drawerWidth } }}
-                                                variant="temporary"
-                                                open={mobileOpen}
-                                                onClose={this.handleDrawerToggle}
-                                                deployments={this.state.deployments}
-                                            />
-                                        </Hidden>
-                                        <Hidden xsDown implementation="css">
-                                            <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
-                                        </Hidden>
-                                    </nav>
-                                    <div className={classes.app}>
+            <ThemeProvider>
+                {loading ? <Loading />
+                    : loginRedirect ? <Redirect to="/login" />
+                        : <div className={classes.root}>
+                            <CssBaseline />
+                            <nav className={classes.drawer}>
+                                <Hidden smUp implementation="js">
+                                    <Sidebar
+                                        PaperProps={{ style: { width: drawerWidth } }}
+                                        variant="temporary"
+                                        open={mobileOpen}
+                                        onClose={this.handleDrawerToggle}
+                                        deployments={this.state.deployments}
+                                    />
+                                </Hidden>
+                                <Hidden xsDown implementation="css">
+                                    <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
+                                </Hidden>
+                            </nav>
+                            <div className={classes.app}>
 
-                                        <Header onDrawerToggle={this.handleDrawerToggle} />
+                                <Header user={user} onDrawerToggle={this.handleDrawerToggle} />
 
-                                        <main className={classes.main}>
+                                <main className={classes.main}>
 
-                                            <Switch>
+                                    <Switch>
 
-                                                <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
-                                                <Route exact path="/admin/new-deployment" render={props => (
-                                                    <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
-                                                )} />
-                                                <Route path={"/admin/users"} render={(props) => <Users {...props} />} />
-                                                <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
-                                                {this.state.deployments.length !== 0 ? (
-                                                    <Route path={"/admin/:deployment"} render={(props) => (
-                                                        <Deployment
-                                                            deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
-                                                            updateDeployments={this.updateDeployments}
-                                                            socket={this.socket} {...props}
-                                                        />
-                                                    )} />
-                                                ) : null}
+                                        <Route exact path="/admin" render={props => <Home deployments={this.state.deployments} {...props} />} />
+                                        <Route exact path="/admin/new-deployment" render={props => (
+                                            <DeploymentConfigForm newDeployment updateDeployments={this.updateDeployments} {...props} />
+                                        )} />
+                                        <Route path={"/admin/profile"} render={(props) => <Profile user={user} {...props} />} />
+                                        <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+                                        {this.state.deployments.length !== 0 ? (
+                                            <Route path={"/admin/:deployment"} render={(props) => (
+                                                <Deployment
+                                                    deployment={this.state.deployments.find(d => d.name === props.match.params.deployment)}
+                                                    updateDeployments={this.updateDeployments}
+                                                    socket={this.socket} {...props}
+                                                />
+                                            )} />
+                                        ) : null}
 
 
-                                            </Switch>
+                                    </Switch>
 
-                                        </main>
+                                </main>
 
-                                        <footer className={classes.footer}>
-                                            <Copyright />
-                                        </footer>
+                                <footer className={classes.footer}>
+                                    <Copyright />
+                                </footer>
 
-                                    </div>
-                                </div>
-                            )
-                }
+                            </div>
+                        </div>}
             </ThemeProvider>
         );
     }

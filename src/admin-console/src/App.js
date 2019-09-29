@@ -16,7 +16,6 @@ class App extends Component {
         }
 
         this.getAuthState = this.getAuthState.bind(this);
-        this.onLoginSuccess = this.onLoginSuccess.bind(this);
     }
 
     componentDidMount() {
@@ -33,9 +32,8 @@ class App extends Component {
             .catch(() => this.setState({ loading: false }))
     }
 
-    onLoginSuccess(user) {
+    updateAuthState = user => {
         this.setState({ user });
-        this.props.history.replace("/admin");
     }
 
     render() {
@@ -47,16 +45,17 @@ class App extends Component {
 
         return (
             <Switch>
-                <Route exact path="/login" render={props => (
-                    !user ? <Login onLoginSuccess={this.onLoginSuccess} /> : <Redirect to="/admin" />
-                )} />
 
                 <Route exact path="/logout" render={props => (
-                    <Logout onLogoutSuccess={this.onLogoutSuccess} />
+                    <Logout updateAuthState={this.updateAuthState} />
+                )} />
+
+                <Route exact path="/login" render={props => (
+                    !user ? <Login updateAuthState={this.updateAuthState} /> : <Redirect to="/admin" />
                 )} />
 
                 <Route path="/admin" render={props => (
-                    user ? <AdminConsole /> : <Redirect to="/login" />
+                    user ? <AdminConsole user={user} /> : <Redirect to="/login" />
                 )} />
 
                 <Route render={props => (

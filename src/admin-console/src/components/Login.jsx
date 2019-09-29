@@ -24,7 +24,7 @@ class Login extends Component {
             password: this.state.password
         })
             .then(res => {
-                this.props.onLoginSuccess(res.data.user);
+                this.props.updateAuthState(res.data.user);
             })
             .catch(err => console.log(err))
     }

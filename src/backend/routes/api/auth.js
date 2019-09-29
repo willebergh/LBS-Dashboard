@@ -95,7 +95,7 @@ router.post("/login", (req, res) => {
                         const { uid, username, email, fullName, roles, deployments } = user;
                         return res.status(200).json({
                             msg: "success", user: {
-                                uid, username, email, fullName, roles, deployments, token, refreshToken
+                                uid, username, email, fullName, roles, deployments, token, refreshToken, avatarUrl
                             }
                         });
 
@@ -134,19 +134,23 @@ router.post("/register", (req, res) => {
                 bcrypt.genSalt(saltRounds, (err, salt) => {
                     bcrypt.hash(password, salt, (err, hashedPassword) => {
 
-                        const uid = randToken.uid(32);
-                        var newUser = new User({
-                            uid, username, email, password: hashedPassword, fullName, roles: { "user": "user" }
-                        });
-                        newUser.save()
-                            .then(() => {
-                                const payload = { user: { uid, roles: { "user": "user" } } };
-                                const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
-                                res.cookie("token", token, { httpOnly: true });
+                        genUserAvatar(fullName, avatarUrl => {
+                            const uid = randToken.uid(32);
+                            var newUser = new User({
+                                uid, username, email, password: hashedPassword, fullName, roles: { "user": "user" }, avatarUrl: avatarUrl
+                            });
+                            newUser.save()
+                                .then(() => {
+                                    const payload = { user: { uid, roles: { "user": "user" } } };
+                                    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
+                                    res.cookie("token", token, { httpOnly: true });
 
-                                let user = { uid, username, email, fullName };
-                                return res.status(200).json({ msg: "success", user: { ...user, token } });
-                            })
+                                    let user = { uid, username, email, fullName };
+                                    return res.status(200).json({ msg: "success", user: { ...user, token } });
+                                })
+                        });
+
+
 
                     });
                 });
@@ -155,5 +159,16 @@ router.post("/register", (req, res) => {
             }
         })
 });
+
+async function genUserAvatar(fullName, callback) {
+    let color = "";
+    for (var i = 0, letters = "0123456789ABCDEF"; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    var avatarUrl = "https://ui-avatars.com/api/?uppercase=true&size=128&color=fff"
+    avatarUrl += `&name=${fullName.replace(/ /g, "+")}`
+    avatarUrl += `&background=${color}`
+    callback(avatarUrl);
+}
 
 module.exports = router;

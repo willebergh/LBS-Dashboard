@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev-app": "start cmd /k \"cd .\\src\\app && npm start\"",
+    "dev-admin-console": "start cmd /k \"cd .\\src\\admin-console && npm start\"",
     "dev-website": "start cmd /k \"cd .\\src\\website && npm start\"",
     "dev-backend": "start cmd /k \"cd .\\src\\backend && nodemon index.js\"",
-    "dev-all": "npm run dev-app && npm run dev-website && npm run dev-backend"
+    "dev-all": "npm run dev-app && npm run dev-website && && npm run dev-admin-console npm run dev-backend"
   },
   "repository": {
     "type": "git",

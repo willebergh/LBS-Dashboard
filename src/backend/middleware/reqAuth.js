@@ -25,11 +25,9 @@ module.exports.websocket = (socket, next) => {
                 return next(error);
             }
             socket.decoded = decoded;
-            console.log("new-connection");
             next();
         });
     } else {
-        console.log("authentication-error")
         next(new Error('Authentication error'));
     }
 }
@@ -61,7 +59,6 @@ module.exports.websocket.cookie = function (socket, next) {
         if (!token) throw { message: "no-token" };
         var decoded = jwt.verify(token, process.env.JWT_SECRET)
     } catch (err) {
-        console.log(err);
         let error = new Error("authentication-error");
         error.data = {
             type: "authentication-error",
