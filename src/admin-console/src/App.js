@@ -4,6 +4,7 @@ import axios from "axios";
 
 import Login from "./components/Login";
 import Logout from "./components/Logout";
+import Register from "./components/Register";
 import AdminConsole from "./components/AdminConsole";
 import Loading from "./components/Loading";
 
@@ -46,21 +47,43 @@ class App extends Component {
         return (
             <Switch>
 
-                <Route exact path="/logout" render={props => (
-                    <Logout updateAuthState={this.updateAuthState} />
+                <Route exact path="/login" render={props => (
+                    !user
+                        ? <Login updateAuthState={this.updateAuthState} />
+                        : <Redirect to={this.props.location.state.from} />
                 )} />
 
-                <Route exact path="/login" render={props => (
-                    !user ? <Login updateAuthState={this.updateAuthState} /> : <Redirect to="/admin" />
+                <Route exact path="/register/:token" render={props => (
+                    !user
+                        ? <Register />
+                        : <Redirect to="/admin" />
+                )} />
+
+                <Route exact path="/logout" render={props => (
+                    user
+                        ? <Logout updateAuthState={this.updateAuthState} />
+                        : <Redirect to={{
+                            pathname: "/login",
+                            state: { from: props.location }
+                        }} />
                 )} />
 
                 <Route path="/admin" render={props => (
-                    user ? <AdminConsole user={user} /> : <Redirect to="/login" />
+                    user
+                        ? <AdminConsole {...props} user={user} />
+                        : <Redirect to={{
+                            pathname: '/login',
+                            state: { from: props.location }
+                        }} />
                 )} />
 
                 <Route render={props => (
-                    <Redirect to="/admin" />
+                    <Redirect to={{
+                        pathname: "/admin",
+                        state: { from: props.location }
+                    }} />
                 )} />
+
 
             </Switch>
         )

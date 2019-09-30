@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 
 class Login extends Component {
@@ -8,16 +9,13 @@ class Login extends Component {
             username: null,
             password: null
         }
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(e) {
+    handleChange = e => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    handleSubmit(e) {
+    handleSubmit = e => {
         e.preventDefault();
         axios.post("/api/auth/login", {
             username: this.state.username,
@@ -40,4 +38,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);
