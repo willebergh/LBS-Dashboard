@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import io from "socket.io-client";
 import axios from "axios";
 
-import { ThemeProvider, theme } from "./Theme";
+import { theme } from "./Theme";
 import Loading from "./Loading";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
@@ -102,7 +102,7 @@ class AdminConsole extends Component {
         const { loading, loginRedirect, mobileOpen } = this.state;
         return (
 
-            <ThemeProvider>
+            <div>
                 {loading ? <Loading />
                     : loginRedirect ? <Redirect to="/login" />
                         : <div className={classes.root}>
@@ -156,7 +156,7 @@ class AdminConsole extends Component {
 
                             </div>
                         </div>}
-            </ThemeProvider>
+            </div>
         );
     }
 }

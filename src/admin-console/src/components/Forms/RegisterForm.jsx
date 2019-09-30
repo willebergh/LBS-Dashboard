@@ -6,12 +6,13 @@ import {
 import axios from "axios";
 
 const styles = {
-    container: {
+    form: {
+        width: "100%",
         display: "flex",
         flexDirection: "column"
     },
     formGroup: {
-        paddingBottom: 32
+        paddingBottom: 16
     },
     labelText: {
         padding: "0 14px"
@@ -29,28 +30,47 @@ class RegisterForm extends Component {
         }
     }
 
-    onChange = e => {
+    handleChange = e => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmit = e => {
-        e.preventDefautl();
+    handleSubmit = e => {
+        e.preventDefault();
         console.log(this.state);
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, email } = this.props;
+        const { username, fullName, password, passwordRepeat } = this.state;
         return (
-            <form className={classes.container} onSubmit={this.handleSubmit} noValidate autoComplete="off">
+            <form className={classes.form} onSubmit={this.handleSubmit} noValidate autoComplete="off">
+
                 <FormGroup className={classes.formGroup}>
                     <TextField
                         margin="dense"
                         variant="outlined"
-                        name="currentPassword"
-                        label="Current Password"
-                        value={currentPassword}
+                        name="fullName"
+                        label="Full Name"
+                        value={fullName}
                         onChange={this.handleChange}
-                        helperText="Enter your current password"
+                        helperText="Enter your first and last name"
+                    />
+                    <TextField
+                        margin="dense"
+                        variant="outlined"
+                        name="username"
+                        label="Username"
+                        value={username}
+                        onChange={this.handleChange}
+                        helperText="Enter a username"
+                    />
+                    <TextField
+                        disabled
+                        margin="dense"
+                        variant="outlined"
+                        label="Email Address"
+                        value={email}
+                        helperText="Your email address"
                     />
                 </FormGroup>
 
@@ -58,23 +78,20 @@ class RegisterForm extends Component {
                     <TextField
                         margin="dense"
                         variant="outlined"
-                        name="newPassword"
-                        label="New password"
-                        value={newPassword}
+                        name="password"
+                        label="Password"
+                        value={password}
                         onChange={this.handleChange}
-                        helperText="Enter a new password"
+                        helperText="Enter a password"
                     />
-                </FormGroup>
-
-                <FormGroup className={classes.formGroup}>
                     <TextField
                         margin="dense"
                         variant="outlined"
-                        name="newPasswordRepeat"
-                        label="Repeat new password"
-                        value={newPasswordRepeat}
+                        name="passwordRepeat"
+                        label="Repeat password"
+                        value={passwordRepeat}
                         onChange={this.handleChange}
-                        helperText="Please repeat your new password"
+                        helperText="Please repeat your password"
                     />
                 </FormGroup>
 
@@ -83,8 +100,8 @@ class RegisterForm extends Component {
                     color="primary"
                     variant="contained"
                 >
-                    Update
-                            </Button>
+                    Register
+                </Button>
                 <Button
                     color="primary"
                 >
