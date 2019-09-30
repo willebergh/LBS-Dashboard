@@ -5,9 +5,12 @@ const randToken = require("rand-token");
 const bcrypt = require("bcrypt");
 const DeploymentConfig = require("../../models/DeploymentConfig");
 const User = require("../../models/User");
+const NewUser = require("../../models/NewUser");
+const reqAuth = require("../../middleware/reqAuth");
+const mailer = require("../../mailer");
 require("dotenv").config();
 
-router.get("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
     res.clearCookie("token");
     req.session.destroy(err => {
         if (err) throw err;
@@ -92,7 +95,7 @@ router.post("/login", (req, res) => {
                         req.session.user = { ...payload.user };
 
                         const refreshToken = remember ? randToken.uid(256) : undefined;
-                        const { uid, username, email, fullName, roles, deployments } = user;
+                        const { uid, username, email, fullName, roles, deployments, avatarUrl } = user;
                         return res.status(200).json({
                             msg: "success", user: {
                                 uid, username, email, fullName, roles, deployments, token, refreshToken, avatarUrl
@@ -113,8 +116,56 @@ router.post("/login", (req, res) => {
         })
 });
 
-router.post("/register", (req, res) => {
-    const { username, email, password, fullName } = req.body;
+router.post("/new-user", reqAuth.jwt, (req, res) => {
+    if (res.locals.user.roles.user === "admin") {
+
+        const { email } = req.body;
+        User.findOne({ email })
+            .then(user => {
+                if (user) {
+                    return res.status(200).json({ msg: "email-taken" })
+                } else {
+                    NewUser.findOne({ email })
+                        .then(user => {
+                            if (user) {
+                                return res.status(200).json({ msg: "email-taken" })
+                            } else {
+                                const token = jwt.sign({ type: "newUser", data: email }, process.env.JWT_SECRET);
+                                const newUser = new NewUser({ email, token });
+                                newUser.save()
+                                    .then(() => {
+                                        const link = `http://localhost:3000/register/${token}`;
+                                        mailer.sendMail(email, "newUser", { link })
+                                            .then(info => {
+                                                return res.status(200).json({ msg: "success", info });
+                                            })
+                                            .catch(err => {
+                                                return res.status(200).json({ err });
+                                            })
+                                    })
+                                    .catch(err => {
+                                        return res.status(200).json({ err });
+                                    })
+                            }
+                        })
+                }
+            })
+    } else {
+        return res.status(401).json({ msg: "unathorized" })
+    }
+})
+
+router.post("/register:token", (req, res) => {
+    const { username, password, fullName } = req.body;
+    const { token } = req.params;
+
+    try {
+        var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ msg: "unathorized" });
+    }
+
+    const { email } = decoded.user;
 
     if (!username || !email || !password) {
         return res.status(200).json({ msg: "empty-fields" });
