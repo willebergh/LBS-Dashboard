@@ -153,9 +153,20 @@ router.post("/new-user", reqAuth.jwt, (req, res) => {
     } else {
         return res.status(401).json({ msg: "unathorized" })
     }
-})
+});
 
-router.post("/register:token", (req, res) => {
+router.get("/new-user/:token", async (req, res) => {
+    const { token } = req.params;
+    try {
+        var decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.type !== "newUser") throw "invalid-token-type";
+    } catch (err) {
+        return res.status(401).json({ msg: "error", error: err })
+    }
+    return res.status(200).json({ msg: "success", user: { email: decoded.data } });
+});
+
+router.post("/register/:token", (req, res) => {
     const { username, password, fullName } = req.body;
     const { token } = req.params;
 
