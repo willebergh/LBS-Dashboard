@@ -9,6 +9,9 @@ let theme = createMuiTheme({
             main: '#009be5',
             dark: '#006db3',
         },
+        background: {
+            default: "#EFEFEF"
+        }
     },
     typography: {
         h5: {
