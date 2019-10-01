@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { CssBaseline } from "@material-ui/core";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import axios from "axios";
 
@@ -47,6 +48,7 @@ class App extends Component {
 
         return (
             <ThemeProvider>
+                <CssBaseline />
                 <Switch>
 
                     <Route exact path="/login" render={props => (

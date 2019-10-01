@@ -106,7 +106,6 @@ class AdminConsole extends Component {
                 {loading ? <Loading />
                     : loginRedirect ? <Redirect to="/login" />
                         : <div className={classes.root}>
-                            <CssBaseline />
                             <nav className={classes.drawer}>
                                 <Hidden smUp implementation="js">
                                     <Sidebar
