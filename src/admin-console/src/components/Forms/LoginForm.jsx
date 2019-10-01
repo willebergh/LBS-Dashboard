@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles";
-import { FormGroup, TextField, Button } from "@material-ui/core";
+import { FormGroup, TextField, Button, Grid, Link } from "@material-ui/core";
 import axios from "axios";
 
 const styles = {
@@ -8,11 +8,15 @@ const styles = {
         width: "100%",
     },
     formGroup: {
-        paddingBottom: 16
+        margin: "16px 0"
     },
-    labelText: {
-        padding: "0 14px"
-    }
+    otherActions: {
+        marginTop: "-16px",
+        padding: "8px 14px"
+    },
+    loginBtn: {
+        marginTop: 48
+    },
 }
 
 class LoginForm extends Component {
@@ -35,7 +39,7 @@ class LoginForm extends Component {
             password: this.state.password
         })
             .then(res => {
-                this.props.onLoginSuccess(res.data.user);
+                this.props.updateAuthState(res.data.user);
             })
             .catch(err => console.log(err))
     }
@@ -45,7 +49,7 @@ class LoginForm extends Component {
         const { username, password } = this.state;
         return (
             <form className={classes.form} onSubmit={this.handleSubmit} noValidate autoComplete="off">
-                <FormGroup className={classes.formGroup}>
+                <FormGroup className={classes.formGroup} >
                     <TextField
                         fullWidth
                         margin="dense"
@@ -55,6 +59,8 @@ class LoginForm extends Component {
                         value={username}
                         onChange={this.handleChange}
                     />
+                </FormGroup>
+                <FormGroup className={classes.formGroup}>
                     <TextField
                         fullWidth
                         margin="dense"
@@ -65,14 +71,27 @@ class LoginForm extends Component {
                         onChange={this.handleChange}
                     />
                 </FormGroup>
+
+                <FormGroup className={classes.otherActions} >
+                    <Grid container direction="row" justify="space-between">
+                        <Grid item>
+                            <Link>Forgot password</Link>
+                        </Grid>
+                        <Grid item>
+                            <Link>I don't have an account</Link>
+                        </Grid>
+                    </Grid>
+                </FormGroup>
+
                 <Button
                     fullWidth
                     type="submit"
                     color="primary"
                     variant="contained"
+                    className={classes.loginBtn}
                 >
                     Login
-                </Button>
+                    </Button>
             </form>
         );
     }
