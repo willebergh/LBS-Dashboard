@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography } from "@material-ui/core";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 
 import RegisterForm from "../Forms/RegisterForm";
@@ -46,7 +47,10 @@ class Register extends Component {
         const { classes } = this.props;
 
         if (this.state.error) {
-            return "error";
+            return <Redirect to={{
+                pathname: "/login",
+                state: { from: "/admin" }
+            }} />
         }
 
         return (
