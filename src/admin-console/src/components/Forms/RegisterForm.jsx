@@ -4,19 +4,19 @@ import {
     TextField, Button, FormGroup,
 } from "@material-ui/core";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
+import Loading from "../Loading";
 
 const styles = {
     form: {
         width: "100%",
-        display: "flex",
-        flexDirection: "column"
     },
     formGroup: {
-        paddingBottom: 16
+        margin: "16px 0"
     },
-    labelText: {
-        padding: "0 14px"
-    }
+    registerBtn: {
+        marginTop: 48
+    },
 }
 
 class RegisterForm extends Component {
@@ -26,7 +26,9 @@ class RegisterForm extends Component {
             username: "",
             fullName: "",
             password: "",
-            passwordRepeat: ""
+            passwordRepeat: "",
+            loading: false,
+            redirect: false
         }
     }
 
@@ -35,79 +37,98 @@ class RegisterForm extends Component {
     }
 
     handleSubmit = e => {
+        this.setState({ loading: true });
         e.preventDefault();
-        console.log(this.state);
+        const token = window.location.pathname.split("/")[2];
+        const { fullName, username, password } = this.state;
+        axios.post(`/api/auth/register/${token}`, { fullName, username, password })
+            .then(res => {
+                if (res.data.msg === "success") {
+                    return this.setState({ loading: false, redirect: true });
+                }
+                this.setState({ loading: false });
+            })
+            .catch(err => {
+                this.setState({ loading: false });
+            })
     }
 
     render() {
         const { classes, email } = this.props;
-        const { username, fullName, password, passwordRepeat } = this.state;
+        const { username, fullName, password, passwordRepeat, loading, redirect } = this.state;
         return (
-            <form className={classes.form} onSubmit={this.handleSubmit} noValidate autoComplete="off">
+            <React.Fragment>
+                {loading ? <Loading /> : null}
+                {redirect ? <Redirect to="/login" /> : null}
+                <form className={classes.form} onSubmit={this.handleSubmit} noValidate autoComplete="off">
+                    <FormGroup className={classes.formGroup}>
+                        <TextField
+                            disabled
+                            margin="dense"
+                            variant="outlined"
+                            label="Email Address"
+                            value={email}
+                        />
+                        <TextField
+                            disabled={loading}
+                            type="text"
+                            margin="dense"
+                            variant="outlined"
+                            name="fullName"
+                            label="Full Name"
+                            value={fullName}
+                            onChange={this.handleChange}
+                            helperText="Enter your first and last name"
+                        />
+                        <TextField
+                            disabled={loading}
+                            type="text"
+                            margin="dense"
+                            variant="outlined"
+                            name="username"
+                            label="Username"
+                            value={username}
+                            onChange={this.handleChange}
+                            helperText="Enter a username"
+                        />
+                    </FormGroup>
 
-                <FormGroup className={classes.formGroup}>
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        name="fullName"
-                        label="Full Name"
-                        value={fullName}
-                        onChange={this.handleChange}
-                        helperText="Enter your first and last name"
-                    />
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        name="username"
-                        label="Username"
-                        value={username}
-                        onChange={this.handleChange}
-                        helperText="Enter a username"
-                    />
-                    <TextField
-                        disabled
-                        margin="dense"
-                        variant="outlined"
-                        label="Email Address"
-                        value={email}
-                        helperText="Your email address"
-                    />
-                </FormGroup>
+                    <FormGroup className={classes.formGroup}>
+                        <TextField
+                            disabled={loading}
+                            type="password"
+                            margin="dense"
+                            variant="outlined"
+                            name="password"
+                            label="Password"
+                            value={password}
+                            onChange={this.handleChange}
+                            helperText="Enter a password"
+                        />
+                        <TextField
+                            disabled={loading}
+                            type="password"
+                            margin="dense"
+                            variant="outlined"
+                            name="passwordRepeat"
+                            label="Repeat password"
+                            value={passwordRepeat}
+                            onChange={this.handleChange}
+                            helperText="Please repeat your password"
+                        />
+                    </FormGroup>
 
-                <FormGroup className={classes.formGroup}>
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        name="password"
-                        label="Password"
-                        value={password}
-                        onChange={this.handleChange}
-                        helperText="Enter a password"
-                    />
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        name="passwordRepeat"
-                        label="Repeat password"
-                        value={passwordRepeat}
-                        onChange={this.handleChange}
-                        helperText="Please repeat your password"
-                    />
-                </FormGroup>
-
-                <Button
-                    type="submit"
-                    color="primary"
-                    variant="contained"
-                >
-                    Register
-                </Button>
-                <Button
-                    color="primary"
-                >
-                    Cancel
-                </Button>
-            </form>
+                    <Button
+                        fullWidth
+                        type="submit"
+                        color="primary"
+                        variant="contained"
+                        className={classes.registerBtn}
+                    >
+                        Register
+                    </Button>
+                </form>
+            </React.Fragment>
         );
     }
 }

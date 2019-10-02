@@ -4,23 +4,22 @@ import { Paper, Grid, Typography } from "@material-ui/core";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 
+import Logo from "../Logo";
 import RegisterForm from "../Forms/RegisterForm";
 
 const styles = {
     container: {
         minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
     },
     paper: {
+        position: "relative",
+        maxWidth: 400,
+        margin: "auto",
         padding: 32,
-        width: "100%",
-        maxWidth: 500
     },
     title: {
-        marginTop: 8,
-        marginBottom: 32,
+        marginBottom: 48,
+        textAlign: "center"
     }
 }
 
@@ -43,6 +42,10 @@ class Register extends Component {
             })
     }
 
+    updateAuthState = user => {
+        this.props.updateAuthState(user);
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -54,18 +57,17 @@ class Register extends Component {
         }
 
         return (
-            <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-                className={classes.container}
-            >
+            <Grid className={classes.container} container direction="column">
+
                 <Grid item >
+                    <Logo theme="dark" inline />
+                </Grid>
+
+                <Grid item xs="12" >
                     <Paper className={classes.paper}>
                         <Typography className={classes.title} variant="h5">
                             Register your account
-                        </Typography>
+                            </Typography>
                         <RegisterForm email={this.state.email} />
                     </Paper>
                 </Grid>
