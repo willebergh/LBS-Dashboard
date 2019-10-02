@@ -4,8 +4,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Typography } from "@material-ui/core";
 import axios from "axios";
 
-import Logo from "./Logo";
-import LoginForm from "./Forms/LoginForm";
+import Logo from "../Logo";
+import LoginForm from "../Forms/LoginForm";
 
 const styles = {
     container: {

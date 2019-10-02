@@ -4,7 +4,7 @@ import {
     Paper, Grid, Typography, Avatar, IconButton
 } from "@material-ui/core";
 import { } from "@material-ui/icons"
-import UserProfileForm from "./Forms/UserProfileForm";
+import UserProfileForm from "../Forms/UserProfileForm";
 
 const styles = {
     paper: {

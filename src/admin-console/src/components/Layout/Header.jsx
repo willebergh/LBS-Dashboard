@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Menu as MenuIcon, Notifications as NotificationsIcon } from "@material-ui/icons";
 import { Typography, Tooltip, Toolbar, Link, IconButton, Hidden, Grid, Avatar, AppBar } from '@material-ui/core';
 
-import TabList from "./TabList";
+import TabList from "../TabList";
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 

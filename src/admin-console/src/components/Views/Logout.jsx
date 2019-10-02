@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import Loading from "./Loading";
+import Loading from "../Loading";
 import { Redirect } from "react-router-dom";
 
 class Logout extends Component {

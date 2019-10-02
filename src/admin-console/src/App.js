@@ -4,11 +4,11 @@ import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import axios from "axios";
 
 import { ThemeProvider } from "./components/Theme";
-import Login from "./components/Login";
-import Logout from "./components/Logout";
-import Register from "./components/Register";
-import AdminConsole from "./components/AdminConsole";
 import Loading from "./components/Loading";
+import Login from "./components/Views/Login";
+import Logout from "./components/Views/Logout";
+import Register from "./components/Views/Register";
+import AdminConsole from "./components/Views/AdminConsole";
 
 class App extends Component {
     constructor() {

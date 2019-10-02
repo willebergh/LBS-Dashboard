@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography } from "@material-ui/core";
 import axios from "axios";
 
-import RegisterForm from "./Forms/RegisterForm";
+import RegisterForm from "../Forms/RegisterForm";
 
 const styles = {
     container: {

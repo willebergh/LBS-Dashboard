@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import io from "socket.io-client";
 import axios from "axios";
 
-import { theme } from "./Theme";
-import Loading from "./Loading";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import { theme } from "../Theme";
+import Loading from "../Loading";
+import Sidebar from "../Layout/Sidebar";
+import Header from "../Layout/Header";
 import Home from "./Home";
 import Profile from "./Profile";
-import Settings from "./settings";
-import Deployment from './Deployment';
-import DeploymentConfigForm from "./Forms/DeploymentConfigForm";
-import Copyright from "./Copyright";
+import Settings from "./Settings";
+import Deployment from '../Deployment';
+import DeploymentConfigForm from "../Forms/DeploymentConfigForm";
+import Copyright from "../Copyright";
 
 const drawerWidth = 256;
 
