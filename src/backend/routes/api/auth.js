@@ -163,7 +163,16 @@ router.get("/new-user/:token", async (req, res) => {
     } catch (err) {
         return res.status(401).json({ msg: "error", error: err })
     }
-    return res.status(200).json({ msg: "success", user: { email: decoded.data } });
+
+    NewUser.findOne({ email: decoded.data })
+        .then(user => {
+            if (user) {
+                console.log(user);
+                return res.status(200).json({ msg: "success", user: { email: decoded.data } });
+            } else {
+                return res.status(401).json({ msg: "error", error: "user-not-found" })
+            }
+        })
 });
 
 router.post("/register/:token", async (req, res) => {
