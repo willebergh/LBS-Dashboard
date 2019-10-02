@@ -42,54 +42,54 @@ class App extends Component {
     render() {
         const { loading, user } = this.state;
 
-        if (loading) {
-            return <Loading />
-        }
-
         return (
             <ThemeProvider>
                 <CssBaseline />
-                <Switch>
+                {loading ? (
+                    <Loading />
+                ) : (
+                        <Switch>
 
-                    <Route exact path="/login" render={props => (
-                        !user
-                            ? <Login updateAuthState={this.updateAuthState} />
-                            : <Redirect to={this.props.location.state.from} />
-                    )} />
+                            <Route exact path="/login" render={props => (
+                                !user
+                                    ? <Login updateAuthState={this.updateAuthState} />
+                                    : <Redirect to={this.props.location.state.from} />
+                            )} />
 
-                    <Route exact path="/register/:token" render={props => (
-                        !user
-                            ? <Register {...props} />
-                            : <Redirect to="/admin" />
-                    )} />
+                            <Route exact path="/register/:token" render={props => (
+                                !user
+                                    ? <Register {...props} />
+                                    : <Redirect to="/admin" />
+                            )} />
 
-                    <Route exact path="/logout" render={props => (
-                        user
-                            ? <Logout updateAuthState={this.updateAuthState} />
-                            : <Redirect to={{
-                                pathname: "/login",
-                                state: { from: props.location }
-                            }} />
-                    )} />
+                            <Route exact path="/logout" render={props => (
+                                user
+                                    ? <Logout updateAuthState={this.updateAuthState} />
+                                    : <Redirect to={{
+                                        pathname: "/login",
+                                        state: { from: props.location }
+                                    }} />
+                            )} />
 
-                    <Route path="/admin" render={props => (
-                        user
-                            ? <AdminConsole {...props} user={user} />
-                            : <Redirect to={{
-                                pathname: '/login',
-                                state: { from: props.location }
-                            }} />
-                    )} />
+                            <Route path="/admin" render={props => (
+                                user
+                                    ? <AdminConsole {...props} user={user} />
+                                    : <Redirect to={{
+                                        pathname: '/login',
+                                        state: { from: props.location }
+                                    }} />
+                            )} />
 
-                    <Route render={props => (
-                        <Redirect to={{
-                            pathname: "/admin",
-                            state: { from: props.location }
-                        }} />
-                    )} />
+                            <Route render={props => (
+                                <Redirect to={{
+                                    pathname: "/admin",
+                                    state: { from: props.location }
+                                }} />
+                            )} />
 
 
-                </Switch>
+                        </Switch>
+                    )}
             </ThemeProvider>
         )
     }
