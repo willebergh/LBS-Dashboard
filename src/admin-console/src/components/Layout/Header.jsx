@@ -14,7 +14,6 @@ const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = theme => ({
     AppBar: {
         paddingTop: theme.spacing(2),
-        zIndex: 0,
     },
     menuButton: {
         marginLeft: -theme.spacing(1),
@@ -78,7 +77,7 @@ class Header extends Component {
                 </AppBar>
 
                 <AppBar
-                    style={{ zIndex: -1 }}
+                    style={{ zIndex: 0 }}
                     component="div"
                     color="primary"
                     position="static"
