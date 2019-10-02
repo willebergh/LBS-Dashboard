@@ -122,7 +122,7 @@ class AdminConsole extends Component {
                             </nav>
                             <div className={classes.app}>
 
-                                <Header user={user} onDrawerToggle={this.handleDrawerToggle} />
+                                <Header user={user} onDrawerToggle={this.handleDrawerToggle} deployments={this.state.deployments} />
 
                                 <main className={classes.main}>
 

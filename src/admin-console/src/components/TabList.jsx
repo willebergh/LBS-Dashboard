@@ -17,7 +17,7 @@ class TabList extends Component {
         return (
             <Switch>
 
-                <Route path={["/admin/new-deployment", "/admin/profile", "/admin/settings"]} render={props => (
+                <Route exact path={["/admin", "/admin/new-deployment", "/admin/profile", "/admin/settings"]} render={props => (
                     <Tabs>
                         <Tab />
                     </Tabs>

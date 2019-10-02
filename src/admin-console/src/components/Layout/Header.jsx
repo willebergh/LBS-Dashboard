@@ -3,20 +3,21 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Menu as MenuIcon, Notifications as NotificationsIcon } from "@material-ui/icons";
 import { Typography, Tooltip, Toolbar, Link, IconButton, Hidden, Grid, Avatar, AppBar } from '@material-ui/core';
+import { withRouter } from "react-router-dom";
 
+import HeaderTitle from "./HeaderTitle";
 import TabList from "../TabList";
+import ProfileDropdown from "../Menus/ProfileDropdown";
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
 const styles = theme => ({
-    secondaryBar: {
+    AppBar: {
+        paddingTop: theme.spacing(2),
         zIndex: 0,
     },
     menuButton: {
         marginLeft: -theme.spacing(1),
-    },
-    iconButtonAvatar: {
-        padding: 4,
     },
     link: {
         textDecoration: 'none',
@@ -30,25 +31,26 @@ const styles = theme => ({
     },
 });
 
-function Title() {
-    const str = window.location.pathname.split("/")[2];
-    return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
-}
-
 class Header extends Component {
-
-    componentDidUpdate(prevProps) {
-        if (this.props !== prevProps) {
-
-        }
-    }
-
     render() {
         const { classes, onDrawerToggle, user } = this.props;
         return (
             <React.Fragment>
-                <AppBar color="primary" position="sticky" elevation={0}>
+                <AppBar
+                    component="div"
+                    className={classes.AppBar}
+                    color="primary"
+                    position="static"
+                    elevation={0}
+                >
                     <Toolbar>
+                        <Grid container alignItems="center" spacing={1}>
+                            <Grid item xs>
+                                <Typography color="inherit" variant="h5" component="h1">
+                                    <HeaderTitle deployments={this.props.deployments} />
+                                </Typography>
+                            </Grid>
+                        </Grid>
                         <Grid container spacing={1} alignItems="center">
                             <Hidden smUp>
                                 <Grid item>
@@ -64,37 +66,20 @@ class Header extends Component {
                             </Hidden>
                             <Grid item xs />
                             <Grid item>
-                                {user.fullName}
+                                <Typography>
+                                    {user.fullName}
+                                </Typography>
                             </Grid>
                             <Grid item>
-                                <IconButton color="inherit" className={classes.iconButtonAvatar}>
-                                    <Avatar src={user.avatarUrl} alt="User avatar" />
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    </Toolbar>
-                </AppBar>
-                <AppBar
-                    component="div"
-                    className={classes.secondaryBar}
-                    color="primary"
-                    position="static"
-                    elevation={0}
-                >
-                    <Toolbar>
-                        <Grid container alignItems="center" spacing={1}>
-                            <Grid item xs>
-                                <Typography color="inherit" variant="h5" component="h1">
-                                    <Title />
-                                </Typography>
+                                <ProfileDropdown user={user} />
                             </Grid>
                         </Grid>
                     </Toolbar>
                 </AppBar>
 
                 <AppBar
+                    style={{ zIndex: 0 }}
                     component="div"
-                    className={classes.secondaryBar}
                     color="primary"
                     position="static"
                     elevation={0}
