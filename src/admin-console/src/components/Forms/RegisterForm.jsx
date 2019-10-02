@@ -45,7 +45,6 @@ class RegisterForm extends Component {
             .then(res => {
                 if (res.data.msg === "success") {
                     this.setState({ loading: false });
-                    console.log(res.data.user)
                     return this.props.updateAuthState(res.data.user);
                 }
                 this.setState({ loading: false });
