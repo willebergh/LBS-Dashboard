@@ -68,7 +68,7 @@ class Register extends Component {
                         <Typography className={classes.title} variant="h5">
                             Register your account
                             </Typography>
-                        <RegisterForm email={this.state.email} />
+                        <RegisterForm updateAuthState={this.updateAuthState} email={this.state.email} />
                     </Paper>
                 </Grid>
             </Grid>
