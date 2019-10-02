@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
+import { Switch, Route } from "react-router-dom";
+import Account from "../Tabs/Account";
 
 class Settings extends Component {
     render() {
         return (
-            <div>
-                Settings
-            </div>
+            <Switch>
+
+                <Route exact path="/admin/settings/account" render={props => (
+                    <Account />
+                )} />
+
+            </Switch>
         );
     }
 }

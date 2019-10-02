@@ -17,12 +17,18 @@ class TabList extends Component {
         return (
             <Switch>
 
-                <Route exact path={["/admin", "/admin/new-deployment", "/admin/profile", "/admin/settings"]} render={props => (
+                <Route exact path={["/admin", "/admin/new-deployment", "/admin/profile"]} render={props => (
                     <Tabs value={0}>
                         <Tab value={0} />
                     </Tabs>
                 )
                 } />
+
+                <Route path="/admin/settings" render={props => (
+                    <Tabs onChange={this.handleChange} value={this.props.location.pathname}>
+                        <Tab label="Account" value="/admin/settings/account" />
+                    </Tabs>
+                )} />
 
                 < Route path="/admin/:deployment" render={props => (
                     <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
