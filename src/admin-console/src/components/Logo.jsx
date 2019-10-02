@@ -50,15 +50,17 @@ function LogoSvg({ margin, themeColor }) {
 
 class Logo extends Component {
     render() {
-        const { classes, theme, inline } = this.props;
+        const { classes, theme, inline, noText } = this.props;
         const themeColor = theme === "dark" ? "#202020" : "#EFEFEF";
         return (
             <div className={classes.container}>
                 <div className={classes.logo} style={!inline ? { flexDirection: "column" } : null}>
                     <LogoSvg margin="0 16 0 0" themeColor={themeColor} />
-                    <span className={classes.text} style={{ color: themeColor }}>
-                        LBS-Dashboard
-                    </span>
+                    {noText ? null : (
+                        <span className={classes.text} style={{ color: themeColor }}>
+                            LBS-Dashboard
+                        </span>
+                    )}
                 </div>
             </div>
         );
