@@ -19,7 +19,7 @@ const categories = [
     {
         id: "Other", links: [
             { id: "Profile", icon: <PeopleIcon />, path: "/admin/profile" },
-            { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings/overview" },
+            { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings" },
         ]
     }
 ];
