@@ -166,58 +166,61 @@ router.get("/new-user/:token", async (req, res) => {
     return res.status(200).json({ msg: "success", user: { email: decoded.data } });
 });
 
-router.post("/register/:token", (req, res) => {
+router.post("/register/:token", async (req, res) => {
     const { username, password, fullName } = req.body;
     const { token } = req.params;
 
     try {
         var decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.type !== "newUser") throw "invalid-type";
     } catch (err) {
-        return res.status(401).json({ msg: "unathorized" });
+        return res.status(401).json({ msg: "unathorized", error: err });
     }
 
-    const { email } = decoded.user;
-
-    if (!username || !email || !password) {
+    const email = decoded.data;
+    if (!username || !password) {
         return res.status(200).json({ msg: "empty-fields" });
     }
 
-    User.findOne({ $or: [{ username }, { email }] })
+    NewUser.findOne({ email })
         .then(user => {
-            if (user) {
-                if (user.username === username) {
-                    return res.status(200).json({ msg: "username-taken" })
-                } else {
-                    return res.status(200).json({ msg: "email-taken" })
-                }
+            if (!user) {
+                return res.status(401).json({ msg: "token-used" });
             } else {
+                User.findOne({ username })
+                    .then(user => {
+                        if (user) {
+                            return res.status(200).json({ msg: "username-taken" });
+                        } else {
+                            NewUser.findOneAndDelete({ email })
+                                .then(user => {
+                                    if (user) {
+                                        const saltRounds = 10;
+                                        bcrypt.genSalt(saltRounds, (err, salt) => {
+                                            bcrypt.hash(password, salt, (err, hashedPassword) => {
+                                                genUserAvatar(fullName, avatarUrl => {
+                                                    const uid = randToken.uid(32);
+                                                    var newUser = new User({
+                                                        uid, username, email, password: hashedPassword, fullName, roles: { "user": "user" }, avatarUrl: avatarUrl
+                                                    });
+                                                    newUser.save()
+                                                        .then(() => {
+                                                            const payload = { user: { uid, roles: { "user": "user" } } };
+                                                            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
+                                                            res.cookie("token", token, { httpOnly: true });
 
-                const saltRounds = 10;
-                bcrypt.genSalt(saltRounds, (err, salt) => {
-                    bcrypt.hash(password, salt, (err, hashedPassword) => {
-
-                        genUserAvatar(fullName, avatarUrl => {
-                            const uid = randToken.uid(32);
-                            var newUser = new User({
-                                uid, username, email, password: hashedPassword, fullName, roles: { "user": "user" }, avatarUrl: avatarUrl
-                            });
-                            newUser.save()
-                                .then(() => {
-                                    const payload = { user: { uid, roles: { "user": "user" } } };
-                                    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 60 * 10 });
-                                    res.cookie("token", token, { httpOnly: true });
-
-                                    let user = { uid, username, email, fullName };
-                                    return res.status(200).json({ msg: "success", user: { ...user, token } });
+                                                            let user = { uid, username, email, fullName };
+                                                            return res.status(200).json({ msg: "success", user: { ...user, token } });
+                                                        })
+                                                });
+                                            });
+                                        });
+                                    } else {
+                                        return res.status(401).json({ msg: "token-used" });
+                                    }
                                 })
-                        });
-
-
-
-                    });
-                });
-
-
+                        }
+                    })
             }
         })
 });
