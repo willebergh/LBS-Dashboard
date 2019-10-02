@@ -1,10 +1,5 @@
-import React, { Component } from 'react';
-import { withRouter, Route } from "react-router-dom";
-import { Typography } from "@material-ui/core";
-
-const routes = [
-    { pathname: "/admin/new-deployment", title: "New deployment" }
-]
+import { Component } from 'react';
+import { withRouter } from "react-router-dom";
 
 class HeaderTitle extends Component {
     constructor() {
@@ -25,7 +20,7 @@ class HeaderTitle extends Component {
     }
 
     updateState() {
-        const { history, location, match, deployments } = this.props;
+        const { location, deployments } = this.props;
         var path = location.pathname.split("/");
         path.splice(0, 1);
 
@@ -44,12 +39,7 @@ class HeaderTitle extends Component {
     }
 
     render() {
-
-        return (
-            <Typography color="inherit" variant="h5" component="h1">
-                {this.state.title}
-            </Typography>
-        )
+        return this.state.title;
     }
 }
 

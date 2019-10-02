@@ -18,12 +18,13 @@ class TabList extends Component {
             <Switch>
 
                 <Route exact path={["/admin", "/admin/new-deployment", "/admin/profile", "/admin/settings"]} render={props => (
-                    <Tabs>
-                        <Tab />
+                    <Tabs value={0}>
+                        <Tab value={0} />
                     </Tabs>
-                )} />
+                )
+                } />
 
-                <Route path="/admin/:deployment" render={props => (
+                < Route path="/admin/:deployment" render={props => (
                     <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
                         <Tab label="Dashboards" value={`/admin/${props.match.params.deployment}/dashboards`} />
                         <Tab label="Config" value={`/admin/${props.match.params.deployment}/config`} />
@@ -31,7 +32,7 @@ class TabList extends Component {
                 )} />
 
 
-            </Switch>
+            </Switch >
         )
     }
 }

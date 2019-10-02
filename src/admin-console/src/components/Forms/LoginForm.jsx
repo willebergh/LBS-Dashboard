@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles";
-import { FormGroup, TextField, Button, Grid, Link, CircularProgress } from "@material-ui/core";
+import { FormGroup, TextField, Button, Grid, Link } from "@material-ui/core";
 import axios from "axios";
 import Loading from "../Loading";
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
-import { CssBaseline, Hidden, CircularProgress } from '@material-ui/core';
+import { Hidden } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import io from "socket.io-client";

@@ -53,19 +53,7 @@ class App extends Component {
                             <Route exact path="/login" render={props => (
                                 !user
                                     ? <Login updateAuthState={this.updateAuthState} />
-                                    : <Redirect to={() => {
-                                        const state = this.props.location.state;
-                                        if (state) {
-                                            const from = state.from.toLowerCase();
-                                            if (from === "/login" || from === "/logout" || from === "/register") {
-                                                return "/admin"
-                                            } else {
-                                                return from;
-                                            }
-                                        } else {
-                                            return "/admin";
-                                        }
-                                    }} />
+                                    : <Redirect to={this.props.location.state.from} />
                             )} />
 
                             <Route exact path="/register/:token" render={props => (

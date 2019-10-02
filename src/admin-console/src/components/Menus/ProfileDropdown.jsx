@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles"
-import { Popper, Paper, IconButton, Avatar, Grow, ClickAwayListener, MenuList, MenuItem, List, ListItem, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
+import { Popper, Paper, IconButton, Avatar, Grow, ClickAwayListener, MenuList, MenuItem, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 const styles = {
