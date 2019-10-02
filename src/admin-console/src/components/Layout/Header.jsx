@@ -78,7 +78,7 @@ class Header extends Component {
                 </AppBar>
 
                 <AppBar
-                    style={{ zIndex: 0 }}
+                    style={{ zIndex: -1 }}
                     component="div"
                     color="primary"
                     position="static"
