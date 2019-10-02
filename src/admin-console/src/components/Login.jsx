@@ -12,6 +12,7 @@ const styles = {
         minHeight: "100vh",
     },
     paper: {
+        position: "relative",
         maxWidth: 400,
         margin: "auto",
         padding: 32,
