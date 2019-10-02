@@ -4,18 +4,18 @@ import { withStyles } from "@material-ui/core/styles";
 
 const style = {
     loading: {
-        position: "fixed",
         top: "50%",
         left: "50%",
-        transform: "translate(-50%, -50%)"
+        transform: "translate(-50%, -50%)",
+        zIndex: 1000
     },
 }
 
 class Loading extends Component {
     render() {
-        const { classes } = this.props;
+        const { classes, position } = this.props;
         return (
-            <div className={classes.loading}>
+            <div className={classes.loading} style={position ? { position } : { position: "fixed" }}>
                 <CircularProgress />
             </div>
         )
