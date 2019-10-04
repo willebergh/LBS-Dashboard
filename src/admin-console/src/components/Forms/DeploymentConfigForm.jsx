@@ -80,25 +80,47 @@ class DeploymentConfigForm extends Component {
 
     handleChange(e) {
         if (e.target.name === "displayName") {
-            var prevValue = this.state.values.deploymentName;
-            var newValue = e.target.value.toLowerCase().replace(/ /g, "-");
-            let newState = getNewState();
-            function getNewState() {
-                if (prevValue.length > newValue.length) {
-                    return prevValue.substring(0, prevValue.length - (prevValue.length - newValue.length));
-                } else {
-                    let prevChar = prevValue.charAt(prevValue.length - 1);
-                    let newChar = newValue.charAt(newValue.length - 1);
-                    if (newChar && newChar === prevChar && newChar === "-") {
-                        return prevValue;
-                    } else {
-                        return prevValue + newValue.substring(prevValue.length, newValue.length);
-                    }
+            const { displayName, deploymentName } = this.state.values, newState = e.target.value;
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    displayName: this.formatName(displayName, newState, " "),
+                    deploymentName: this.formatName(deploymentName, newState, "-", "toLowerCase")
                 }
-            }
-            return this.setState({ values: { ...this.state.values, displayName: e.target.value, deploymentName: newState, } })
+            });
+        } else {
+            this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } });
         }
-        this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } })
+    }
+
+    formatName(prevState, newState, replacementChar, method) {
+        const tempChar = "*";
+        const replaceFilter = new RegExp(replacementChar, "g");
+        const tempCharFilter = new RegExp("\\" + tempChar, "g");
+        prevState = prevState.replace(replaceFilter, tempChar);
+        newState = newState.replace(replaceFilter, tempChar);
+
+        var result = null;
+        if (prevState.length > newState.length) {
+            result = prevState.substring(0, prevState.length - (prevState.length - newState.length))
+                .replace(tempCharFilter, replacementChar);
+        } else {
+            let prevChar = prevState.charAt(prevState.length - 1);
+            let newChar = newState.charAt(newState.length - 1);
+            if (newChar && newChar === prevChar && newChar === tempChar) {
+                result = prevState
+                    .replace(tempCharFilter, replacementChar);
+            } else {
+                result = (prevState + newState.substring(prevState.length, newState.length))
+                    .replace(tempCharFilter, replacementChar);
+            }
+        }
+
+        if (method && typeof result[method] === "function") {
+            return result[method]();
+        } else {
+            return result;
+        }
     }
 
     handleSubmit(e) {
