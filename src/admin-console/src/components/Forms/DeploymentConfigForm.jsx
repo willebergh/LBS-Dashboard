@@ -27,7 +27,7 @@ const styles = {
     }
 }
 
-class Config extends Component {
+class DeploymentConfigForm extends Component {
     constructor() {
         super();
         this.state = {
@@ -79,6 +79,25 @@ class Config extends Component {
     }
 
     handleChange(e) {
+        if (e.target.name === "displayName") {
+            var prevValue = this.state.values.deploymentName;
+            var newValue = e.target.value.toLowerCase().replace(/ /g, "-");
+            let newState = getNewState();
+            function getNewState() {
+                if (prevValue.length > newValue.length) {
+                    return prevValue.substring(0, prevValue.length - (prevValue.length - newValue.length));
+                } else {
+                    let prevChar = prevValue.charAt(prevValue.length - 1);
+                    let newChar = newValue.charAt(newValue.length - 1);
+                    if (newChar && newChar === prevChar && newChar === "-") {
+                        return prevValue;
+                    } else {
+                        return prevValue + newValue.substring(prevValue.length, newValue.length);
+                    }
+                }
+            }
+            return this.setState({ values: { ...this.state.values, displayName: e.target.value, deploymentName: newState, } })
+        }
         this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } })
     }
 
@@ -133,12 +152,11 @@ class Config extends Component {
 
                             <FormGroup className={classes.formGroup}>
                                 <TextField
+                                    disabled
                                     margin="dense"
                                     variant="outlined"
-                                    name="deploymentName"
                                     label="Deployment name"
                                     value={deploymentName}
-                                    onChange={this.handleChange}
                                     helperText="Deployment name is a unique name that identifies a deployment. It's used for example in the url of the deployment."
                                 />
                             </FormGroup>
@@ -248,4 +266,4 @@ class Config extends Component {
     }
 }
 
-export default withStyles(styles)(withRouter(Config));
+export default withStyles(styles)(withRouter(DeploymentConfigForm));
