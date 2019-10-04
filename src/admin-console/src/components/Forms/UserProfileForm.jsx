@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles";
 import {
-    TextField, MenuItem, Button, FormGroup,
+    TextField, Button, FormGroup,
     Paper, Typography, IconButton, Avatar
 } from "@material-ui/core";
 import axios from "axios";
@@ -64,7 +64,7 @@ class UserProfileForm extends Component {
 
     render() {
         const { classes, user } = this.props
-        const { avatarUrl, email, fullName, currentPassword, newPassword, newPasswordRepeat, uid, username } = this.state.values
+        const { avatarUrl, email, fullName, uid, username } = this.state.values
         return (
 
 

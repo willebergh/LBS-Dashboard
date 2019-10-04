@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { Menu as MenuIcon, Notifications as NotificationsIcon } from "@material-ui/icons";
-import { Typography, Tooltip, Toolbar, Link, IconButton, Hidden, Grid, Avatar, AppBar } from '@material-ui/core';
-import { withRouter } from "react-router-dom";
+import { Menu as MenuIcon } from "@material-ui/icons";
+import { Typography, Toolbar, IconButton, Hidden, Grid, AppBar } from '@material-ui/core';
 
 import HeaderTitle from "./HeaderTitle";
 import TabList from "../TabList";
@@ -14,7 +13,6 @@ const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = theme => ({
     AppBar: {
         paddingTop: theme.spacing(2),
-        zIndex: 0,
     },
     menuButton: {
         marginLeft: -theme.spacing(1),
@@ -78,7 +76,7 @@ class Header extends Component {
                 </AppBar>
 
                 <AppBar
-                    style={{ zIndex: -1 }}
+                    style={{ zIndex: 0 }}
                     component="div"
                     color="primary"
                     position="static"

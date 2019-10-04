@@ -44,7 +44,8 @@ class RegisterForm extends Component {
         axios.post(`/api/auth/register/${token}`, { fullName, username, password })
             .then(res => {
                 if (res.data.msg === "success") {
-                    return this.setState({ loading: false, redirect: true });
+                    this.setState({ loading: false });
+                    return this.props.updateAuthState(res.data.user);
                 }
                 this.setState({ loading: false });
             })

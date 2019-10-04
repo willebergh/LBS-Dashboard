@@ -30,7 +30,7 @@ class App extends Component {
         axios.get("/api/user/me")
             .then(res => {
                 this.setState({ loading: false, user: res.data.user });
-                this.props.history.replace("/admin");
+                this.props.history.replace(this.props.location.pathname);
             })
             .catch(() => this.setState({ loading: false }))
     }
@@ -53,24 +53,12 @@ class App extends Component {
                             <Route exact path="/login" render={props => (
                                 !user
                                     ? <Login updateAuthState={this.updateAuthState} />
-                                    : <Redirect to={() => {
-                                        const state = this.props.location.state;
-                                        if (state) {
-                                            const from = state.from.toLowerCase();
-                                            if (from === "/login" || from === "/logout" || from === "/register") {
-                                                return "/admin"
-                                            } else {
-                                                return from;
-                                            }
-                                        } else {
-                                            return "/admin";
-                                        }
-                                    }} />
+                                    : <Redirect to={this.props.location.state.from} />
                             )} />
 
                             <Route exact path="/register/:token" render={props => (
                                 !user
-                                    ? <Register {...props} />
+                                    ? <Register updateAuthState={this.updateAuthState} {...props} />
                                     : <Redirect to="/admin" />
                             )} />
 

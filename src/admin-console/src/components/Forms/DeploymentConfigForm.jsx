@@ -27,7 +27,7 @@ const styles = {
     }
 }
 
-class Config extends Component {
+class DeploymentConfigForm extends Component {
     constructor() {
         super();
         this.state = {
@@ -79,7 +79,48 @@ class Config extends Component {
     }
 
     handleChange(e) {
-        this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } })
+        if (e.target.name === "displayName") {
+            const { displayName, deploymentName } = this.state.values, newState = e.target.value;
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    displayName: this.formatName(displayName, newState, " "),
+                    deploymentName: this.formatName(deploymentName, newState, "-", "toLowerCase")
+                }
+            });
+        } else {
+            this.setState({ values: { ...this.state.values, [e.target.name]: e.target.value } });
+        }
+    }
+
+    formatName(prevState, newState, replacementChar, method) {
+        const tempChar = "*";
+        const replaceFilter = new RegExp(replacementChar, "g");
+        const tempCharFilter = new RegExp("\\" + tempChar, "g");
+        prevState = prevState.replace(replaceFilter, tempChar);
+        newState = newState.replace(replaceFilter, tempChar);
+
+        var result = null;
+        if (prevState.length > newState.length) {
+            result = prevState.substring(0, prevState.length - (prevState.length - newState.length))
+                .replace(tempCharFilter, replacementChar);
+        } else {
+            let prevChar = prevState.charAt(prevState.length - 1);
+            let newChar = newState.charAt(newState.length - 1);
+            if (newChar && newChar === prevChar && newChar === tempChar) {
+                result = prevState
+                    .replace(tempCharFilter, replacementChar);
+            } else {
+                result = (prevState + newState.substring(prevState.length, newState.length))
+                    .replace(tempCharFilter, replacementChar);
+            }
+        }
+
+        if (method && typeof result[method] === "function") {
+            return result[method]();
+        } else {
+            return result;
+        }
     }
 
     handleSubmit(e) {
@@ -133,12 +174,11 @@ class Config extends Component {
 
                             <FormGroup className={classes.formGroup}>
                                 <TextField
+                                    disabled
                                     margin="dense"
                                     variant="outlined"
-                                    name="deploymentName"
                                     label="Deployment name"
                                     value={deploymentName}
-                                    onChange={this.handleChange}
                                     helperText="Deployment name is a unique name that identifies a deployment. It's used for example in the url of the deployment."
                                 />
                             </FormGroup>
@@ -248,4 +288,4 @@ class Config extends Component {
     }
 }
 
-export default withStyles(styles)(withRouter(Config));
+export default withStyles(styles)(withRouter(DeploymentConfigForm));
