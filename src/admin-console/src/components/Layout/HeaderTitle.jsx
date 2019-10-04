@@ -34,7 +34,11 @@ class HeaderTitle extends Component {
             return setState(path[1])
         } else if (path.length === 3) {
             if (path[1] === "settings") return setState(path[1]);
-            return setState(deployments.find(d => d.name === path[1]).displayName, true);
+            try {
+                return setState(deployments.find(d => d.name === path[1]).displayName, true);
+            } catch (err) {
+                return;
+            }
         }
 
     }
