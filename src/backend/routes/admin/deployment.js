@@ -30,6 +30,9 @@ router.post("/new", async (req, res) => {
                 .then(() => {
                     newConfig.save()
                         .then(() => {
+                            let payload = { user: { uid: user.uid, roles: user.roles, deployments: user.deployments } };
+                            var newToken = jwt.sign(payload, process.env.JWT_SECRET);
+                            res.cookie("token", newToken, { httpOnly: true });
                             res.status(200).json({ msg: "success", key });
                         })
                         .catch(err => {
