@@ -67,7 +67,7 @@ class App extends Component {
                                     ? <Logout updateAuthState={this.updateAuthState} />
                                     : <Redirect to={{
                                         pathname: "/login",
-                                        state: { from: props.location }
+                                        state: { from: "/" }
                                     }} />
                             )} />
 
