@@ -11,7 +11,7 @@ const reqAuth = require("../../middleware/reqAuth");
 require("dotenv").config();
 
 router.post("/new", async (req, res) => {
-    const user_uid = req.session.user.id;
+    const user_uid = req.session.user.uid;
     if (!user_uid) {
         return res.status(200).json({ msg: "unathorized" });
     } else {
