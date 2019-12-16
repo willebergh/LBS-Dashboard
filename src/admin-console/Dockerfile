@@ -5,11 +5,10 @@ RUN mkdir /app/public
 
 WORKDIR /app
 
-COPY ./build /app/public
-COPY ./server.js /app
+COPY ./build ./public
+COPY ./server.js .
 
-RUN ls
-
+RUN npm init -y
 RUN npm install express
 
 CMD ["node", "server.js"]
