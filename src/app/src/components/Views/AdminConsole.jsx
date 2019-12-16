@@ -74,7 +74,13 @@ class AdminConsole extends Component {
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.initSocket();
+        const loop = setInterval(() => {
+            console.log(this.props.user)
+            if (this.props.user) {
+                clearInterval(loop);
+                this.initSocket();
+            }
+        }, 100)
     }
 
     initSocket() {
