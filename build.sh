@@ -10,7 +10,6 @@ cp -r ./src/backend/routes ./build
 cp -r ./src/backend/updater ./build
 cp -r ./src/backend/websocket ./build
 
-cp ./src/backend/.env ./build
 cp ./src/backend/*.js ./build
 cp ./src/backend/package*.json ./build
 
