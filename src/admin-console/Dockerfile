@@ -1,15 +1,15 @@
 FROM node
 
 RUN mkdir /app
-RUN mkidr /app/public
+RUN mkdir /app/public
 
 WORKDIR /app
 
 COPY ./build ./public
-
+COPY ./server.js .
 
 RUN ls
 
 RUN npm install express
 
-CMD ["node", "index.js"]
+CMD ["node", "server.js"]
