@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles";
-import { Paper, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, Button, Grid, FormGroup, TextField } from "@material-ui/core";
+import { Paper, List, ListItem, ListItemText, ListItemSecondaryAction, Button, Grid, TextField } from "@material-ui/core";
 
 const styles = {
     paper: {

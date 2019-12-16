@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import { Switch, Route } from "react-router-dom";
 import axios from "axios";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Button, Grid, Typography, Snackbar } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Grid, Typography } from "@material-ui/core";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import ButtonProgress from "../ButtonProgress";
 
@@ -44,6 +44,7 @@ function AddUser(props) {
             })
             .catch(err => {
                 setLoading(false);
+                setFeedback(err.response.data.msg)
                 props.openSnackbar(err.response.data.msg, "error");
             })
     }

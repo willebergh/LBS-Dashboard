@@ -85,7 +85,7 @@ class DeploymentConfigForm extends Component {
                 values: {
                     ...this.state.values,
                     displayName: newState.replace(/([ ])\1{0,}/g, " "),
-                    deploymentName: newState.replace(/([ ])\1{0,}/g, "-").toLowerCase().replace(/([^a-z0-9\-])/g, "")
+                    deploymentName: newState.replace(/([ ])\1{0,}/g, "-").toLowerCase().replace(/([^a-z0-9-])/g, "")
                 }
             });
         } else {

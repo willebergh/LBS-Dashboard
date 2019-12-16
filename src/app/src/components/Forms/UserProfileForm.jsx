@@ -4,7 +4,6 @@ import {
     TextField, Button, FormGroup,
     Paper, Typography, IconButton, Avatar
 } from "@material-ui/core";
-import axios from "axios";
 import { withRouter } from "react-router-dom";
 
 

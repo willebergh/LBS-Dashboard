@@ -169,8 +169,4 @@ Sidebar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-function GlobalAdminList(props) {
-
-}
-
 export default withStyles(styles)(Sidebar);
