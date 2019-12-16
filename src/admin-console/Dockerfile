@@ -5,8 +5,8 @@ RUN mkdir /app/public
 
 WORKDIR /app
 
-COPY ./build ./public
-COPY ./server.js .
+COPY ./build /app/public
+COPY ./server.js /app
 
 RUN ls
 
