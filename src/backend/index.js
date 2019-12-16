@@ -5,6 +5,7 @@ const WebSocket = require("./websocket")
 const cors = require("cors");
 const session = require("./config/session");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const logger = require("./logger");
 const routes = require("./routes");
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(session)
 app.use(routes);
+app.use(express.static("app"));
+app.use("/*", (req, res) => res.sendFile(path.join(__dirname, "app", "index.html")));
 
 database.init();
 const webSocket = new WebSocket(server);

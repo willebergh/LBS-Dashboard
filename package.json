@@ -4,12 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install": "cd .\\src\\app && npm install && cd .. && cd .\\admin-console && npm install && cd.. && cd .\\backend && npm install && cd .. && cd .\\website && npm install",
+    "install": "cd .\\src\\app && npm install && cd .. && cd .\\backend && npm install && cd ..",
     "dev-app": "start cmd /k \"cd .\\src\\app && npm start\"",
-    "dev-admin-console": "start cmd /k \"cd .\\src\\admin-console && npm start\"",
-    "dev-website": "start cmd /k \"cd .\\src\\website && npm start\"",
     "dev-backend": "start cmd /k \"cd .\\src\\backend && nodemon index.js\"",
-    "dev-all": "npm run dev-app && npm run dev-website && && npm run dev-admin-console npm run dev-backend"
+    "build": "bash ./build.sh"
   },
   "repository": {
     "type": "git",
