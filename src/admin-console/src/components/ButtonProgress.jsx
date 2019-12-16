@@ -8,8 +8,10 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
     },
     wrapper: {
-        margin: theme.spacing(1),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
         position: 'relative',
+        width: "100%"
     },
     buttonProgress: {
         position: 'absolute',

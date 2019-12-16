@@ -20,6 +20,7 @@ const categories = [
         id: "Other", links: [
             { id: "Profile", icon: <PeopleIcon />, path: "/admin/profile" },
             { id: "Settings", icon: <SettingsIcon />, path: "/admin/settings" },
+            { id: "Add User", icon: <PeopleIcon />, path: "/admin/global/adduser", role: "admin" }
         ]
     }
 ];
@@ -73,9 +74,9 @@ function CustomLink({ children, ...props }) {
     )
 }
 
-class Navigator extends Component {
+class Sidebar extends Component {
     render() {
-        const { deployments, classes, ...other } = this.props;
+        const { deployments, isAdmin, classes, ...other } = this.props;
         return (
             <Drawer variant="permanent" {...other}>
                 <List disablePadding>
@@ -137,25 +138,23 @@ class Navigator extends Component {
                                     {id}
                                 </ListItemText>
                             </ListItem>
-                            {links.map(({ id, icon, path }, i) => (
-                                <CustomLink key={i} to={path} >
-                                    <ListItem
-                                        button
-                                        className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
-                                    >
-                                        <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
-                                        <ListItemText
-                                            classes={{
-                                                primary: classes.itemPrimary,
-                                            }}
+                            {links.map(({ id, icon, path, role }, i) => {
+                                if (role === "admin" && !isAdmin) return null;
+
+                                return (
+                                    <CustomLink key={i} to={path} >
+                                        <ListItem
+                                            button
+                                            className={clsx(classes.item, window.location.pathname.startsWith(path) && classes.itemActiveItem)}
                                         >
-
-                                            {id}
-
-                                        </ListItemText>
-                                    </ListItem>
-                                </CustomLink>
-                            ))}
+                                            <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+                                            <ListItemText classes={{ primary: classes.itemPrimary }}>
+                                                {id}
+                                            </ListItemText>
+                                        </ListItem>
+                                    </CustomLink>
+                                )
+                            })}
                             <Divider className={classes.divider} />
                         </React.Fragment>
                     ))}
@@ -166,8 +165,12 @@ class Navigator extends Component {
     }
 }
 
-Navigator.propTypes = {
+Sidebar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Navigator);
+function GlobalAdminList(props) {
+
+}
+
+export default withStyles(styles)(Sidebar);

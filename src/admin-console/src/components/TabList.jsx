@@ -30,6 +30,11 @@ class TabList extends Component {
                     </Tabs>
                 )} />
 
+                <Route path="/admin/global" render={props => (
+                    <Tabs onChange={this.handleChange} value={this.props.location.pathname}>
+                    </Tabs>
+                )} />
+
                 < Route path="/admin/:deployment" render={props => (
                     <Tabs onChange={this.handleChange} value={this.props.history.location.pathname}>
                         <Tab label="Dashboards" value={`/admin/${props.match.params.deployment}/dashboards`} />

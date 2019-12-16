@@ -16,6 +16,8 @@ import Settings from "./Settings";
 import Deployment from '../Deployment';
 import DeploymentConfigForm from "../Forms/DeploymentConfigForm";
 import Copyright from "../Copyright";
+import GlobalAdmin from "./GlobalAdmin";
+import Snackbar from "../Snackbar";
 
 const drawerWidth = 256;
 
@@ -59,7 +61,11 @@ class AdminConsole extends Component {
             mobileOpen: false,
             deployments: [],
             loading: false,
-            loginRedirect: false
+            loginRedirect: false,
+            snackbar: {
+                open: false,
+                message: "",
+            }
         }
 
         this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
@@ -97,15 +103,30 @@ class AdminConsole extends Component {
             .catch(err => console.log(err));
     }
 
+    openSnackbar = (message, variant) => {
+        this.setState({ snackbar: { ...this.state.snackbar, open: true, message, variant } })
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { ...this.state.snackbar, open: false } })
+    }
+
     render() {
         const { classes, user } = this.props;
-        const { loading, loginRedirect, mobileOpen } = this.state;
+        const { loading, loginRedirect, mobileOpen, snackbar } = this.state;
         return (
 
             <div>
                 {loading ? <Loading />
                     : loginRedirect ? <Redirect to="/login" />
                         : <div className={classes.root}>
+                            <Snackbar
+                                open={snackbar.open}
+                                message={snackbar.message}
+                                variant={snackbar.variant}
+                                onClose={this.handleSnackbarClose}
+                                anchorOrigin={{ vertical: "top", horizontal: "right", }}
+                            />
                             <nav className={classes.drawer}>
                                 <Hidden smUp implementation="js">
                                     <Sidebar
@@ -114,10 +135,11 @@ class AdminConsole extends Component {
                                         open={mobileOpen}
                                         onClose={this.handleDrawerToggle}
                                         deployments={this.state.deployments}
+                                        isAdmin={this.props.user.roles.user === "admin"}
                                     />
                                 </Hidden>
                                 <Hidden xsDown implementation="css">
-                                    <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} />
+                                    <Sidebar PaperProps={{ style: { width: drawerWidth } }} deployments={this.state.deployments} isAdmin={this.props.user.roles.user === "admin"} />
                                 </Hidden>
                             </nav>
                             <div className={classes.app}>
@@ -134,6 +156,13 @@ class AdminConsole extends Component {
                                         )} />
                                         <Route path={"/admin/profile"} render={(props) => <Profile user={user} {...props} />} />
                                         <Route path={"/admin/settings"} render={(props) => <Settings {...props} />} />
+
+                                        {this.props.user.roles.user === "admin" ? (
+                                            <Route path="/admin/global" render={props => (
+                                                <GlobalAdmin {...props} openSnackbar={this.openSnackbar} />
+                                            )} />
+                                        ) : null}
+
                                         {this.state.deployments.length !== 0 ? (
                                             <Route path={"/admin/:deployment"} render={(props) => (
                                                 <Deployment
@@ -143,7 +172,6 @@ class AdminConsole extends Component {
                                                 />
                                             )} />
                                         ) : null}
-
 
                                     </Switch>
 
