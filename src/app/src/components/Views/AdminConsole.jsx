@@ -87,6 +87,9 @@ class AdminConsole extends Component {
         const socket = io("/admin");
         socket.on("error", err => {
             console.log(err);
+            if (err.type === "authentication-error" && err.message === "no-token" && this.props.user) {
+                window.location.reload();
+            }
         });
         socket.on("connect", () => {
             console.log("Successfully connected to socket!");
