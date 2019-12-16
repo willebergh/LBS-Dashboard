@@ -10,6 +10,6 @@ app.use("*", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Serving app on port ${port}`)
+    console.log(`Serving admin-console on port ${port}`)
 })
 
