@@ -3,6 +3,12 @@ const moment = require("moment");
 const rp = require("request-promise");
 const logger = require("../logger");
 const Restaurant = require("../models/Restaurant");
+const Tesseract = require("tesseract.js");
+const axios = require("axios");
+
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 module.exports = async function (name, io) {
     logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
@@ -31,12 +37,12 @@ module.exports = async function (name, io) {
 
 async function getData(name) {
     switch (name) {
-        case "jonsjacob": return await getDataJonsJacob();
+        case "jonsjacob": return await getDataJonsJacob_v2();
     }
 }
 
 // Get data for restaurant Jöns Jacob
-async function getDataJonsJacob() {
+async function getDataJonsJacob_v1() {
     let weeks;
     let currentWeekNr;
 
@@ -107,4 +113,65 @@ async function getDataJonsJacob() {
         today,
         thisWeek
     })
+}
+
+async function getDataJonsJacob_v2() {
+    const worker = Tesseract.createWorker({
+        logger: ({ workerId, jobId, status, progress }) => {
+            const log = [`[${moment().format("HH:mm:ss")}]`.gray, `[Tesseract]`.cyan, `${status.capitalize()}`.yellow, `${Math.floor(progress * 100)}%`.green];
+            if (workerId) log.splice(2, 0, `[${workerId}]`.cyan);
+            if (jobId) log.splice(log.length - 2, 0, `${jobId}:`.cyan);
+            console.log(...log);
+        }
+    });
+
+    await worker.load();
+    await worker.loadLanguage("swe");
+    await worker.initialize("swe");
+
+    const url = "https://jonsjacob.gastrogate.com/gymnasiemeny/";
+    const imageUrl = (await axios.get(url)).headers.refresh.replace("0;url=", "");
+    const text = (await worker.recognize(imageUrl)).data.text;
+
+    const lines = text.split("\n");
+    const lowerCaseLines = lines.map(_ => _.toLowerCase());
+    const indexOfWeek = lowerCaseLines.findIndex(_ => _.startsWith("vecka"));
+
+    const thisWeek = {
+        title: lines[indexOfWeek],
+        nr: parseInt(lines[indexOfWeek].replace(/[^0-9]/g, "")),
+        days: []
+    };
+
+    ["måndag", "tisdag", "onsdag", "torsdag", "fredag", "quality of life services"]
+        .map(day => lowerCaseLines.findIndex(_ => _.startsWith(day)))
+        .reduce((prev, value) => {
+            const day = { day: lowerCaseLines[prev].capitalize(), menu: [] };
+            for (var i = prev + 1; i < value; i++) {
+                day.menu.push(lines[i]);
+            }
+            thisWeek.days.push(day);
+            return value;
+        });
+
+    function getDayOfTheWeek() {
+        switch (moment().format("dddd")) {
+            case "Monday": return "måndag";
+            case "Tuesday": return "tisdag";
+            case "Wednesday": return "onsdag";
+            case "Thursday": return "torsdag";
+            case "Friday": return "fredag";
+            case "Saturday": return "måndag";
+            case "Sunday": return "måndag";
+        }
+    }
+
+    const today = thisWeek.days.find(_ => _.day.toLowerCase() === getDayOfTheWeek());
+
+    return ({
+        name: "jonsjacob",
+        displayName: "Jöns Jacob",
+        today,
+        thisWeek
+    });
 }
