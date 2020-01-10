@@ -43,7 +43,7 @@ class NextDepartures extends Component {
                         </div>
                         <div className="departures">
 
-                            {departures.map((d, i) => {
+                            {departures.filter((_, i) => i < 3).map((d, i) => {
                                 return (
                                     <Departure
                                         key={i}
