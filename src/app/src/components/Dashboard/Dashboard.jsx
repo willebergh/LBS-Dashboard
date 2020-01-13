@@ -49,6 +49,7 @@ class Dashboard extends Component {
             this.socket.emit("dashboard-connect", config);
             this.socket.on("update-connected-dashboards", data => console.log(data));
             this.socket.on("dashboard-identified", () => this.onDashboardIdentified());
+            this.socket.on("dashboard-refresh", () => this.onDashboardRefresh());
             this.socket.on("dashboard-delete", this.onDashboardDelete);
         });
     }
@@ -80,6 +81,10 @@ class Dashboard extends Component {
                 }
             }, 500)
         }
+    }
+
+    onDashboardRefresh() {
+        window.location.reload();
     }
 
     onDashboardDelete() {

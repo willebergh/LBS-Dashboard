@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import MaterialTable, { MTableToolbar, MTableHeader } from 'material-table';
-import { MyLocation as MyLocationIcon } from "@material-ui/icons";
+import { MyLocation as MyLocationIcon, Refresh as RefreshIcon } from "@material-ui/icons";
 import axios from "axios"
 
 
@@ -71,6 +71,7 @@ class Overview extends Component {
 
         this.tableRef = React.createRef();
         this.handleIdentifyDashboard = this.handleIdentifyDashboard.bind(this);
+        this.handleRefreshDashboard = this.handleRefreshDashboard.bind(this);
     }
 
     componentDidMount() {
@@ -124,6 +125,12 @@ class Overview extends Component {
         socket.emit("identify-dashboard", data)
     }
 
+    handleRefreshDashboard(e, rowData) {
+        const socket = this.props.socket;
+        const data = { key: this.props.deployment.key, name: rowData.name };
+        socket.emit("refresh-dashboard", data)
+    }
+
     render() {
         const { classes, deployment } = this.props;
         return (
@@ -140,6 +147,7 @@ class Overview extends Component {
                     }}
                     actions={[
                         { icon: () => <MyLocationIcon />, onClick: this.handleIdentifyDashboard, tooltip: "Identify dashboard" },
+                        { icon: () => <RefreshIcon />, onClick: this.handleRefreshDashboard, tooltip: "Refresh dashboard" },
                         { icon: 'refresh', tooltip: 'Refresh Data', isFreeAction: true, onClick: () => this.updateTable() },
                     ]}
                     options={{
