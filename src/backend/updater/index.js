@@ -11,8 +11,8 @@ module.exports = class Updater {
     }
 
     init() {
-        this.addJob_updateRestaurants();
-        this.addJob_updateForecast();
+        this.addJob_updateRestaurants(this.io);
+        this.addJob_updateForecast(this.io);
         this.addJob_updateStation(this.io);
     }
 
