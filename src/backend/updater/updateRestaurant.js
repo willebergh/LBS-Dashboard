@@ -28,7 +28,7 @@ module.exports = async function (name, io) {
         newRestaurant.save()
             .then(() => {
                 logger.log(`Updated restaurant ${name}`.green, "Updater");
-                io.of("/dashboards").in(`restaurant-${name}`).emit("update-station", data)
+                io.of("/dashboards").in(`restaurant-${name}`).emit("update-restaurant", data)
             })
             .catch(err => logger.error(err, "Updater"))
     }
