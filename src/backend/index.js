@@ -16,8 +16,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(session)
 app.use(routes);
-app.use(express.static("app"));
-app.use("/*", (req, res) => res.sendFile(path.join(__dirname, "app", "index.html")));
+app.use("/", express.static("public"))
+app.use("/*", (req, res) => res.sendFile(path.join(__dirname, "public", "admin", "index.html")));
 
 database.init();
 const webSocket = new WebSocket(server);

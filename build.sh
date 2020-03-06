@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -r build
 mkdir build
 
 cp -r ./src/backend/config ./build
@@ -13,8 +14,15 @@ cp -r ./src/backend/websocket ./build
 cp ./src/backend/*.js ./build
 cp ./src/backend/package*.json ./build
 
-cd src/app
+cd src/admin
 npm run build
 
-mkdir ../../build/app
-cp -r ./build/* ../../build/app
+mkdir ../../build/public
+mkdir ../../build/public/admin
+cp -r ./build/* ../../build/public/admin
+
+cd ../app
+npm run build
+
+mkdir ../../build/public/app
+cp -r ./build/* ../../build/public/app
