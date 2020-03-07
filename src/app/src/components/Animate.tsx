@@ -14,18 +14,19 @@ interface IRevealControllerProps {
 interface IRevealControllerState {
     up: Array<object>;
     down: Array<object>;
-    isHiding: boolean;
-    isRevealing: boolean;
+    isRevealed: boolean;
+    offset: number;
 }
 
 interface IContext {
     addRefs: CallableFunction;
     reveal: CallableFunction;
     hide: CallableFunction;
+    isRevealed: boolean;
 }
 
 const func = () => { };
-export const RevealContext = React.createContext<IContext>({ addRefs: func, reveal: func, hide: func });
+export const RevealContext = React.createContext<IContext>({ addRefs: func, reveal: func, hide: func, isRevealed: false });
 
 export class RevealController extends React.Component<IRevealControllerProps, IRevealControllerState> {
     constructor(props: IRevealControllerProps) {
@@ -33,8 +34,8 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
         this.state = {
             up: [],
             down: [],
-            isHiding: false,
-            isRevealing: false
+            isRevealed: false,
+            offset: 100
         }
     }
 
@@ -48,31 +49,41 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
         this.setState(newState);
     }
 
-    animate = () => {
-        if (this.state.isHiding) return;
+    reveal = () => {
+        const { up, down, offset } = this.state;
+
+        if (up.length > 0 && down.length > 0) {
+            setTimeout(() => {
+                this.setState({ isRevealed: true })
+            }, 2000)
+        }
+
         anime({
-            targets: this.state.up,
+            targets: up,
             translateY: -100,
             direction: 'reverse',
             opacity: [1, 0],
             easing: "easeInExpo",
-            delay: (el, i) => i * 100,
+            delay: (el, i) => i * offset,
         })
+
         anime({
-            targets: this.state.down,
+            targets: down,
             translateY: -100,
             direction: 'reverse',
             opacity: [1, 0],
             easing: "easeInExpo",
-            delay: (el, i) => i * 100,
+            delay: (el, i) => i * offset,
         })
     }
 
     hide = () => {
+        const { up, down, offset } = this.state;
+
         anime.timeline({
-            targets: this.state.up,
+            targets: up,
             easing: "easeInExpo",
-            delay: (el, i) => i * 100,
+            delay: (el, i) => i * offset,
         })
             .add({
                 translateY: -100,
@@ -83,9 +94,9 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
             });
 
         anime.timeline({
-            targets: this.state.down,
+            targets: down,
             easing: "easeInExpo",
-            delay: (el, i) => i * 100,
+            delay: (el, i) => i * offset,
         })
             .add({
                 translateY: -100,
@@ -100,8 +111,9 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
         return (
             <RevealContext.Provider value={{
                 addRefs: this.addRefs,
-                reveal: this.animate,
-                hide: this.hide
+                reveal: this.reveal,
+                hide: this.hide,
+                isRevealed: this.state.isRevealed
             }}>
                 {this.props.children}
             </RevealContext.Provider>
@@ -137,7 +149,7 @@ export class Reveal extends React.Component<IReveal> {
                 {React.Children.map(this.props.children, (element, idx) => (
                     React.cloneElement(
                         element as React.ReactElement<any>,
-                        { ref: idx, className: css(styles.hidden) }
+                        { ref: idx, className: !this.context.isRevealed ? css(styles.hidden) : null }
                     )
                 ))}
             </React.Fragment>

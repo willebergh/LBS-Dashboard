@@ -148,6 +148,8 @@ const Dashboard: React.FC = props => {
             return i < 3 ? newData : false;
         })
         setDepartures(newData);
+        setTimeout(() => setDepartures([]), 5000);
+        setTimeout(() => setDepartures(newData), 6000);
     }
 
     const updateWeather = (weather: IWeather) => {
