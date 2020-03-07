@@ -143,6 +143,7 @@ const Dashboard: React.FC = props => {
 
     const updateDepartures = (sl: ISLRealtime) => {
         console.log("updateDepartures");
+        if (sl.Buses.length < 0) return;
         const newData: Array<IDeparture> = sl.Buses.filter(({ Destination, DisplayTime, LineNumber, StopAreaName }, i) => {
             const newData = { Destination, DisplayTime, LineNumber, StopAreaName };
             return i < 3 ? newData : false;
