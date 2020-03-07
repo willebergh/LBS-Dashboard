@@ -11,6 +11,8 @@ module.exports = async function (siteId, io) {
     const data = await getData(siteId);
     const station = await Station.findOne({ siteId });
 
+    if (!data) return;
+
     if (!station) {
         const newStation = new Station(data)
         newStation.save()
