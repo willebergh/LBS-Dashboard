@@ -8,7 +8,7 @@ import * as serviceWorker from './serviceWorker';
 ReactDOM.render((
     <BrowserRouter>
         <Switch>
-            <Route exact path="/app" component={Dashboard} />
+            <Route exact path="/v1/app" component={Dashboard} />
             <Route component={AdminConsole} />
         </Switch>
     </BrowserRouter>
