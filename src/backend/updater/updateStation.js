@@ -19,25 +19,28 @@ module.exports = async function (siteId, io) {
             .then(() => logger.log(`Added station ${siteId} to the database`.green, "Updater"))
             .catch(err => logger.error(err, "Updater"))
     } else {
-        await Station.deleteOne({ _id: station._id });
-        const newStation = new Station(data);
-        newStation.save()
-            .then(() => {
-                logger.log(`Updated station ${siteId}`.green, "Updater");
-                io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
-            })
-            .catch(err => logger.error(err, "Updater"))
+
+        try {
+            await Station.deleteOne({ _id: station._id });
+            const newStation = new Station(data);
+            await newStation.save();
+        } catch (err) {
+            logger.error(err, "Updater")
+        } finally {
+            logger.log(`Updated station ${siteId}`.green, "Updater");
+            io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
+        }
     }
 }
 
 async function getData(siteId) {
-    let data;
-
-    const token = process.env.SL_API_REALTIME_TOKEN;
-    const url = `https://api.sl.se/api2/realtimedeparturesV4.json?key=${token}&siteid=${siteId}`;
-    await axios.get(url)
-        .then(res => data = { siteId, ...res.data.ResponseData })
-        .catch(err => logger.error(err, "Updater"))
-
-    return data;
+    try {
+        const token = process.env.SL_API_REALTIME_TOKEN;
+        const url = `https://api.sl.se/api2/realtimedeparturesV4.json?key=${token}&siteid=${siteId}`;
+        const data = (await axios.get(url)).data.ResponseData;
+        if (!data) return;
+        return { siteId, ...data };
+    } catch (err) {
+        logger.error(err, "Updater")
+    }
 }
