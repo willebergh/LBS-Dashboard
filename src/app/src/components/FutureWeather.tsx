@@ -43,7 +43,7 @@ const FutureWeather: React.FC<IProps> = props => {
                             {i === 0 ? "Now" : moment.unix(time).format("HH:mm")}
                         </Row>
                         <Row>
-                            <WeatherIcon theme="light" icon={icon} />
+                            <WeatherIcon icon={icon} />
                         </Row>
                         <Row>
                             {Math.round(temperature)}&deg;

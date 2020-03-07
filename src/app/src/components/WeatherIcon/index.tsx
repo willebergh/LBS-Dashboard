@@ -14,12 +14,16 @@ import Thunderstorm from "./icons/Thunderstorm";
 import Tornado from "./icons/Tornado";
 import Wind from "./icons/Wind";
 
+import { ThemeContext } from "../Theme";
+
 interface IProps {
     icon: string;
-    theme: string;
 }
 
-const WeatherIcon: React.FC<IProps> = ({ icon, theme }) => {
+const WeatherIcon: React.FC<IProps> = ({ icon }) => {
+
+    const { theme } = React.useContext(ThemeContext);
+
     const getIcon = () => {
         switch (icon) {
             case "clear-day": return <ClearDay theme={theme} />
