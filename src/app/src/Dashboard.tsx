@@ -11,6 +11,7 @@ import axios from "axios";
 import { IWeather, IWeatherData, IRestaurant, ISLRealtime, ISocketError, IDashboardConfig } from "./types";
 import io from "socket.io-client";
 import { ThemeContext } from "./components/Theme";
+import { RevealContext } from "./components/Animate";
 
 const Root = styled.div`
     display: flex;
@@ -23,7 +24,58 @@ const Root = styled.div`
 
 `;
 
+interface IHideProps {
+    hide: boolean;
+}
+
+const Hide: React.FC<IHideProps> = props => {
+
+    const Root = styled.div`
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0,0,0,.8);
+        position: fixed;
+        top: 0;
+        left: 0;
+    `;
+
+    const Text = styled.div`
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        color: #fff;
+    `;
+
+    const { hide, reveal } = React.useContext(RevealContext);
+
+    React.useEffect(() => {
+        if (props.hide) {
+            hide();
+        } else {
+            reveal();
+        }
+    }, [props.hide])
+
+    return (
+        <React.Fragment>
+            {props.children}
+            {props.hide && (
+                <Root>
+                    <Text>
+                        <h1>Dashboard</h1>
+                        <p>The system is shutting down</p>
+                        {"See you soon"}
+                    </Text>
+                </Root>
+            )}
+
+        </React.Fragment>
+    );
+}
+
 const Dashboard: React.FC = props => {
+    const [hide, setHide] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState(false);
     const [currentWeatherData, setCurrentWeatherData] = React.useState<ICurrentWeather>({
         temperature: 0, summary: ""
@@ -119,27 +171,35 @@ const Dashboard: React.FC = props => {
 
     const onDashboardRefresh = () => {
         console.log("onDashboardRefresh");
-        window.location.reload();
+        setHide(true)
+        setTimeout(() => {
+            window.location.reload()
+        }, 3000)
     }
 
     const onDashboardDelete = () => {
         console.log("onDashboardDelete");
-        localStorage.removeItem("dashboard-config");
-        window.location.reload();
+        setHide(true)
+        setTimeout(() => {
+            localStorage.removeItem("dashboard-config");
+            window.location.reload();
+        }, 3000)
     }
 
     return (
-        <Root>
-            <RevealController>
+        <RevealController>
+            <Hide hide={hide}>
                 <Loading loading={loading}>
-                    <CurrentTimeAndDate />
-                    <CurrentWeather data={currentWeatherData} />
-                    <FutureWeather data={futureWeatherData} />
-                    <Departures data={departures} />
-                    <FoodMenu data={foodMenu} />
+                    <Root>
+                        <CurrentTimeAndDate />
+                        <CurrentWeather data={currentWeatherData} />
+                        <FutureWeather data={futureWeatherData} />
+                        <Departures data={departures} />
+                        <FoodMenu data={foodMenu} />
+                    </Root>
                 </Loading>
-            </RevealController>
-        </Root>
+            </Hide>
+        </RevealController>
     )
 }
 

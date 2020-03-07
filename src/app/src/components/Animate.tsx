@@ -14,16 +14,27 @@ interface IRevealControllerProps {
 interface IRevealControllerState {
     up: Array<object>;
     down: Array<object>;
+    isHiding: boolean;
+    isRevealing: boolean;
 }
 
-const RevealContext = React.createContext<any>(null);
+interface IContext {
+    addRefs: CallableFunction;
+    reveal: CallableFunction;
+    hide: CallableFunction;
+}
+
+const func = () => { };
+export const RevealContext = React.createContext<IContext>({ addRefs: func, reveal: func, hide: func });
 
 export class RevealController extends React.Component<IRevealControllerProps, IRevealControllerState> {
     constructor(props: IRevealControllerProps) {
         super(props);
         this.state = {
             up: [],
-            down: []
+            down: [],
+            isHiding: false,
+            isRevealing: false
         }
     }
 
@@ -38,6 +49,7 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
     }
 
     animate = () => {
+        if (this.state.isHiding) return;
         anime({
             targets: this.state.up,
             translateY: -100,
@@ -56,11 +68,40 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
         })
     }
 
+    hide = () => {
+        anime.timeline({
+            targets: this.state.up,
+            easing: "easeInExpo",
+            delay: (el, i) => i * 100,
+        })
+            .add({
+                translateY: -100,
+                opacity: [1, 0],
+            })
+            .add({
+                translateY: 0
+            });
+
+        anime.timeline({
+            targets: this.state.down,
+            easing: "easeInExpo",
+            delay: (el, i) => i * 100,
+        })
+            .add({
+                translateY: -100,
+                opacity: [1, 0],
+            })
+            .add({
+                translateY: 0
+            });
+    }
+
     render() {
         return (
             <RevealContext.Provider value={{
                 addRefs: this.addRefs,
-                reveal: this.animate
+                reveal: this.animate,
+                hide: this.hide
             }}>
                 {this.props.children}
             </RevealContext.Provider>
