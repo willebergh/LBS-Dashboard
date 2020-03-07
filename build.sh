@@ -26,3 +26,8 @@ npm run build
 
 mkdir ../../build/public/app
 cp -r ./build/* ../../build/public/app
+
+cd ../..
+
+docker build -t willebergh/lbs-dashboard .
+docker push willebergh/lbs-dashboard
