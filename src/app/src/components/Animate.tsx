@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import anime, { AnimeInstance } from "animejs";
 import { StyleSheet, css } from "aphrodite/no-important";
+import moment from "moment";
 
 
 /**
@@ -37,6 +38,19 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
             isRevealed: false,
             offset: 100
         }
+    }
+
+    componentDidMount() {
+        this.clock();
+    }
+
+    clock = () => {
+        setInterval(() => {
+            if (moment().format("mm:ss") === "00:00" && this.state.isRevealed) {
+                setTimeout(() => window.location.reload(), 2000);
+                this.hide();
+            }
+        }, 1000)
     }
 
     addRefs = (direction: "up" | "down", newRefs: any) => {
@@ -79,6 +93,10 @@ export class RevealController extends React.Component<IRevealControllerProps, IR
 
     hide = () => {
         const { up, down, offset } = this.state;
+
+        setTimeout(() => {
+            this.setState({ isRevealed: false })
+        }, 2000)
 
         anime.timeline({
             targets: up,
