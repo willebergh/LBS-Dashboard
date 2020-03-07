@@ -4,6 +4,7 @@ import Setup from "./Setup";
 import Dashboard from "./Dashboard";
 import { ThemeController } from "./components/Theme";
 import * as serviceWorker from './serviceWorker';
+import "./index.css";
 
 const Root: React.FC = props => {
     const config = localStorage.getItem("dashboard-config");
