@@ -1,18 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
-
-const available = {
-    restaurants: [
-        { id: "jonsjacob", name: "Jöns Jacob" }
-    ],
-    stations: [
-        { id: "3404", name: "Karolinska institutet västra" },
-    ],
-    weathers: [
-        { id: "stockholm", name: "Stockholm" }
-    ],
-}
+const available = require("../../dataSources");
 
 router.get("/restaurants", (req, res) => {
     res.json({ msg: "success", available: { restaurants: available.restaurants } })
