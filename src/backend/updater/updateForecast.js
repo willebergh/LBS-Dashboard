@@ -5,29 +5,29 @@ require("dotenv").config();
 const colors = require("colors");
 
 module.exports = async function (city, io) {
-    if (!city) return;
+    try {
 
-    logger.log(`Updating forecast in ${city}`.yellow, "Updater");
+        if (!city) throw "City name is required!";
+        if (!io) throw "Websocket is  required!";
 
-    const data = await getData(city);
-    const forecast = await Forecast.findOne({ city });
+        logger.log(`Updating forecast in ${city}`.yellow, "Updater");
 
-    if (!forecast) {
-        const newForecast = new Forecast(data);
-        newForecast.save()
-            .then(() => {
-                logger.log(`Added a new forecast from ${city} to the database`.green, "Updater");
-            })
-            .catch(err => logger.error(err, "Updater"))
-    } else {
-        await Forecast.deleteOne({ city });
-        const newForecast = new Forecast(data);
-        newForecast.save()
-            .then(() => {
-                logger.log(`Updated the forecast in ${city}`.green, "Updater");
-                io.of("/dashboards").in(`weather-${city}`).emit("update-weather", data)
-            })
-            .catch(err => logger.error(err, "Updater"))
+        const data = await getData(city);
+        const forecast = await Forecast.findOne({ city });
+
+        if (!forecast) {
+            const newForecast = new Forecast(data);
+            await newForecast.save();
+        } else {
+            forecast.overwrite(data);
+            await forecast.save();
+        }
+
+        logger.log(`Updated the forecast in ${city}`.green, "Updater");
+        io.of("/dashboards").in(`weather-${city}`).emit("update-weather", data)
+
+    } catch (err) {
+        logger.error(err, "Updater");
     }
 }
 

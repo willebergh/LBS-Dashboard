@@ -11,28 +11,30 @@ String.prototype.capitalize = function () {
 }
 
 module.exports = async function (name, io) {
-    logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
+    try {
 
-    const data = await getData(name);
-    const restaurant = await Restaurant.findOne({ name });
+        if (!name) throw "Restaurant name is required!";
+        if (!io) throw "Websocket is  required!";
 
-    if (!restaurant) {
-        const newRestaurant = new Restaurant(data);
-        newRestaurant.save()
-            .then(() => logger.log("Added new restaurant to the database".green, "Updater"))
-            .catch(err => logger.error(err, "Updater"))
-    } else {
-        await Restaurant.deleteOne({ _id: restaurant._id });
+        logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
 
-        const newRestaurant = new Restaurant(data);
-        newRestaurant.save()
-            .then(() => {
-                logger.log(`Updated restaurant ${name}`.green, "Updater");
-                io.of("/dashboards").in(`restaurant-${name}`).emit("update-restaurant", data)
-            })
-            .catch(err => logger.error(err, "Updater"))
+        const data = await getData(name);
+        const restaurant = await Restaurant.findOne({ name });
+
+        if (!restaurant) {
+            const newRestaurant = new Restaurant(data);
+            await newRestaurant.save();
+        } else {
+            restaurant.overwrite(data);
+            await restaurant.save();
+        }
+
+        logger.log(`Updated restaurant ${name}`.green, "Updater");
+        io.of("/dashboards").in(`restaurant-${name}`).emit("update-restaurant", data)
+
+    } catch (err) {
+        logger.error(err, "Updater");
     }
-
 }
 
 async function getData(name) {

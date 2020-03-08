@@ -4,32 +4,29 @@ const Station = require("../models/Station");
 require("dotenv").config();
 
 module.exports = async function (siteId, io) {
-    if (!siteId) return;
+    try {
 
-    logger.log(`Updating station ${siteId}...`.yellow, "Updater");
+        if (!siteId) throw "Station siteId is required!";
+        if (!io) throw "Websocket is required!";
 
-    const data = await getData(siteId);
-    const station = await Station.findOne({ siteId });
+        logger.log(`Updating station ${siteId}...`.yellow, "Updater");
 
-    if (!data) return;
+        const data = await getData(siteId);
+        const station = await Station.findOne({ siteId });
 
-    if (!station) {
-        const newStation = new Station(data)
-        newStation.save()
-            .then(() => logger.log(`Added station ${siteId} to the database`.green, "Updater"))
-            .catch(err => logger.error(err, "Updater"))
-    } else {
-
-        try {
-            await Station.deleteOne({ _id: station._id });
-            const newStation = new Station(data);
+        if (!station) {
+            const newStation = new Station(data)
             await newStation.save();
-        } catch (err) {
-            logger.error(err, "Updater")
-        } finally {
-            logger.log(`Updated station ${siteId}`.green, "Updater");
-            io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
+        } else {
+            station.overwrite(data);
+            await station.save();
         }
+
+        io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
+        logger.log(`Updated station ${siteId}`.green, "Updater");
+
+    } catch (err) {
+        logger.error(err, "Updater", "Station:" + siteId)
     }
 }
 
