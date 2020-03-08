@@ -4,13 +4,13 @@ const Forecast = require("../models/Forecast");
 require("dotenv").config();
 const colors = require("colors");
 
-module.exports = async function (city, io) {
+module.exports = async function (city, count, io) {
     try {
 
         if (!city) throw "City name is required!";
-        if (!io) throw "Websocket is  required!";
+        if (!io) throw "Websocket is required!";
 
-        logger.log(`Updating forecast in ${city}`.yellow, "Updater");
+        logger.log(`Updating forecast in ${city}#${count}`.yellow, "Updater");
 
         const data = await getData(city);
         const forecast = await Forecast.findOne({ city });
@@ -23,11 +23,15 @@ module.exports = async function (city, io) {
             await forecast.save();
         }
 
-        logger.log(`Updated the forecast in ${city}`.green, "Updater");
         io.of("/dashboards").in(`weather-${city}`).emit("update-weather", data)
+        logger.log(`Updated the forecast in ${city}#${count}`.green, "Updater");
 
     } catch (err) {
-        logger.error(err, "Updater");
+        if (typeof err === "string") {
+            logger.error(err, "Updater", `Forecast ${city}#${count}`);
+        } else {
+            logger.error(err.message, "Updater", `Forecast ${city}#${count}`);
+        }
     }
 }
 

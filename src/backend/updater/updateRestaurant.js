@@ -10,13 +10,13 @@ String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
-module.exports = async function (name, io) {
+module.exports = async function (name, count, io) {
     try {
 
         if (!name) throw "Restaurant name is required!";
-        if (!io) throw "Websocket is  required!";
+        if (!io) throw "Websocket is required!";
 
-        logger.log(`Updating restaurant ${name}...`.yellow, "Updater");
+        logger.log(`Updating restaurant ${name}#${count}...`.yellow, "Updater");
 
         const data = await getData(name);
         const restaurant = await Restaurant.findOne({ name });
@@ -29,11 +29,15 @@ module.exports = async function (name, io) {
             await restaurant.save();
         }
 
-        logger.log(`Updated restaurant ${name}`.green, "Updater");
+        logger.log(`Updated restaurant ${name}#${count}`.green, "Updater");
         io.of("/dashboards").in(`restaurant-${name}`).emit("update-restaurant", data)
 
     } catch (err) {
-        logger.error(err, "Updater");
+        if (typeof err === "string") {
+            logger.error(err, "Updater", `Restaurant ${name}#${count}`);
+        } else {
+            logger.error(err.message, "Updater", `Restaurant ${name}#${count}`);
+        }
     }
 }
 
