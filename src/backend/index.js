@@ -10,7 +10,6 @@ const path = require("path");
 const logger = require("./logger");
 const routes = require("./routes");
 const database = require("./database");
-const Updater = require("./updater");
 
 app.use(express.json());
 app.use(cookieParser());
