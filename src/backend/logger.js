@@ -10,8 +10,9 @@ module.exports.log = function log(...args) {
 
 // Console log error
 module.exports.error = function (...args) {
-    const tags = args.length > 1 ? args.slice(0, -1).map(t => `[${t}]`.red) : []
-    console.error(`[${moment().format("HH:mm:ss")}]`.gray, '[ErrorLog]'.red, ...tags, "from", args[args.length - 1].underline.cyan)
+    const message = args[0];
+    const tags = args.length > 1 ? args.slice(1).map(t => `[${t}]`.red) : []
+    console.error(`[${moment().format("HH:mm:ss")}]`.gray, '[ErrorLog]'.red, ...tags, message)
 }
 
 module.exports.loading = function (...args) {
