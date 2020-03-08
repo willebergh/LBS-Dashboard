@@ -3,19 +3,19 @@ const logger = require("../logger");
 const Station = require("../models/Station");
 require("dotenv").config();
 
-module.exports = async function (siteId, io) {
+module.exports = async function (siteId, count, io) {
     try {
 
         if (!siteId) throw "Station siteId is required!";
         if (!io) throw "Websocket is required!";
 
-        logger.log(`Updating station ${siteId}...`.yellow, "Updater");
+        logger.loading(`Updating station ${siteId}#${count}...`, "Updater");
 
         const data = await getData(siteId);
         const station = await Station.findOne({ siteId });
 
         if (!station) {
-            const newStation = new Station(data)
+            const newStation = new Station(data);
             await newStation.save();
         } else {
             station.overwrite(data);
@@ -23,21 +23,21 @@ module.exports = async function (siteId, io) {
         }
 
         io.of("/dashboards").in(`station-${siteId}`).emit("update-station", data);
-        logger.log(`Updated station ${siteId}`.green, "Updater");
+        logger.success(`Updated station ${siteId}#${count}`, "Updater");
 
     } catch (err) {
-        logger.error(err, "Updater", "Station:" + siteId)
+        if (typeof err === "string") {
+            logger.error(err, "Updater", `Station ${siteId}#${count}`);
+        } else {
+            logger.error(err.message, "Updater", `Station ${siteId}#${count}`);
+        }
     }
 }
 
 async function getData(siteId) {
-    try {
-        const token = process.env.SL_API_REALTIME_TOKEN;
-        const url = `https://api.sl.se/api2/realtimedeparturesV4.json?key=${token}&siteid=${siteId}`;
-        const data = (await axios.get(url)).data.ResponseData;
-        if (!data) return;
-        return { siteId, ...data };
-    } catch (err) {
-        logger.error(err, "Updater")
-    }
+    const token = process.env.SL_API_REALTIME_TOKEN;
+    const url = `https://api.sl.se/api2/realtimedeparturesV4.json?key=${token}&siteid=${siteId}`;
+    const data = (await axios.get(url, { timeout: 25 * 1000 })).data.ResponseData;
+    if (!data) throw "SL API: Request timed out";
+    return { siteId, ...data };
 }

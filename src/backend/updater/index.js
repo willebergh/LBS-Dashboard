@@ -9,9 +9,20 @@ const updateStation = require("./updateStation");
 module.exports = class Updater {
     constructor(io) {
         this.io = io;
+
+        this.counts = {
+            restaurants: {},
+            forecasts: {},
+            stations: {}
+        };
     }
 
-    init() {
+    async init() {
+        const initCount = key => _ => this.counts[key][_.id] = 0;
+        restaurants.forEach(initCount("restaurants"));
+        weathers.forEach(initCount("forecasts"));
+        stations.forEach(initCount("stations"));
+
         this.addJob_updateRestaurants();
         this.addJob_updateForecast();
         this.addJob_updateStation();
@@ -24,7 +35,10 @@ module.exports = class Updater {
         rule.second = 0;
 
         var j = schedule.scheduleJob(rule, () => {
-            restaurants.forEach(({ id }) => updateRestaurant(id, this.io))
+            restaurants.forEach(({ id }) => {
+                updateRestaurant(id, this.counts.restaurants[id], this.io)
+                this.counts.restaurants[id]++;
+            })
         })
     }
 
@@ -35,7 +49,10 @@ module.exports = class Updater {
         rule.second = 0;
 
         var j = schedule.scheduleJob(rule, () => {
-            weathers.forEach(({ id }) => updateForecast(id, this.io))
+            weathers.forEach(({ id }) => {
+                updateForecast(id, this.counts.forecasts[id], this.io)
+                this.counts.forecasts[id]++;
+            })
         })
     }
 
@@ -45,7 +62,10 @@ module.exports = class Updater {
         rule.second = [0, 30];
 
         var j = schedule.scheduleJob(rule, () => {
-            stations.forEach(({ id }) => updateStation(id, this.io))
+            stations.forEach(({ id }) => {
+                updateStation(id, this.counts.stations[id], this.io)
+                this.counts.stations[id]++;
+            })
         });
     }
 
