@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install": "cd .\\src\\app && npm install && cd .. && cd .\\backend && npm install && cd ..",
+    "dev-all": "start cmd /k \"cd .\\src\\backend && nodemon .\" && start cmd /k \"cd .\\src\\app && npm start\"  &&  start cmd /k \"cd .\\src\\admin && npm start\"",
     "dev-app": "start cmd /k \"cd .\\src\\app && npm start\"",
     "dev-backend": "start cmd /k \"cd .\\src\\backend && nodemon index.js\"",
     "build": "bash ./build.sh"
