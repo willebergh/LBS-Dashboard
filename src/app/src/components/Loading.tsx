@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 import { Loading as Animate } from "./Animate";
+import { ThemeContext } from "./Theme";
 
 const Root = styled.div`
     position: fixed;
@@ -15,7 +16,14 @@ interface IProps {
 }
 
 const Loading: React.FC<IProps> = props => {
-    const color = "black";
+
+    const [color, setColor] = React.useState<"black" | "white">("black");
+    const { theme } = React.useContext(ThemeContext);
+
+    React.useEffect(() => {
+        setColor(theme === "light" ? "black" : "white");
+    }, [theme])
+
     return (
         <React.Fragment>
             <Root>
