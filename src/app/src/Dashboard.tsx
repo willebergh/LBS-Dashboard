@@ -12,6 +12,7 @@ import { IWeather, IWeatherData, IRestaurant, ISLRealtime, ISocketError, IDashbo
 import io from "socket.io-client";
 import { ThemeContext } from "./components/Theme";
 import { RevealContext } from "./components/Animate";
+import moment from "moment";
 
 const Root = styled.div`
     display: flex;
@@ -86,7 +87,7 @@ const Dashboard: React.FC = props => {
         restaurant: "", menuItems: []
     });
 
-    const { identify: onDashboardIdentified } = React.useContext(ThemeContext);
+    const theme = React.useContext(ThemeContext);
 
     React.useEffect(() => {
         setLoading(true);
@@ -142,8 +143,8 @@ const Dashboard: React.FC = props => {
     }
 
     const updateDepartures = (sl: ISLRealtime) => {
+        if (sl.Buses.length === 0) return;
         console.log("updateDepartures");
-        if (sl.Buses.length < 0) return;
         const newData: Array<IDeparture> = sl.Buses.filter(({ Destination, DisplayTime, LineNumber, StopAreaName }, i) => {
             const newData = { Destination, DisplayTime, LineNumber, StopAreaName };
             return i < 3 ? newData : false;
@@ -153,10 +154,16 @@ const Dashboard: React.FC = props => {
 
     const updateWeather = (weather: IWeather) => {
         console.log("updateWeather");
+
+        const sunRise = moment.unix(weather.daily.data[0].sunriseTime);
+        const sunSet = moment.unix(weather.daily.data[0].sunsetTime);
+        theme.updateTheme(moment().isBetween(sunRise, sunSet) ? "light" : "dark");
+
         const newData = weather.hourly.data.filter((_: IWeatherData, i: number) => {
             const newData = { time: _.time, icon: _.icon, temperature: _.temperature };
             return i < 6 ? newData : false;
-        })
+        });
+
         setFutureWeatherData(newData);
         setCurrentWeatherData(weather.currently);
     }
@@ -168,6 +175,10 @@ const Dashboard: React.FC = props => {
             menuItems: restaurant.today.menu
         };
         setFoodMenu(newData);
+    }
+
+    const onDashboardIdentified = () => {
+        theme.identify();
     }
 
     const onDashboardRefresh = () => {
@@ -185,6 +196,18 @@ const Dashboard: React.FC = props => {
             localStorage.removeItem("dashboard-config");
             window.location.reload();
         }, 3000)
+    }
+
+    const onDashboardFullscreen = () => {
+        if (document.fullscreenEnabled) {
+            const isFullscreen = Boolean(document.fullscreenElement);
+            const root = document.getElementById("root");
+            if (isFullscreen) {
+                document.exitFullscreen();
+            } else {
+                root?.requestFullscreen();
+            }
+        }
     }
 
     return (
