@@ -14,9 +14,14 @@ const style = {
 interface IThemeContext {
     theme: "light" | "dark";
     identify: CallableFunction;
+    updateTheme: CallableFunction;
 }
 
-export const ThemeContext = React.createContext<IThemeContext>({ theme: "light", identify: () => console.log("onDashboardIdentified") });
+export const ThemeContext = React.createContext<IThemeContext>({
+    theme: "light",
+    identify: () => console.log("onDashboardIdentified"),
+    updateTheme: () => console.log("updateTheme")
+});
 
 interface IProps {
 
@@ -57,11 +62,16 @@ export class ThemeController extends React.Component<IProps, IState> {
         }
     }
 
+    updateTheme = (theme: "light" | "dark") => {
+        this.setState({ theme });
+    }
+
     render() {
         return (
             <ThemeContext.Provider value={{
                 theme: this.state.theme,
-                identify: this.handleIdentification
+                identify: this.handleIdentification,
+                updateTheme: this.updateTheme
             }}>
                 <div style={style[this.state.theme]}>
                     {this.props.children}
