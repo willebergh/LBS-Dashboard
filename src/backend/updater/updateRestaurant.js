@@ -43,7 +43,7 @@ module.exports = async function (name, count, io) {
 
 async function getData(name) {
     switch (name) {
-        case "jonsjacob": return await getDataJonsJacob_v2();
+        case "jonsjacob": return await getDataJonsJacob_v3();
     }
 }
 
@@ -180,4 +180,57 @@ async function getDataJonsJacob_v2() {
         today,
         thisWeek
     });
+}
+
+
+async function getDataJonsJacob_v3() {
+    const html = await rp("https://sodexo.mashie.com/public/app/Restaurang%20J%C3%B6ns%20Jacob/de7a1375?country=se");
+    const loadedHtml = $.load(html);
+    const menuList = loadedHtml(".panel-primary > .list-group")
+    const catcher = []
+
+    menuList.map((i, el) => {
+        el.children
+            .filter(x => x.type === "tag")
+            .map(el2 => {
+                el2.children
+                    .filter(x => x.type === "tag")
+                    .map(el3 => {
+                        catcher.push(el3)
+                    })
+            })
+    })
+
+    Array.prototype.getUnique = function () {
+        var o = {}, a = [], i, e;
+        for (i = 0; e = this[i]; i++) { o[e] = 1 };
+        for (e in o) { a.push(e) };
+        return a;
+    }
+
+    const todaysMenu = catcher
+        .filter(x => x.attribs.class === "app-daymenu-name")
+        .map(el => el.children[0].data)
+        .getUnique();
+
+    function getDayOfTheWeek() {
+        switch (moment().format("dddd")) {
+            case "Monday": return "måndag";
+            case "Tuesday": return "tisdag";
+            case "Wednesday": return "onsdag";
+            case "Thursday": return "torsdag";
+            case "Friday": return "fredag";
+            case "Saturday": return "måndag";
+            case "Sunday": return "måndag";
+        }
+    }
+
+    return ({
+        name: "jonsjacob",
+        displayName: "Jöns Jacob",
+        today: {
+            day: getDayOfTheWeek(),
+            menu: todaysMenu
+        },
+    })
 }
